@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.UserDAO-mapper">
+	<select id="insertNewUser" parameterType="UserVO" >
+		INSERT INTO app_user (email, createdTime, username,pwhash,useridx)
+		values (#{email},SYSTIMESTAMP,#{username},#{pwHash},USER_SEQUENCE.nextval) 
+	</select>
+	<select id="selectOneUserByEmail" parameterType="String" resultType="UserVO">
+		SELECT * FROM app_user WHERE email=#{email}
+	</select>
+	<select id="deleteUserByEmail" parameterType="string" >
+		DELETE FROM app_user WHERE email=#{email}
+	</select>
+	<select id="deleteUserByEmailAndPw" parameterType="map" >
+		DELETE FROM app_user WHERE email=#{email} AND pw=#{pw}
+	</select>
+
+</mapper>
