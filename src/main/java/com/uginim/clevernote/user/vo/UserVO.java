@@ -9,14 +9,15 @@ import lombok.Data;
 @Data
 public class UserVO {
 	@Pattern(regexp = "", message = "")
-	String email;
+	String email; // e-mail address. 계정을 식별할 수 있음   
 	@Pattern(regexp = "", message = "")
-	String username;
-	String pwHash;
+	String username; // username. 계정명 외에 앱인터페이스에서 표현되는 이름(중복가능) 
+	String pwHash; // 패스워드 다이제스트
 	
-	Date createdTime;
+	long usernum;
 	
-	Date updatedTime;
+	Date createdAt; // 생성날짜	
+	Date updatedAt; // 수정날짜
 	
 	
 }

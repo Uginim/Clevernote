@@ -3,4 +3,67 @@
 <mapper namespace="mappers.NoteDAO-mapper">
 
 
+<!-- Create -->
+<insert id="insert" parameterType="NoteVO">
+INSERT INTO note
+	(title, content, notenum, categorynum) 
+VALUES (#{title},#{content},NOTE_SEQUENCE.nextval,#{categorynum}) 
+<selectKey order="AFTER" resultType="long">
+	SELECT NOTE_SEQUENCE.currval FROM dual
+</selectKey>
+</insert>
+
+<!-- Read -->
+<select id="searchNotes" parameterType="string" resultType="NoteVO">
+SELECT
+    created_at AS "createdAt",
+    title,
+    updated_at AS "updatedAt",
+<!--     content, -->
+    notenum,
+    categorynum
+FROM note
+WHERE title like '%' || #{keyword} || '%' 
+or content like '%' || #{keyword} || '%'
+</select>
+
+<select id="getAllNoteFromCategory" parameterType="long" resultType="NoteVO">
+SELECT
+	created_at AS "createdAt",
+    title,
+    updated_at AS "updatedAt",
+<!--     content, -->
+    notenum,
+     
+FROM note
+WHERE categorynum = #{categorynum} 
+</select>
+<select id="getNote" parameterType="long" resultType="NoteVO">
+SELECT
+	created_at AS "createdAt",
+    title,
+    updated_at AS "updatedAt",
+    content,
+    notenum, 
+FROM note
+WHERE notenum = #{notenum}
+</select>
+
+
+<!-- Update -->
+<update id="modify" parameterType="NoteVO" >
+UPDATE note
+  SET   title = #{title},
+        content =#{content},
+        categorynum = #{categorynum},
+        updated_at = systimestamp
+WHERE  notenum = #{notenum}
+</update>
+
+<delete id="delete" parameterType="long">
+DELETE 
+FROM note
+WHERE notenum = ${notenum}
+</delete>
+
 </mapper>
