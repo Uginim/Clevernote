@@ -12,7 +12,9 @@ import com.uginim.clevernote.user.vo.UserVO;
  */
 public interface UserDAO {
 	
-	/* Create */
+	/* 
+	 * Create 
+	 */
 	/** 
 	 * app_user 테이블에 레코드를 추가한다.
 	 * @param userVO 새 레코드(email, username, pwHash) 의 정보가 담긴 UserVO 객체 
@@ -21,26 +23,26 @@ public interface UserDAO {
 	public int insertNewUser(UserVO userVO); // Insert new user.
 	
 	
-	/* Select */
+	/* Read */
 	/**
 	 * email로 계정의 정보를 검색함
 	 * @param email 검색할 email(계정)
 	 * @return 검색결과가 담긴 VO객체. 없으면 null
 	 */
-	public UserVO selectOneUserByEmail(String email); // Select an user By email
+	public UserVO selectOneUser(String email); // Select an user By email
 	/**
 	 * email와 pwHash가 일치하는 계정을 검색함
 	 * @param email 검색할 email(계정)
 	 * @param pwHahs 검색할 계정의 pwHash
 	 * @return 검색결과가 담긴 VO객체
 	 */	
-	public UserVO selectOneUserByEmailAndPw(String email, String pwHash); // Select an user By email
+	public UserVO selectOneUser(String email, String pwHash); // Select an user By email
 	/**
-	 * table의 idx(키값)으로 계정을 검색
-	 * @param idx app_user 테이블의 키값
+	 * table의 usernum(키값)으로 계정을 검색
+	 * @param usernum app_user 테이블의 키값
 	 * @return 검색결과가 담긴 VO객체
 	 */	
-	public UserVO selectOneUserByUserIdx(int idx); // Select an user By email
+	public UserVO selectOneUser(long usernum); // Select an user By email
 	
 	/**
 	 * 해당 username으로 검색함 (username은 중복가능한 필드)	 *
@@ -53,7 +55,7 @@ public interface UserDAO {
 
 //	public List<UserVO> selectAllUsers() ; // Select all user
 	
-	
+		
 	/* Delete */	
 	/**
 	 * email이 일치하는 레코드 삭제
@@ -83,7 +85,7 @@ public interface UserDAO {
 	 * @param pwHash 바꿀 pwHash
 	 * @return 성공 시 1 반환
 	 */
-	public int updateUserPw(String email, String pwHash); // Update an user's password
+	public int updateUserPwHash(String email, String pwHash); // Update an user's password
 	/**
 	 * user의 pwHash를 변경함 이전의 pw가 일치해야 변경가능
 	 * @param email pwHash를 변경할 email(계정)
@@ -91,7 +93,7 @@ public interface UserDAO {
 	 * @param newPwHash 바꿀 pwHash
 	 * @return 성공 시 1 반환
 	 */
-	public int updateUserPw(String email, String oldPwHash, String newPwHash); // Update an user password
+	public int updateUserPwHash(String email, String oldPwHash, String newPwHash); // Update an user password
 	
 	
 }

@@ -33,7 +33,10 @@
 	</bean>
 	<!-- mybatis-spring 끝 -->
 	
-	
+	<!-- 트랜잭션 설정 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
 	
 	<!-- 	component : @Controller, @Service, @Repository 중에서 
 				@Controller를 제외한 클래스만 인스턴스화 하도록 설정함-->
