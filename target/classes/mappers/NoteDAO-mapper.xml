@@ -6,7 +6,7 @@
 <!-- Create -->
 <insert id="insert" parameterType="NoteVO">
 INSERT INTO note
-	(title, content, notenum, categorynum) 
+	(title, content, note_num AS "noteNum", categorynum) 
 VALUES (#{title},#{content},NOTE_SEQUENCE.nextval,#{categorynum}) 
 <selectKey order="AFTER" resultType="long">
 	SELECT NOTE_SEQUENCE.currval FROM dual
@@ -20,7 +20,7 @@ SELECT
     title,
     updated_at AS "updatedAt",
 <!--     content, -->
-    notenum,
+    note_num AS "noteNum",
     categorynum
 FROM note
 WHERE title like '%' || #{keyword} || '%' 
@@ -33,7 +33,7 @@ SELECT
     title,
     updated_at AS "updatedAt",
 <!--     content, -->
-    notenum,
+    note_num AS "noteNum",
      
 FROM note
 WHERE categorynum = #{categorynum} 
@@ -44,9 +44,9 @@ SELECT
     title,
     updated_at AS "updatedAt",
     content,
-    notenum, 
+    note_num AS "noteNum", 
 FROM note
-WHERE notenum = #{notenum}
+WHERE note_num = #{noteNum}
 </select>
 
 
@@ -57,13 +57,13 @@ UPDATE note
         content =#{content},
         categorynum = #{categorynum},
         updated_at = systimestamp
-WHERE  notenum = #{notenum}
+WHERE  note_num = #{noteNum}
 </update>
 
 <delete id="delete" parameterType="long">
 DELETE 
 FROM note
-WHERE notenum = ${notenum}
+WHERE note_num = ${noteNum}
 </delete>
 
 </mapper>

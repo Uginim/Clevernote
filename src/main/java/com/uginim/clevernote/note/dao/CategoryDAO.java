@@ -16,7 +16,7 @@ public interface CategoryDAO {
 	 * @param newCategory
 	 * @return 성공시 1
 	 */
-	int insertCategory(CategoryVO newCategory);	
+	int insert(CategoryVO newCategory);	
 	
 	/* Read */
 	/**
@@ -24,7 +24,7 @@ public interface CategoryDAO {
 	 * @param usernum 검색할 user의 usernum
 	 * @return 전체 category 리스트
 	 */
-	List<CategoryVO> loadAllCateogries(long usernum);
+	List<CategoryVO> loadUsersAllCateogries(long usernum);
 	
 	/* Update */
 	/**
@@ -32,7 +32,7 @@ public interface CategoryDAO {
 	 * @param categoryVO
 	 * @return 성공 시 1
 	 */
-	int modifyCategory(CategoryVO categoryVO);
+	int modify(CategoryVO categoryVO);
 	
 	/* Delete */
 	/**
@@ -40,6 +40,6 @@ public interface CategoryDAO {
 	 * @param categorynum
 	 * @return 성공 시 1
 	 */
-	int deleteCategory(long categorynum);
+	int delete(long categorynum);
 	
 }

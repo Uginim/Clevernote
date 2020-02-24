@@ -46,7 +46,7 @@ public class UserDAOImpl implements UserDAO {
 	 */
 	@Override
 	public UserVO selectOneUser(String email) {
-		logger.info("UserDAOImpl.selectOneUserByEmail(String email)");
+		logger.info("UserDAOImpl.selectOneUser(String email)");
 		return (UserVO)sqlSession.selectOne("mappers.UserDAO-mapper.selectOneUserByEmail", email);
 	}
 	

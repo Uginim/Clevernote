@@ -113,7 +113,8 @@ public class UserDAOTest {
 			newUserVO.setPwHash(pwHash);
 			newUserVO.setUsername(username);
 			userDAO.insertNewUser(newUserVO);
-			long usernum = userDAO.selectOneUser(email).getUsernum();
+			long usernum = userDAO.selectOneUser(email).getUserNum();
+			logger.info("usernum=" + usernum);
 			UserVO userVO = userDAO.selectOneUser(usernum);
 			assertNotNull(userVO);
 			assertEquals(email, userVO.getEmail());
@@ -165,6 +166,6 @@ public class UserDAOTest {
 
 	@Test
 	public void deleteOne() {
-
+		
 	}
 }

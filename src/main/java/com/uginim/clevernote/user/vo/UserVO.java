@@ -14,7 +14,7 @@ public class UserVO {
 	String username; // username. 계정명 외에 앱인터페이스에서 표현되는 이름(중복가능) 
 	String pwHash; // 패스워드 다이제스트
 	
-	long usernum;
+	long userNum;
 	
 	Date createdAt; // 생성날짜	
 	Date updatedAt; // 수정날짜
