@@ -4,7 +4,7 @@
 
 <!-- create -->
 	<insert id="insertNewUser" parameterType="UserVO" >
-		INSERT INTO app_user (email, created_at, username,pwhash,usernum)
+		INSERT INTO app_user (email, created_at, username,pwhash,user_num)
 		values (#{email},SYSTIMESTAMP,#{username},#{pwHash},USER_SEQUENCE.nextval)
 		<selectKey order="AFTER" resultType="long">
 			SELECT USER_SEQUENCE.currval FROM dual
@@ -19,7 +19,7 @@
 			updated_at AS "updatedAt",
 			username,
 			pwhash AS "pwHash",
-			usernum
+			user_num AS "userNum"
 		FROM app_user 
 		WHERE email=#{email}
 	</select>
@@ -31,7 +31,7 @@
 			updated_at AS "updatedAt",
 			username,
 			pwhash AS "pwHash",
-			usernum
+			user_num
 		FROM app_user 
 		WHERE email=#{email} AND pwHash = #{pwHash}
 	</select>
@@ -43,9 +43,9 @@
 			updated_at AS "updatedAt",
 			username,
 			pwhash AS "pwHash",
-			usernum
+			user_num AS "userNum"
 		FROM app_user 
-		WHERE usernum=#{usernum}
+		WHERE user_num=#{userNum}
 	</select>
 	
 	<select id="selectAllUsersByUsername" parameterType="map" resultType="UserVO">
@@ -55,7 +55,7 @@
 			updated_at AS "updatedAt",
 			username,
 			pwhash AS "pwHash",
-			usernum
+			user_num
 		FROM app_user
 		WHERE username=#{username}		
 	</select>
@@ -67,7 +67,7 @@
 			updated_at AS "updatedAt",
 			username,
 			pwhash AS "pwHash",
-			usernum
+			user_num
 		FROM app_user
 		WHERE username like '%' || #{username} ||'%'		
 	</select>
