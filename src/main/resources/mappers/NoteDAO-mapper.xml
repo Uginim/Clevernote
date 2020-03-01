@@ -6,9 +6,17 @@
 <!-- Create -->
 <insert id="insert" parameterType="NoteVO">
 INSERT INTO note
-	(title, content, note_num AS "noteNum", categorynum) 
-VALUES (#{title},#{content},NOTE_SEQUENCE.nextval,#{categorynum}) 
-<selectKey order="AFTER" resultType="long">
+	(title, 
+	content, 
+	note_num, 
+	category_num) 
+VALUES (
+	#{title},
+	#{content},
+	NOTE_SEQUENCE.nextval,
+	#{category.categoryNum}
+	) 
+<selectKey order="AFTER" keyProperty="noteNum" resultType="long">
 	SELECT NOTE_SEQUENCE.currval FROM dual
 </selectKey>
 </insert>
@@ -16,37 +24,44 @@ VALUES (#{title},#{content},NOTE_SEQUENCE.nextval,#{categorynum})
 <!-- Read -->
 <select id="searchNotes" parameterType="string" resultType="NoteVO">
 SELECT
-    created_at AS "createdAt",
-    title,
-    updated_at AS "updatedAt",
+    note.created_at AS "createdAt",
+    note.title AS "title",
+    note.updated_at AS "updatedAt",
 <!--     content, -->
-    note_num AS "noteNum",
-    categorynum
-FROM note
-WHERE title like '%' || #{keyword} || '%' 
-or content like '%' || #{keyword} || '%'
+    note.note_num AS "noteNum",
+    category.category_num AS "category.categoryNum",
+    category.title AS "category.title"
+FROM note, category
+WHERE  note.category_num = category.category_num
+AND note.title like '%' || #{keyword} || '%' 
+OR note.content like '%' || #{keyword} || '%'
 </select>
 
 <select id="getAllNoteFromCategory" parameterType="long" resultType="NoteVO">
 SELECT
-	created_at AS "createdAt",
-    title,
-    updated_at AS "updatedAt",
+	note.created_at AS "createdAt",
+    note.title AS title,
+    note.updated_at AS "updatedAt",
 <!--     content, -->
-    note_num AS "noteNum",
-     
-FROM note
-WHERE categorynum = #{categorynum} 
+    note.note_num AS "noteNum",
+    category.category_num AS "category.categoryNum",
+    category.title AS "category.title" 
+FROM note, category
+WHERE note.category_num = category.category_num 
+AND note.category_num = #{categoryNum} 
 </select>
 <select id="getNote" parameterType="long" resultType="NoteVO">
 SELECT
-	created_at AS "createdAt",
-    title,
-    updated_at AS "updatedAt",
+	note.created_at AS "createdAt",
+    note.title AS title,
+    note.updated_at AS "updatedAt",
     content,
-    note_num AS "noteNum", 
-FROM note
-WHERE note_num = #{noteNum}
+    note_num AS "noteNum",
+    category.category_num AS "category.categoryNum",
+    category.title AS "category.title" 
+FROM note, category
+WHERE note.category_num = category.category_num
+AND note_num = #{noteNum}
 </select>
 
 
@@ -55,7 +70,7 @@ WHERE note_num = #{noteNum}
 UPDATE note
   SET   title = #{title},
         content =#{content},
-        categorynum = #{categorynum},
+        category_num = #{category.categoryNum},
         updated_at = systimestamp
 WHERE  note_num = #{noteNum}
 </update>

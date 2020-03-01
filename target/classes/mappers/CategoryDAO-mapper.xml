@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mappers.CategoryDAO-mapper">
 <insert id="insert" parameterType="CategoryVO">	
-	INSERT INTO (categorynum, title, ownernum) 
-	VALUES(#{categoryNum},#{title},#{ownerNum})
-	<selectKey>
+	INSERT INTO category (category_num, title, owner_num) 
+	VALUES(CATEGORY_SEQUENCE.nextval,#{title},#{ownerNum})
+	<selectKey resultType="long" order="AFTER" keyProperty="categoryNum">
 		SELECT CATEGORY_SEQUENCE.currval FROM dual	
 	</selectKey>
 </insert >
@@ -14,7 +14,7 @@
 	    TITLE,
 	    CATEGORY_NUM AS "categoryNum",
 	    OWNER_NUM AS "ownerNum",
-	    CREATE_AT AS "createdAt",
+	    CREATEd_AT AS "createdAt",
 	    updated_at AS "updatedAt"
 	FROM category
 	WHERE OWNER_NUM = #{ownerNum}
@@ -24,7 +24,7 @@
 	SET title = #{title},
 	    category_num = #{categoryNum},
 	    owner_num = #{ownerNum},
-	    updated_at = #{updateNum}    
+	    updated_at = SYSTIMESTAMP    
 	WHERE
 	    category_num = #{categoryNum}
 </update>
