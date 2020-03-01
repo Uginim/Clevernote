@@ -22,7 +22,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 */
 	@Override
 	public int insert(CategoryVO newCategory) {		
-		return sqlSession.insert("mappers.NoteDAO-mapper.insert",newCategory);
+		return sqlSession.insert("mappers.CategoryDAO-mapper.insert",newCategory);
 	}
 
 	/* Read */
@@ -33,7 +33,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 */
 	@Override
 	public List<CategoryVO> loadUsersAllCateogries(long usernum) {
-		return sqlSession.selectList("mappers.NoteDAO-mapper.loadUsersAllCateogries",usernum);
+		return sqlSession.selectList("mappers.CategoryDAO-mapper.loadUsersAllCateogries",usernum);
 	}
 
 	/* Update */
@@ -44,7 +44,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 */
 	@Override
 	public int modify(CategoryVO categoryVO) {
-		return sqlSession.update("mappers.NoteDAO-mapper.modify",categoryVO);
+		return sqlSession.update("mappers.CategoryDAO-mapper.modify",categoryVO);
 	}
 
 	/* Delete */
@@ -55,7 +55,7 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 */
 	@Override
 	public int delete(long categorynum) {
-		return sqlSession.update("mappers.NoteDAO-mapper.delete",categorynum);
+		return sqlSession.update("mappers.CategoryDAO-mapper.delete",categorynum);
 	}
 
 }

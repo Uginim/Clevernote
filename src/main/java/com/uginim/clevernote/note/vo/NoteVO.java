@@ -12,7 +12,7 @@ public class NoteVO {
 	Date updatedAt; // 업데이트 시간
 	String content;  // 노트 내용
 	String title; // 노트 제목
-	long notenum; // 노트 번호
+	long noteNum; // 노트 번호
 //	long categorynum; // 카데고리 번호
 	CategoryVO category;
 }

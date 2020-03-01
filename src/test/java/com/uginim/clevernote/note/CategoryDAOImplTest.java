@@ -1,12 +1,13 @@
 package com.uginim.clevernote.note;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,9 +34,10 @@ public class CategoryDAOImplTest {
 	UserDAO userDAO;
 	
 	static String userEmail = "category@test.test";
-	static long userNum;
+	static long userNum = -1;
 	
 	@BeforeEach
+	@Transactional
 	public void doBeforeAll() {
 		logger.info("doBeforeAll(): start");
 		String email = userEmail;
@@ -53,6 +55,7 @@ public class CategoryDAOImplTest {
 	@Transactional
 	public void insertCategory() {
 		logger.info("insertCategory()");
+		logger.info("userNum"+userNum);
 		CategoryVO newCategory = new CategoryVO();
 		newCategory.setTitle("새 타이틀");
 		newCategory.setOwnerNum(userNum);;
@@ -62,10 +65,41 @@ public class CategoryDAOImplTest {
 		assertEquals(1, cnt);		
 	}
 	
+	@Test
+//	@Disabled
+	@Transactional
+	public void modifyCategory() {
+		logger.info("modifyCategory()");
+		CategoryVO newCategory = new CategoryVO();
+		String origin = "새 타이틀";
+		String modified = "다른 제목";
+		newCategory.setTitle(origin);
+		newCategory.setOwnerNum(userNum);;
+		int cnt = categoryDAO.insert(newCategory);
+		assertEquals(1, cnt);
+		newCategory.setTitle(modified);
+		cnt = categoryDAO.modify(newCategory);
+		assertEquals(1, cnt);
+		
+		cnt = categoryDAO.delete(newCategory.getCategoryNum());
+		assertEquals(1, cnt);
+	}
+	
+	@Test
+	@Transactional
+	public void selectCategory() {
+		List<CategoryVO> list = categoryDAO.loadUsersAllCateogries(userNum);
+		CategoryVO newCategory = new CategoryVO();
+		assertNotNull(list);
+		
+	}
+	
 	@AfterEach
 	public void doAfterAll() {
 		logger.info("doAfterAll(): start");
 		userDAO.deleteUserByEmail(userEmail);
 	}
+	
+	
 	
 }
