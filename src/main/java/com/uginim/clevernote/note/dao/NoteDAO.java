@@ -44,6 +44,22 @@ public interface NoteDAO {
 	 * @return 노트객체
 	 */
 	NoteVO getNote(long notenum);
+
+	/**
+	 * 특정 태그로 노트 가져오기 
+	 * @param tagNum 태그 번호
+	 * @return 해당 태그를 사용하는 노트 리스트
+	 */
+	List<NoteVO> selectNotesByTag(long tagNum);
+	
+	/**
+	 * 특정 태그로 사용자의 노트 가져오기
+	 * @param tagNum 태그 번호
+	 * @param userNum 유저 번호
+	 * @return 해당 태그를 사용하는 유저의 노트 리스트 
+	 */
+	List<NoteVO> selectNotesByTag(long tagNum, long userNum);
+	
 	
 	/* Update */
 	/**

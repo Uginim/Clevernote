@@ -3,82 +3,102 @@
 <mapper namespace="mappers.NoteDAO-mapper">
 
 
-<!-- Create -->
-<insert id="insert" parameterType="NoteVO">
-INSERT INTO note
-	(title, 
-	content, 
-	note_num, 
-	category_num) 
-VALUES (
-	#{title},
-	#{content},
-	NOTE_SEQUENCE.nextval,
-	#{category.categoryNum}
-	) 
-<selectKey order="AFTER" keyProperty="noteNum" resultType="long">
-	SELECT NOTE_SEQUENCE.currval FROM dual
-</selectKey>
-</insert>
+	<!-- Create -->
+	<insert id="insert" parameterType="NoteVO">
+		INSERT INTO note
+		(title,
+		content,
+		note_num,
+		category_num)
+		VALUES (
+		#{title},
+		#{content},
+		NOTE_SEQUENCE.nextval,
+		#{category.categoryNum}
+		)
+		<selectKey order="AFTER" keyProperty="noteNum"
+			resultType="long">
+			SELECT NOTE_SEQUENCE.currval FROM dual
+		</selectKey>
+	</insert>
 
-<!-- Read -->
-<select id="searchNotes" parameterType="string" resultType="NoteVO">
-SELECT
-    note.created_at AS "createdAt",
-    note.title AS "title",
-    note.updated_at AS "updatedAt",
-<!--     content, -->
-    note.note_num AS "noteNum",
-    category.category_num AS "category.categoryNum",
-    category.title AS "category.title"
-FROM note, category
-WHERE  note.category_num = category.category_num
-AND note.title like '%' || #{keyword} || '%' 
-OR note.content like '%' || #{keyword} || '%'
-</select>
+	<!-- Read -->
+	<select id="searchNotes" parameterType="string"
+		resultType="NoteVO">
+		SELECT
+		note.created_at AS "createdAt",
+		note.title AS "title",
+		note.updated_at AS "updatedAt",
+		<!-- content, -->
+		note.note_num AS "noteNum",
+		category.category_num AS "category.categoryNum",
+		category.title AS "category.title"
+		FROM note, category
+		WHERE note.category_num = category.category_num
+		AND note.title like '%' || #{keyword} || '%'
+		OR note.content like '%' || #{keyword} || '%'
+	</select>
 
-<select id="getAllNoteFromCategory" parameterType="long" resultType="NoteVO">
-SELECT
-	note.created_at AS "createdAt",
-    note.title AS title,
-    note.updated_at AS "updatedAt",
-<!--     content, -->
-    note.note_num AS "noteNum",
-    category.category_num AS "category.categoryNum",
-    category.title AS "category.title" 
-FROM note, category
-WHERE note.category_num = category.category_num 
-AND note.category_num = #{categoryNum} 
-</select>
-<select id="getNote" parameterType="long" resultType="NoteVO">
-SELECT
-	note.created_at AS "createdAt",
-    note.title AS title,
-    note.updated_at AS "updatedAt",
-    content,
-    note_num AS "noteNum",
-    category.category_num AS "category.categoryNum",
-    category.title AS "category.title" 
-FROM note, category
-WHERE note.category_num = category.category_num
-AND note_num = #{noteNum}
-</select>
+	<select id="getAllNoteFromCategory" parameterType="long"
+		resultType="NoteVO">
+		SELECT
+		note.created_at AS "createdAt",
+		note.title AS title,
+		note.updated_at AS "updatedAt",
+		<!-- content, -->
+		note.note_num AS "noteNum",
+		category.category_num AS "category.categoryNum",
+		category.title AS "category.title"
+		FROM note, category
+		WHERE note.category_num = category.category_num
+		AND note.category_num = #{categoryNum}
+	</select>
+	<select id="getNote" parameterType="long" resultType="NoteVO">
+		SELECT
+		note.created_at AS "createdAt",
+		note.title AS title,
+		note.updated_at AS "updatedAt",
+		content,
+		note_num AS "noteNum",
+		category.category_num AS "category.categoryNum",
+		category.title AS "category.title"
+		FROM note, category
+		WHERE note.category_num = category.category_num
+		AND note_num = #{noteNum}
+	</select>
 
+	<select id="selectNotesByTag" parameterType="map" resultType="NoteVO">
+		SELECT
+		note.created_at AS "createdAt",
+		note.title AS title,
+		note.updated_at AS "updatedAt",
+		content,
+		note.note_num AS "noteNum",
+		category.category_num AS "category.categoryNum",
+		category.title AS "category.title"
+		FROM note, category, tagging
+		WHERE note.category_num = category.category_num
+		AND tagging.note_num = note.note_num
+		AND tagging.tag_num = #{tagNum}
+		<if test="userNum != null">
+			AND note.user_num = #{userNum}
+		</if>
+	</select>
 
-<!-- Update -->
-<update id="modify" parameterType="NoteVO" >
-UPDATE note
-  SET   title = #{title},
-        content =#{content},
-        category_num = #{category.categoryNum},
-        updated_at = systimestamp
-WHERE  note_num = #{noteNum}
-</update>
+	<!-- Update -->
+	<update id="modify" parameterType="NoteVO">
+		UPDATE note
+		SET title = #{title},
+		content =#{content},
+		category_num = #{category.categoryNum},
+		updated_at = systimestamp
+		WHERE note_num = #{noteNum}
+	</update>
 
-<delete id="delete" parameterType="long">
-DELETE 
-FROM note
-WHERE note_num = ${noteNum}
-</delete>
+	<delete id="delete" parameterType="long">
+		DELETE
+		FROM note
+		WHERE note_num = ${noteNum}
+	</delete>
 
 </mapper>

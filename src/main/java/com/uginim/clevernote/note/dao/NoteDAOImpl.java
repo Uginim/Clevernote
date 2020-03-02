@@ -1,6 +1,8 @@
 package com.uginim.clevernote.note.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -58,9 +60,38 @@ public class NoteDAOImpl implements NoteDAO{
 	 */
 	@Override
 	public NoteVO getNote(long notenum) {
-		// TODO Auto-generated method stub
 		return sqlSession.selectOne("mappers.NoteDAO-mapper.getNote", notenum);
 	}
+	
+	
+
+	/**
+	 * 특정 태그로 노트 가져오기 
+	 * @param tagNum 태그 번호
+	 * @return 해당 태그를 사용하는 노트 리스트
+	 */
+	@Override
+	public List<NoteVO> selectNotesByTag(long tagNum) {
+		Map map = new HashMap<>();
+		map.put("tagNum", tagNum);
+		return sqlSession.selectList("mappers.NoteDAO-mapper.selectNotesByTag", map);
+	}
+
+
+	/**
+	 * 특정 태그로 사용자의 노트 가져오기
+	 * @param tagNum 태그 번호
+	 * @param userNum 유저 번호
+	 * @return 해당 태그를 사용하는 유저의 노트 리스트 
+	 */
+	@Override
+	public List<NoteVO> selectNotesByTag(long tagNum, long userNum) {
+		Map map = new HashMap<>();
+		map.put("tagNum", tagNum);
+		map.put("userNum", userNum);
+		return sqlSession.selectList("mappers.NoteDAO-mapper.selectNotesByTag", map);
+	}
+
 	
 	/* Update */
 	/**
@@ -86,6 +117,7 @@ public class NoteDAOImpl implements NoteDAO{
 
 		return sqlSession.delete("mappers.NoteDAO-mapper.delete", notenum);
 	}
+
 
 
 

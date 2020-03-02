@@ -8,6 +8,9 @@
 <!-- 			alias="MemberVO" /> -->
 		<typeAlias type="com.uginim.clevernote.note.vo.CategoryVO" alias="CategoryVO"/>
 		<typeAlias type="com.uginim.clevernote.note.vo.NoteVO" alias="NoteVO"/>
+		<typeAlias type="com.uginim.clevernote.note.vo.TagVO" alias="TagVO"/>
+		<typeAlias type="com.uginim.clevernote.note.vo.TaggingVO" alias="TaggingVO"/>
+				
 		<typeAlias type="com.uginim.clevernote.user.vo.UserVO" alias="UserVO"/>
 	</typeAliases>
 </configuration>

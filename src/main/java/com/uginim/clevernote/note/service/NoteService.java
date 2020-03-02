@@ -23,7 +23,7 @@ public interface NoteService {
 	// 노트 카데고리 목록 불러오기
 	List<CategoryVO> getAllCategories(long userNum);
 	// 카데고리 이름 변경
-	int changeCategoryTitle(long categoryNum, String newTitle);
+	int changeCategoryTitle(long categoryNum, String newTitle); 
 	// 카데고리 추가
 	CategoryVO createCategory(long userNum, String title);
 	// 카데고리 내 모든 노트 불러오기
