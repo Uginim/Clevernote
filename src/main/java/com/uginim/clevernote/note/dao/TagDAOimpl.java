@@ -133,10 +133,10 @@ public class TagDAOimpl implements TagDAO {
 	 * @return
 	 */
 	@Override
-	public TagVO selectTag(long tagNum) {
+	public TagVO selectOneTag(long tagNum) {
 		Map map = new HashMap<>();
 		map.put("tagNum", tagNum);
-		return sqlSession.selectOne("mappers.Tagging-mapper.selectTag", tagNum);
+		return sqlSession.selectOne("mappers.Tagging-mapper.selectOneTag", tagNum);
 	}
 
 	/**
@@ -145,10 +145,10 @@ public class TagDAOimpl implements TagDAO {
 	 * @return
 	 */
 	@Override
-	public TagVO selectTag(String word) {
+	public TagVO selectOneTag(String word) {
 		Map map = new HashMap<>();
 		map.put("word", word);
-		return sqlSession.selectOne("mappers.Tagging-mapper.selectTag", word);
+		return sqlSession.selectOne("mappers.Tagging-mapper.selectOneTag", word);
 	}
 
 	

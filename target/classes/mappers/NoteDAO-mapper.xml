@@ -81,7 +81,7 @@
 		AND tagging.note_num = note.note_num
 		AND tagging.tag_num = #{tagNum}
 		<if test="userNum != null">
-			AND note.user_num = #{userNum}
+			AND category.owner_num = #{userNum}
 		</if>
 	</select>
 

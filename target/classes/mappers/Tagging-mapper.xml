@@ -25,14 +25,18 @@
 
 	<!-- Read -->
 	<select id="selectTags" parameterType="map" resultType="TagVO">
-		SELECT
-		tag.word AS word,
-		tag.tag_num AS "tagNum"
-		FROM tag, tagging
+		SELECT DISTINCT
+		 tag.word AS word,
+		 tag.tag_num AS "tagNum"
+		FROM tag, tagging <if test="userNum != null">, note, category </if>
 		WHERE tag.tag_num = tagging.tag_num
+		<if test="userNum != null">
+			AND tagging.note_num = note.note_num
+			AND note.category_num = category.category_num
+		</if>
 		AND tag.word like '%' || #{keyword} || '%'
 		<if test="userNum != null">
-			AND tagging.user_num == #{userNum}
+			AND category.owner_num = #{userNum}		
 		</if>
 	</select>
 	<select id="selectAllTaggings" parameterType="long"
@@ -58,7 +62,7 @@
 		AND note.user_num = #{userNum}
 	</select>
 
-	<select id="selectTag">
+	<select id="selectOneTag">
 		SELECT
 		tag.word AS "word",
 		tag.tag_num AS "tagNum",
