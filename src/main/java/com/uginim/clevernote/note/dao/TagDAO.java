@@ -60,13 +60,13 @@ public interface TagDAO {
 	 * @param tagNum 태그번호
 	 * @return
 	 */
-	TagVO selectTag(long tagNum);
+	TagVO selectOneTag(long tagNum);
 	/**
 	 * 태그 가져오기
 	 * @param word 태그  
 	 * @return
 	 */
-	TagVO selectTag(String word);
+	TagVO selectOneTag(String word);
 	/**
 	 * 유저의 모든 태그 가져오기, user가 사용한 태그들 다 불러오기 
 	 * @param userNum 유저 번호
