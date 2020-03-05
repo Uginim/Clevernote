@@ -140,6 +140,15 @@ public class TagDAOImplTest {
 		
 		List<TaggingVO> taggings = tagDAO.selectAllTaggings(noteList.get(3).getNoteNum());
 		logger.info("노트의 태깅 정보: "+taggings.toString());
+		taggings = tagDAO.selectAllUsersTaggings(user.getUserNum());
+		logger.info("유저의 태깅 정보: "+taggings.toString());
+		TagVO tag = tagDAO.selectOneTag("태그입니다0");
+		logger.info("tag결과:"+tag);
+		tag = tagDAO.selectOneTag("태그입니다0");
+		logger.info("tag결과:"+tag);
+		tag = tagDAO.selectOneTag(tagList.get(0).getTagNum());
+		logger.info("tag결과:"+tag);
+		
 		
 		List<TagVO> tags = tagDAO.selectTags("태그입니다");
 		List<TagVO> userstags = tagDAO.selectTags("태그입니다",user.getUserNum());

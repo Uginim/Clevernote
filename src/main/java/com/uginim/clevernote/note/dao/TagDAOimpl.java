@@ -80,7 +80,7 @@ public class TagDAOimpl implements TagDAO {
 	 */
 	@Override
 	public List<TagVO> selectTags(String keyword) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("keyword", keyword);
 		return sqlSession.selectList("mappers.Tagging-mapper.selectTags", map);
 	}
@@ -93,7 +93,7 @@ public class TagDAOimpl implements TagDAO {
 	 */
 	@Override
 	public List<TagVO> selectTags(String keyword, long userNum) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("keyword", keyword);
 		map.put("userNum", userNum);
 		return sqlSession.selectList("mappers.Tagging-mapper.selectTags", map);
@@ -126,6 +126,14 @@ public class TagDAOimpl implements TagDAO {
 		return sqlSession.selectList("mappers.Tagging-mapper.selectAllUsersTaggings", userNum);
 	}
 	
+	/**
+	 * 유저의 모든 태그 가져오기, user가 사용한 태그들 다 불러오기 
+	 * @param userNum 유저 번호
+	 * @return
+	 */
+	public List<TagVO> selectAllTagsOfUser(long userNum){
+		return sqlSession.selectList("mappers.Tagging-mapper.selectAllTagsOfUser", userNum);
+	}
 	
 	/**
 	 * 노트에 태깅된 것들 가져오기
@@ -134,9 +142,9 @@ public class TagDAOimpl implements TagDAO {
 	 */
 	@Override
 	public TagVO selectOneTag(long tagNum) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("tagNum", tagNum);
-		return sqlSession.selectOne("mappers.Tagging-mapper.selectOneTag", tagNum);
+		return sqlSession.selectOne("mappers.Tagging-mapper.selectOneTag", map);
 	}
 
 	/**
@@ -146,9 +154,9 @@ public class TagDAOimpl implements TagDAO {
 	 */
 	@Override
 	public TagVO selectOneTag(String word) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("word", word);
-		return sqlSession.selectOne("mappers.Tagging-mapper.selectOneTag", word);
+		return sqlSession.selectOne("mappers.Tagging-mapper.selectOneTag", map);
 	}
 
 	
@@ -163,7 +171,7 @@ public class TagDAOimpl implements TagDAO {
 	 */
 	@Override
 	public int deleteTagging(long noteNum, long tagNum) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("noteNum", noteNum);
 		map.put("tagNum", tagNum);
 		return sqlSession.delete("mappers.Tagging-mapper.deleteTagging", map);
@@ -176,7 +184,7 @@ public class TagDAOimpl implements TagDAO {
 	 */
 	@Override
 	public int deleteTag(long tagNum) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("tagNum", tagNum);
 		return sqlSession.delete("mappers.Tagging-mapper.deleteTag", map);
 	}
@@ -188,7 +196,7 @@ public class TagDAOimpl implements TagDAO {
 	 */
 	@Override
 	public int deleteTag(String word) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("word", word);
 		return sqlSession.delete("mappers.Tagging-mapper.deleteTag", map);
 	}

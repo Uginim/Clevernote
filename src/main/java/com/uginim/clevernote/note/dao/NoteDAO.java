@@ -26,17 +26,42 @@ public interface NoteDAO {
 	/* Read */
 	/**
 	 * 노트를 검색한다.
-	 * @param keyword
+	 * @param keyword 검색할 키워드
 	 * @return 검색결과 노트 리스트
 	 */
-	List<NoteVO> searchNotes(String keyword);
+	List<NoteVO> searchNotes(String keyword,long userNum);
+	
+	/**
+	 * 노트를 검색한다.
+	 * @param keyword 검색할 키워드
+	 * @param categoryNum 검색할 카데고리
+	 * @return 검색결과 노트 리스트
+	 */
+	List<NoteVO> searchNotes(String keyword,long userNum,long categoryNum);
+	
+	/**
+	 * 노트를 검색한다.
+	 * @param keyword 검색할 키워드
+	 * @param categoryNum 검색할 카데고리
+	 * @param hasContent 컨텐츠 포함 여부
+	 * @return 검색결과 노트 리스트
+	 */
+	List<NoteVO> searchNotes(String keyword,long userNum,long categoryNum, boolean hasContent);
 	
 	/** 
 	 * 특정 카데고리의 노트를 리스트로 가져온다
 	 * @param categorynum 노트가 속한 카데고리
 	 * @return 노트 리스트
 	 */
-	List<NoteVO> getAllNoteFromCategory(long categorynum);
+	List<NoteVO> getAllNoteFromCategory(long categoryNum);
+
+	/**
+	 * 특정 카데고리의 노트를 리스트로 가져온다
+	 * @param categorynum 노트가 속한 카데고리
+	 * @param hasContent 콘텐츠 포함 여부
+	 * @return 노트 리스트
+	 */
+	List<NoteVO> getAllNoteFromCategory(long categoryNum, boolean hasContent);
 	
 	/**
 	 * 특정 노트를 가져온다.

@@ -52,28 +52,42 @@
 	</select>
 	<select id="selectAllUsersTaggings" parameterType="long"
 		resultType="TaggingVO">
-		SELECT
+<!-- 		SELECT DISTINCT -->
+		SELECT 
 		tag.word AS "tag.word",
 		tag.tag_num AS "tag.tagNum",
 		note.note_num AS "note.noteNum"
-		FROM tag, tagging, note
+		FROM tag, tagging, note,category
 		WHERE tag.tag_num = tagging.tag_num
 		AND tagging.note_num = note.note_num
-		AND note.user_num = #{userNum}
+		AND category.category_num = note.category_num
+		AND category.owner_num = #{userNum}
+	</select>
+	<select id="selectAllTagsOfUser" parameterType="long"
+		resultType="TagVO">
+		SELECT DISTINCT
+		tag.word AS "tag.word",
+		tag.tag_num AS "tag.tagNum",
+		FROM tag, tagging, note,category
+		WHERE tag.tag_num = tagging.tag_num
+		AND tagging.note_num = note.note_num
+		AND category.category_num = note.category_num
+		AND category.owner_num = #{userNum}
 	</select>
 
-	<select id="selectOneTag">
+	<select id="selectOneTag" parameterType="map" resultType="TagVO">
 		SELECT
 		tag.word AS "word",
-		tag.tag_num AS "tagNum",
+		tag.tag_num AS "tagNum"
 		FROM tag
-		WHERE
-		<if test="word != null">
-			word = #{word}
-		</if>
-		<if test="tagNum != null">
-			tag_num = #{tagNum}
-		</if>
+		<choose>
+			<when test="word != null">
+				WHERE word = #{word}				
+			</when>
+			<when test="tagNum != null">
+				WHERE tag_num = #{tagNum}
+			</when>					
+		</choose>		
 
 	</select>
 	

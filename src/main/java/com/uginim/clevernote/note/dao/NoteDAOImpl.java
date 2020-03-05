@@ -35,12 +35,46 @@ public class NoteDAOImpl implements NoteDAO{
 	/* Read */
 	/**
 	 * 노트를 검색한다.
-	 * @param keyword
+	 * @param keyword 검색할 키워드
 	 * @return 검색결과 노트 리스트
 	 */
 	@Override
-	public List<NoteVO> searchNotes(String keyword) {
-		return sqlSession.selectList("mappers.NoteDAO-mapper.searchNotes", keyword);
+	public List<NoteVO> searchNotes(String keyword,long userNum) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("keyword", keyword);
+		map.put("userNum", userNum);
+		return sqlSession.selectList("mappers.NoteDAO-mapper.searchNotes", map);
+	}
+	/**
+	 * 노트를 검색한다.
+	 * @param keyword 검색할 키워드
+	 * @param categoryNum 검색할 카데고리
+	 * @return 검색결과 노트 리스트
+	 */
+	@Override
+	public List<NoteVO> searchNotes(String keyword,long userNum,long categoryNum){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("keyword", keyword);
+		map.put("userNum", userNum);
+		map.put("categoryNum", categoryNum);
+		return sqlSession.selectList("mappers.NoteDAO-mapper.searchNotes", map);
+	}
+	
+	/**
+	 * 노트를 검색한다.
+	 * @param keyword 검색할 키워드
+	 * @param categoryNum 검색할 카데고리
+	 * @param hasContent 컨텐츠 포함 여부
+	 * @return 검색결과 노트 리스트
+	 */
+	@Override
+	public List<NoteVO> searchNotes(String keyword,long userNum,long categoryNum, boolean hasContent){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("keyword", keyword);
+		map.put("userNum", userNum);
+		map.put("categoryNum", categoryNum);
+		map.put("hasContent", hasContent);
+		return sqlSession.selectList("mappers.NoteDAO-mapper.searchNotes", map);
 	}
 
 	/** 
@@ -49,10 +83,26 @@ public class NoteDAOImpl implements NoteDAO{
 	 * @return 노트 리스트
 	 */
 	@Override
-	public List<NoteVO> getAllNoteFromCategory(long categorynum) {
-		return sqlSession.selectList("mappers.NoteDAO-mapper.getAllNoteFromCategory", categorynum);
+	public List<NoteVO> getAllNoteFromCategory(long categoryNum) {
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("categoryNum",categoryNum);
+		return sqlSession.selectList("mappers.NoteDAO-mapper.getAllNoteFromCategory", map);
 	}
 
+	/**
+	 * 특정 카데고리의 노트를 리스트로 가져온다
+	 * @param categorynum 노트가 속한 카데고리
+	 * @param hasContent 콘텐츠 포함 여부
+	 * @return 노트 리스트
+	 */
+	@Override
+	public List<NoteVO> getAllNoteFromCategory(long categoryNum, boolean hasContent){
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("categoryNum",categoryNum);
+		map.put("hasContent",hasContent);
+		return sqlSession.selectList("mappers.NoteDAO-mapper.getAllNoteFromCategory", map);
+	}
+	
 	/**
 	 * 특정 노트를 가져온다.
 	 * @param notenum 가져올 노트의 노트번호
@@ -72,7 +122,7 @@ public class NoteDAOImpl implements NoteDAO{
 	 */
 	@Override
 	public List<NoteVO> selectNotesByTag(long tagNum) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("tagNum", tagNum);
 		return sqlSession.selectList("mappers.NoteDAO-mapper.selectNotesByTag", map);
 	}
@@ -86,7 +136,7 @@ public class NoteDAOImpl implements NoteDAO{
 	 */
 	@Override
 	public List<NoteVO> selectNotesByTag(long tagNum, long userNum) {
-		Map map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("tagNum", tagNum);
 		map.put("userNum", userNum);
 		return sqlSession.selectList("mappers.NoteDAO-mapper.selectNotesByTag", map);

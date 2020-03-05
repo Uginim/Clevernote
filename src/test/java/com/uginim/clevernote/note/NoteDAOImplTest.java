@@ -92,9 +92,11 @@ public class NoteDAOImplTest {
 			logger.info("new note's num"+list.get(i).getNoteNum());
 		}
 		
-		List<NoteVO> searchingResult = noteDAO.searchNotes("1");
+		List<NoteVO> searchingResult = noteDAO.searchNotes("1",user.getUserNum());
 		logger.info(searchingResult.toString());
 		List<NoteVO> notesInCate = noteDAO.getAllNoteFromCategory(category.getCategoryNum());
+		logger.info(notesInCate.toString());
+		notesInCate = noteDAO.getAllNoteFromCategory(category.getCategoryNum(),true);
 		logger.info(notesInCate.toString());
 		NoteVO note = noteDAO.getNote(list.get(5).getNoteNum());
 		logger.info(note.toString());
