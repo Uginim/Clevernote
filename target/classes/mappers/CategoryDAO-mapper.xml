@@ -9,6 +9,17 @@
 	</selectKey>
 </insert >
 
+<select id="selectOneCateogry" parameterType="long" resultType="CategoryVO">
+	SELECT 
+		TITLE,
+	    CATEGORY_NUM AS "categoryNum",
+	    OWNER_NUM AS "ownerNum",
+	    CREATEd_AT AS "createdAt",
+	    updated_at AS "updatedAt"
+	FROM category
+	WHERE CATEGORY_NUM = #{categoryNum}
+</select>
+
 <select id="loadUsersAllCateogries" parameterType="long" resultType="CategoryVO">
 	SELECT 
 	    TITLE,
@@ -19,6 +30,8 @@
 	FROM category
 	WHERE OWNER_NUM = #{ownerNum}
 </select>
+
+
 <update id="modify" parameterType="CategoryVO">
 	UPDATE category 
 	SET title = #{title},

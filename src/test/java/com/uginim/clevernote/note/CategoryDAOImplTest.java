@@ -91,6 +91,11 @@ public class CategoryDAOImplTest {
 		List<CategoryVO> list = categoryDAO.loadUsersAllCateogries(userNum);
 		CategoryVO newCategory = new CategoryVO();
 		assertNotNull(list);
+		logger.info(list.toString());
+		
+		
+		assertNotNull(list);
+		logger.info(list.toString());
 		
 	}
 	

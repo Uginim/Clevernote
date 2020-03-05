@@ -23,29 +23,38 @@
 	</insert>
 
 	<!-- Read -->
-	<select id="searchNotes" parameterType="string"
+	<select id="searchNotes" parameterType="map"
 		resultType="NoteVO">
 		SELECT
 		note.created_at AS "createdAt",
 		note.title AS "title",
 		note.updated_at AS "updatedAt",
 		<!-- content, -->
+		<if test="hasContent != null and hasContent">
+			content,
+		</if>
 		note.note_num AS "noteNum",
 		category.category_num AS "category.categoryNum",
 		category.title AS "category.title"
 		FROM note, category
 		WHERE note.category_num = category.category_num
+		<if test="categoryNum != null ">
+			AND category.category_num = #{categoryNum}
+		</if>
+		AND category.owner_num = #{userNum}
 		AND note.title like '%' || #{keyword} || '%'
 		OR note.content like '%' || #{keyword} || '%'
 	</select>
 
-	<select id="getAllNoteFromCategory" parameterType="long"
+	<select id="getAllNoteFromCategory" parameterType="map"
 		resultType="NoteVO">
 		SELECT
 		note.created_at AS "createdAt",
 		note.title AS title,
 		note.updated_at AS "updatedAt",
-		<!-- content, -->
+		<if test="hasContent != null and hasContent">
+			content,
+		</if>
 		note.note_num AS "noteNum",
 		category.category_num AS "category.categoryNum",
 		category.title AS "category.title"
@@ -75,7 +84,11 @@
 		content,
 		note.note_num AS "noteNum",
 		category.category_num AS "category.categoryNum",
-		category.title AS "category.title"
+		category.title AS "category.title",
+		category.owner_num AS "category.ownerNum",
+		category.created_at AS "category.createdAt",
+		category.updated_at AS "category.updatedAt"
+		
 		FROM note, category, tagging
 		WHERE note.category_num = category.category_num
 		AND tagging.note_num = note.note_num

@@ -73,12 +73,23 @@ public interface TagDAO {
 	 * @return
 	 */
 	List<TaggingVO> selectAllUsersTaggings(long userNum);
+	
+	/**
+	 * 유저의 모든 태그 가져오기, user가 사용한 태그들 다 불러오기 
+	 * @param userNum 유저 번호
+	 * @return
+	 */
+	List<TagVO> selectAllTagsOfUser(long userNum);
+	
 	/**
 	 * 노트에 태깅된 것들 가져오기
 	 * @param noteNum 노트 번호
 	 * @return
 	 */
 	List<TaggingVO> selectAllTaggings(long noteNum);
+	
+	
+	
 	
 	/* Update */
 	
