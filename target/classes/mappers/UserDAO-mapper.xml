@@ -31,7 +31,8 @@
 			updated_at AS "updatedAt",
 			username,
 			pwhash AS "pwHash",
-			user_num
+			user_num AS "userNum"
+
 		FROM app_user 
 		WHERE email=#{email} AND pwHash = #{pwHash}
 	</select>
@@ -55,7 +56,7 @@
 			updated_at AS "updatedAt",
 			username,
 			pwhash AS "pwHash",
-			user_num
+			user_num AS "userNum"
 		FROM app_user
 		WHERE username=#{username}		
 	</select>
@@ -67,7 +68,7 @@
 			updated_at AS "updatedAt",
 			username,
 			pwhash AS "pwHash",
-			user_num
+			user_num AS "userNum"
 		FROM app_user
 		WHERE username like '%' || #{username} ||'%'		
 	</select>
@@ -88,8 +89,17 @@
 	<update id="updateUserPwHashWithOldPw" parameterType="map">
 		UPDATE app_user
 			SET pwHash = #{newPwHash}
-		WHERE email = #{email}
-		AND pwHash = #{oldPwHash}
+		WHERE pwHash = #{oldPwHash} 
+		AND 
+		<choose  >
+			<when test="email != null">
+				email = #{email}
+			</when>
+			<when test="userNum != null">
+				user_num = #{userNum}
+			</when>
+		</choose>	
+		
 	</update>
 
 	<!-- Delete	 -->

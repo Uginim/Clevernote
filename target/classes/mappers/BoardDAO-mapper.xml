@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.BoardDAO-mapper">
+<!-- Create -->
+<!-- 게시글 작성 -->
+	<insert id="insertBoard" parameterType="BoardVO">
+		INSERT INTO board (
+		  board_num,    
+		  type_num,  
+		  title,  
+		  user_num,      
+		  username,
+		  content,
+		  board_group
+		) VALUES (
+		  BOARD_SEQUENCE.nextval,  
+		  #{type.typeNum},  
+		  #{title},  
+		  #{userNum},  
+		  #{username},
+		  #{content},
+		  BOARD_SEQUENCE.currval
+		)	
+		<selectKey keyProperty="boardNum" resultType="long" order="AFTER">
+			select BOARD_SEQUENCE.currval from dual
+		</selectKey>
+	
+	</insert>
+<!-- 첨부파일 insert -->
+	<insert id="insertAttachmentFile" parameterType="AttachmentFileVO">
+		insert into ATTACHMENT_FILE	(
+			attachment_num,
+			board_num, 	 
+			name, 	 
+			file_size, 	 
+			mimetype, 	 
+			data
+		)values(
+			ATTACHMENT_SEQUENCE.nextval, 
+			#{boardNum}, 
+			#{name}, 
+			#{fileSize}, 
+			#{mimeType}, 
+			#{data} 				
+		)		
+	</insert>
+<!-- 답글 넣기 -->
+	<insert id="insertReplyBoard" parameterType="BoardVO">
+		INSERT INTO board (
+			board_num,    
+		  	type_num,  
+			title,  
+			user_num,      
+			username,
+			content,
+			board_group,
+			step,
+			indent
+		) VALUES (
+			BOARD_SEQUENCE.nextval,  
+			#{type.typeNum},  
+			#{title},  
+			#{userNum},  
+			#{username},
+			#{content},
+			#{boardGroup},
+			#{step} + 1,
+			#{indent} + 1
+		)	
+		<selectKey keyProperty="boardNum" resultType="long" order="AFTER">
+			select BOARD_SEQUENCE.currval from dual
+		</selectKey>	
+	</insert>
+	<!-- 이전 답글step 업데이트 -->
+	<!-- 이전 답글중 원글의 bstep보다 큰값이 있는경우 bstep + 1증가 -->
+	<update id="updateStep" parameterType="map">
+		update board
+		   set step = step + 1
+	   where board_group = #{boardGroup} and step > #{step}	
+	</update>
+
+<!-- Read -->
+<!-- 게시글 타입 불러오기 -->
+	<select id="getBoardTypes" resultType="BoardTypeVO">
+		select type_num as "typeNum", name FROM board_type
+	</select>
+<!-- 게시글 하나 읽어오기 -->
+	<select id="selectOne" parameterType="long" resultType="BoardVO">
+		SELECT
+			board_num as "boardNum",
+			type.type_num as "type.typeNum",
+			type.name as "type.name",
+			title,
+			user_num as "userNum",
+			username,
+			created_at as "createdAt",
+			updated_at as "updatedAt",
+			hit,
+			content,
+			board_group as "boardGroup",
+			step,
+			indent
+		FROM
+		  board ,board_type type
+		where board.type_num = type.type_num	
+			and board.board_num	= #{boardNum}	
+	</select>
+<!-- 특정 게시글의 첨부파일 가져오기 -->
+	<select id="selectAllAttachments" parameterType="long" resultType="AttachmentFileVO">
+		SELECT 
+			attachment_num as "attachmentNum", 
+			board_num as "boardNum", 
+			name, 
+			file_size as "fileSize", 
+			mimetype, 
+			data, 
+			created_at as "createdAt", 
+			updated_at as "updatedAt"
+		FROM attachment_file
+		WHERE board_num = #{boardNum}	
+		ORDER BY attachment_num desc  
+	</select>
+<!-- 첨부파일 열기 -->
+	<select id="getAttachment" parameterType="long" resultType="AttachmentFileVO">
+		SELECT 
+			attachment_num as "attachmentNum", 
+			board_num as "boardNum", 
+			name, 
+			file_size as "fileSize", 
+			mimetype, 
+			data, 
+			created_at as "createdAt", 
+			updated_at as "updatedAt"
+		FROM attachment_file
+		WHERE attachment_num = #{attachmentNum}		
+	</select>
+<!-- 게시글 목록 가져오기 -->
+<!-- // 1) 전체 -->
+	<select id="selectAllBoards" resultType="BoardVO">
+		SELECT
+			board_num as "boardNum",
+			type.type_num as "type.typeNum",
+			type.name as "type.name",
+			title,
+			user_num as "userNum",
+			username,
+			created_at as "createdAt",
+			updated_at as "updatedAt",
+			hit,
+			content,
+			board_group as "boardGroup",
+			step,
+			indent
+		FROM
+		  	board ,board_type type
+		WHERE board.type_num = type.type_num	
+    	ORDER BY board.board_group desc, board.step asc		
+	</select>
+<!-- // 2) 검색어 게시글 검색(전체, 제목, 내용, 작성자ID, 별칭) -->
+	<select id="selectBoards" parameterType="map" resultType="BoardVO">
+		SELECT
+			"boardNum",
+			"type.typeNum",
+			"type.name",
+			title,
+			"userNum",
+			username,
+			"createdAt",
+			"updatedAt",
+			hit,
+			content,
+			"boardGroup",
+			step,
+			indent	
+		FROM (SELECT
+					row_number() over(order by board_group desc, step asc) as num,
+					board_num as "boardNum",
+					type.type_num as "type.typeNum",
+					type.name as "type.name",
+					title,
+					user_num as "userNum",
+					username,
+					created_at as "createdAt",
+					updated_at as "updatedAt",
+					hit,
+					content,
+					board_group as "boardGroup",
+					step,
+					indent
+				FROM
+				  	board ,board_type type
+				WHERE board.type_num = type.type_num
+				
+<!-- 	    	ORDER BY board.board_group desc, board.step asc	)	 -->
+		<if test="searchType != null and list != null"> 
+		   	AND
+	 		<foreach item="item" collection="list" open="(" separator="or" close=")">   		
+				<choose>
+					<!-- 제목+내용 -->
+					<when test="searchType == 'TC'.toString()">
+						title 	 like  '%'||#{item}||'%' or content like  '%'||#{item}||'%' 
+					</when>
+					<!-- 제목 -->
+					<when test="searchType == 'T'.toString()">
+						title 	 like '%'||#{item}||'%'             	
+					</when>
+					<!-- 내용 -->
+					<when test="searchType == 'C'.toString()">
+						content like '%'||#{item}||'%'             	
+					</when>               	
+					<!-- 작성자(별칭) -->
+					<when test="searchType == 'N'.toString()">
+						username like '%'||#{item}||'%'                	
+					</when>                 	
+					<!-- 아이디 -->
+<!-- 					<when test="searchType == 'I'.toString()"> -->
+<!-- 						bid like '%'||#{item}||'%'                	 -->
+<!-- 					</when>    -->
+					<!-- 전체 -->              	
+					<otherwise>
+						title 	 	like '%'||#{item}||'%' 
+					   or content 	like '%'||#{item}||'%'                    
+					   or username 	like '%'||#{item}||'%' 
+<!-- 					   or bid 				like '%'||#{item}||'%'  -->
+					</otherwise>
+				</choose>
+			</foreach>  		      
+	     </if>
+	     	)
+	     WHERE num between #{startRowNum} and #{endRowNum}		
+	</select>
+<!-- 전체 게시글 수 -->
+	<select id="countTotalBoardRows" parameterType="map" resultType="long">
+		SELECT COUNT(board_num) as totalcnt
+		FROM board, board_type type
+		WHERE board.type_num = type.type_num
+		<if test="searchType != null and list != null"> 
+		   		and
+			<foreach item="item" collection="list"
+				open="(" separator="or" close=")">   		
+					<!--  			<bind name="item" value="'%'+item+'%'"/> -->
+				<choose>
+					<!-- 제목+내용 -->
+					<when test="searchType == 'TC'.toString()">
+						title 	 like  '%'||#{item}||'%' or content like  '%'||#{item}||'%' 
+					</when>
+					<!-- 제목 -->
+					<when test="searchType == 'T'.toString()">
+						title 	 like '%'||#{item}||'%'             	
+					</when>
+					<!-- 내용 -->
+					<when test="searchType == 'C'.toString()">
+						content like '%'||#{item}||'%'             	
+					</when>               	
+					<!-- 작성자(별칭) -->
+					<when test="searchType == 'N'.toString()">
+						username like '%'||#{item}||'%'                	
+					</when>                 	
+					<!-- 아이디 -->
+<!-- 					<when test="searchType == 'I'.toString()"> -->
+<!-- 						bid like '%'||#{item}||'%'                	 -->
+<!-- 					</when>    -->
+					<!-- 전체 -->              	
+					<otherwise>
+						title 	 	like '%'||#{item}||'%' 
+					   or content 	like '%'||#{item}||'%'                    
+					   or username	like '%'||#{item}||'%' 
+<!-- 					   or bid 				like '%'||#{item}||'%'  -->
+					</otherwise>
+				</choose>
+			</foreach>  
+		</if>    		
+		
+	</select>
+	
+<!-- Update -->
+<!-- 게시글 수정  -->
+	<update id="update" parameterType="BoardVO">
+		UPDATE 	board	
+		SET   	type_num = #{type.typeNum},
+			 	title    = #{title},
+			 	content  = #{content},
+				updated_at = SYSTIMESTAMP	 		 
+		WHERE 	board_num = #{boardNum}	
+	</update>
+	
+	<update id="updateAttachmentFile" parameterType="AttachmentFileVO">
+		UPDATE attachment_file
+		SET 			
+			board_num = #{boardNum}
+			name = #{name}
+			updated_at = SYSTIMESTAMP
+		WHERE ATTACHMENT_NUM = #{attachmentNum}
+	</update>
+
+<!-- Delete -->
+<!-- 게시글 삭제 -->
+	<delete id="delete" parameterType="long">
+		DELETE FROM board
+		WHERE board_num = #{boardNum}		
+	</delete>
+<!-- 첨부파일 1개 삭제 -->
+	<delete id="deleteAttachmentFile" parameterType="long">
+		DELETE FROM attachment_file 
+		WHERE attachment_num = #{attachmentNum}
+	</delete>
+<!-- 첨부파일 전체 삭제	 -->
+	<delete id="deleteAllAttachments" parameterType="long">
+		DELETE FROM attachment_file
+		WHERE board_num = #{boardNum}
+	</delete>
+</mapper>
+
+

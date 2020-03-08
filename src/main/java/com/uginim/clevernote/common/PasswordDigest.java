@@ -4,6 +4,9 @@ import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.util.Base64;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class PasswordDigest {
 	public static String getSha512(String password) {
 		String encPwd = "";

@@ -12,5 +12,13 @@
 		<typeAlias type="com.uginim.clevernote.note.vo.TaggingVO" alias="TaggingVO"/>
 				
 		<typeAlias type="com.uginim.clevernote.user.vo.UserVO" alias="UserVO"/>
+		
+		<typeAlias type="com.uginim.clevernote.board.vo.BoardVO" alias="BoardVO"/>
+		<typeAlias type="com.uginim.clevernote.board.vo.AttachmentFileVO" alias="AttachmentFileVO"/>
+		<typeAlias type="com.uginim.clevernote.board.vo.BoardTypeVO" alias="BoardTypeVO"/>
+		<typeAlias type="com.uginim.clevernote.board.vo.BoardCommentVO" alias="BoardCommentVO"/>
+		<typeAlias type="com.uginim.clevernote.board.vo.VoteVO" alias="VoteVO"/>
+		
+		
 	</typeAliases>
 </configuration>

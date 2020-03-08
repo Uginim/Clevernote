@@ -12,8 +12,11 @@
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven />
 	<!-- 	정적페이지 매핑경로설정 -->
-	<resources mapping="/resources/**" location="/WEB-INF/resources/" />
-
+	<resources mapping="/resources/**" location="/resources/" />
+		
+	<!-- 웹 컴포넌트 라이브러리 url매핑  -->
+	<resources mapping="/webjars/**" location="classpath:/META-INF/resources/webjars/" />
+	
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
 
@@ -22,6 +25,21 @@
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
+	
+	
+	<!-- interceptor 설정 -->	
+	<interceptors>
+		<!-- 로그인 세션 확인 -->
+		<interceptor>
+			<!-- 1)특정 URL지정 -->
+<!-- 			<mapping path="/board/**/"/> -->
+			<mapping path="/note/**/"/>
+			<!-- 2)빈 등록 -->
+			<beans:bean id="loginInterceptor" 
+									class="com.uginim.clevernote.interceptor.LoginInterceptor" />
+		</interceptor>	
+	</interceptors>
+	
 	
 <!-- 	<context:component-scan base-package="com.uginim.clevernote" /> -->
 	
@@ -32,5 +50,13 @@
 				<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 				<context:include-filter type="annotation" expression="org.springframework.stereotype.ControllerAdvice"/>
 	</context:component-scan>
+	
+	<!-- 파일 업로드 -->
+	<beans:bean id="multipartResolver"
+							class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 파일당 업로드 제한 용량설정 10MB 1024*1024*10,  1kb = 1024byte, 1mb = 1024kbyte-->
+		<beans:property name="maxUploadSize" value="10485760"/>
+		<beans:property name="defaultEncoding" value="utf-8" />
+	</beans:bean>
 	
 </beans:beans>
