@@ -12,6 +12,8 @@ public class UserVO {
 	String email; // e-mail address. 계정을 식별할 수 있음   
 	@Pattern(regexp = "", message = "")
 	String username; // username. 계정명 외에 앱인터페이스에서 표현되는 이름(중복가능) 
+	@Pattern(regexp="",message="")
+	String pw;
 	String pwHash; // 패스워드 다이제스트	
 	long userNum;	
 	Date createdAt; // 생성날짜	

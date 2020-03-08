@@ -170,5 +170,19 @@ public class UserDAOImpl implements UserDAO {
 	}
 
 
-	
+	/**
+	 * user의 pwHash를 변경함 이전의 pw가 일치해야 변경가능// Update an user's password
+	 * @param userNum
+	 * @param oldPwHash 이전의 pwHash값(일치해야 변경가능)
+	 * @param newPwHash 바꿀 pwHash
+	 * @return 성공 시 1 반환
+	 */
+	public int updateUserPwHash(long userNum, String oldPwHash, String newPwHash) {
+		logger.info("UserDAOImpl.updateUserPw(String email, String oldPwHash, String newPwHash)");
+		Map<String, Object> map = new HashMap<>();
+		map.put("userNum",userNum);
+		map.put("oldPwHash",oldPwHash);
+		map.put("newPwHash",newPwHash);
+		return sqlSession.update("mappers.UserDAO-mapper.updateUserPwHashWithOldPw",map);
+	}
 }

@@ -6,7 +6,10 @@
 	VALUES(CATEGORY_SEQUENCE.nextval,#{title},#{ownerNum})
 	<selectKey resultType="long" order="AFTER" keyProperty="categoryNum">
 		SELECT CATEGORY_SEQUENCE.currval FROM dual	
+<!-- 		SELECT CATEGORY_SEQUENCE.currval, cateogry_num, MAX(category_num), created_at FROM category WHERE   	 -->
+
 	</selectKey>
+	
 </insert >
 
 <select id="selectOneCateogry" parameterType="long" resultType="CategoryVO">

@@ -216,5 +216,8 @@ public interface NoteService {
 	 * @param userNum 
 	 * @return 태그 리스트 
 	 */
-	List<TagVO> getAllTagsOfUser(long userNum);
+	List<TagVO> getAllTagsOfUser(long userNum);	
+	
+	
+	
 }

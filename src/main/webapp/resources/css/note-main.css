@@ -1,0 +1,27 @@
+@charset "utf8";    
+section,article,header,nav {
+	outline:1px solid red;
+}
+button{
+    background-color:white;    
+    width: 8em;
+    height: 8em;
+    border-radius: 4em;
+    border:0;
+    margin:0.4em;    
+}
+
+img{
+    height:4em;
+    width:4em;    
+}
+
+li{
+	list-style:none;
+}
+
+
+.sun-editor {
+	width:auto !important;
+	height:auto  !important;
+}

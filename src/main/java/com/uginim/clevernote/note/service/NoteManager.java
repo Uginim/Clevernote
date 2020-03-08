@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.uginim.clevernote.note.dao.CategoryDAO;
 import com.uginim.clevernote.note.dao.NoteDAO;
@@ -191,12 +192,14 @@ public class NoteManager implements NoteService {
 	 * @return 새로 생성한 카데고리
 	 */
 	@Override
+	@Transactional
 	public CategoryVO createCategory(long userNum, String title) {
 		CategoryVO newCategory = new CategoryVO();
 		newCategory.setOwnerNum(userNum);
 		newCategory.setTitle(title);		
 		int state = categoryDAO.insert(newCategory);		
 		if(state == 1) {
+			newCategory = categoryDAO.selectOneCateogry(newCategory.getCategoryNum()); // 생성 날짜 가져오기 위함
 			return newCategory;
 		}else {			
 			return null;

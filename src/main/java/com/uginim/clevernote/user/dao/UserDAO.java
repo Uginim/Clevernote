@@ -93,7 +93,17 @@ public interface UserDAO {
 	 * @param newPwHash 바꿀 pwHash
 	 * @return 성공 시 1 반환
 	 */
-	public int updateUserPwHash(String email, String oldPwHash, String newPwHash); // Update an user password
+	public int updateUserPwHash(String email, String oldPwHash, String newPwHash); // Update an user's password
+	
+	/**
+	 * user의 pwHash를 변경함 이전의 pw가 일치해야 변경가능
+	 * @param userNum
+	 * @param oldPwHash 이전의 pwHash값(일치해야 변경가능)
+	 * @param newPwHash 바꿀 pwHash
+	 * @return 성공 시 1 반환
+	 */
+	public int updateUserPwHash(long userNum, String oldPwHash, String newPwHash); // Update an user's password
+	
 	
 	
 }
