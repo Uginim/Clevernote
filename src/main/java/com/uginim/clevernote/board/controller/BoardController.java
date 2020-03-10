@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.naming.Binding;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.uginim.clevernote.board.service.BoardManager;
 import com.uginim.clevernote.board.vo.AttachmentFileVO;
 import com.uginim.clevernote.board.vo.BoardTypeVO;
-import com.uginim.clevernote.board.vo.BoardVO;
+import com.uginim.clevernote.board.vo.BoardPostVO;
 import com.uginim.clevernote.user.service.LoginManager;
 import com.uginim.clevernote.user.service.LoginService;
 import com.uginim.clevernote.user.vo.UserVO;
@@ -60,7 +60,7 @@ public class BoardController {
 			HttpServletRequest request
 			) {
 		
-		model.addAttribute("board",new BoardVO());
+		model.addAttribute("board",new BoardPostVO());
 
 		return "board/writing-form";
 	}
@@ -71,7 +71,7 @@ public class BoardController {
 	public String write(
 			@PathVariable String returnPage,
 //			@Valid 
-			@ModelAttribute("board") BoardVO board,
+			@ModelAttribute("board") BoardPostVO board,
 			BindingResult result,
 //			HttpServletRequest request
 			HttpSession session
@@ -86,7 +86,7 @@ public class BoardController {
 		board.setUsername(user.getUsername());
 		logger.info("게시글 post:" +board.toString());
 		boardManager.write(board);
-		return "redirect:/board/view/"+returnPage+"/"+board.getBoardNum();
+		return "redirect:/board/view/"+returnPage+"/"+board.getPostNum();
 	}
 	
 	// 목록 보기
@@ -109,14 +109,14 @@ public class BoardController {
 	}
 	
 	// 게시글 보기
-	@GetMapping("/view/{returnPage}/{boardNum}")
+	@GetMapping("/view/{returnPage}/{postNum}")
 	public String view(
 		@ModelAttribute @PathVariable String returnPage,
-		@PathVariable long boardNum,
+		@PathVariable long postNum,
 		Model model
 			) {
-		Map<String,Object> map = boardManager.view(boardNum);
-		BoardVO board = (BoardVO)map.get("board");
+		Map<String,Object> map = boardManager.view(postNum);
+		BoardPostVO board = (BoardPostVO)map.get("board");
 		
 		logger.info(board.toString());
 		List<AttachmentFileVO> files = null;
@@ -150,14 +150,14 @@ public class BoardController {
 	}
 	
 	// 게시글 삭제
-	@GetMapping("/delete/{returnPage}/{boardNum}")
+	@GetMapping("/delete/{returnPage}/{postNum}")
 	public String delete(
 		@PathVariable String returnPage,
-		@PathVariable long boardNum,
+		@PathVariable long postNum,
 		Model model
 			) {
 		// 1) 게시글 및 첨부파일 삭제
-		boardManager.delete(boardNum);
+		boardManager.delete(postNum);
 		// 2) 게시글 목록 가져오기
 //		model.addAttribute("list", boardManager.list(returnPage, searchType, keyword))
 		
@@ -178,16 +178,24 @@ public class BoardController {
 		}
 	}
 	
-	@GetMapping("/modify/{bnum}")
-	public String getModifyingPage()
-	{
+	@GetMapping("/modify/{postNum}/{returnPage}")
+	public String getModifyingPage(
+		@PathVariable String returnPage,
+		@PathVariable(value = "postNum") long postNum,
+		Model model
+		) {
+		logger.info("modify request:" + postNum);
+		Map<String,Object> map = boardManager.view(postNum);
+		model.addAttribute("board", map.get("board"));
+		model.addAttribute("files", map.get("files"));
+		model.addAttribute("returnPage", returnPage);
 		return "board/modifying-form";
 	}
 	// 게시글 수정
 	@PostMapping("/modify/{returnPage}")
 	public String modify(
 		@PathVariable String returnPage,
-		@Valid @ModelAttribute("board") BoardVO board,
+		@Valid @ModelAttribute("board") BoardPostVO board,
 		BindingResult result
 			) {
 		if(result.hasErrors()) {
@@ -195,18 +203,18 @@ public class BoardController {
 		}
 		logger.info("게시글 수정 내용:"+ board.toString());
 		boardManager.modify(board);
-		return "redirect:/board/view/"+returnPage+"/"+board.getBoardNum();
+		return "redirect:/board/view/"+returnPage+"/"+board.getPostNum();
 	}
 	
 	// 답글 양식
-	@GetMapping("/reply/page/{returnPage}/{boardNum}")
+	@GetMapping("/reply/page/{returnPage}/{postNum}")
 	public String replyForm(
 		@ModelAttribute @PathVariable String returnPage,
-		@PathVariable long boardNum,
+		@PathVariable long postNum,
 		Model model
 			) {
-		Map<String,Object> map = boardManager.view(boardNum);
-		BoardVO board = (BoardVO) map.get("board");
+		Map<String,Object> map = boardManager.view(postNum);
+		BoardPostVO board = (BoardPostVO) map.get("board");
 		board.setTitle("[답글]" +board.getTitle());
 		board.setContent("[원글]" +board.getContent());
 		model.addAttribute("board", board);
@@ -218,7 +226,7 @@ public class BoardController {
 	@PostMapping("/reply/{returnPage}")
 	public String reply(
 			@PathVariable String returnPage,
-			@Valid @ModelAttribute("board") BoardVO replyBoard,
+			@Valid @ModelAttribute("board") BoardPostVO replyBoard,
 			BindingResult result,
 			HttpSession session
 			) {
@@ -233,7 +241,7 @@ public class BoardController {
 		
 
 		//		return "redirect:/board/list/"+returnPage;
-		return "redirect:/board/view/"+returnPage+"/"+replyBoard.getBoardNum();
+		return "redirect:/board/view/"+returnPage+"/"+replyBoard.getPostNum();
 
 	}
 	

@@ -3,15 +3,15 @@
 <mapper namespace="mappers.BoardDAO-mapper">
 <!-- Create -->
 <!-- 게시글 작성 -->
-	<insert id="insertBoard" parameterType="BoardVO">
-		INSERT INTO board (
-		  board_num,    
+	<insert id="insertBoard" parameterType="BoardPostVO">
+		INSERT INTO board_post(
+		  post_num,    
 		  type_num,  
 		  title,  
 		  user_num,      
 		  username,
 		  content,
-		  board_group
+		  post_group
 		) VALUES (
 		  BOARD_SEQUENCE.nextval,  
 		  #{type.typeNum},  
@@ -21,7 +21,7 @@
 		  #{content},
 		  BOARD_SEQUENCE.currval
 		)	
-		<selectKey keyProperty="boardNum" resultType="long" order="AFTER">
+		<selectKey keyProperty="postNum" resultType="long" order="AFTER">
 			select BOARD_SEQUENCE.currval from dual
 		</selectKey>
 	
@@ -30,14 +30,14 @@
 	<insert id="insertAttachmentFile" parameterType="AttachmentFileVO">
 		insert into ATTACHMENT_FILE	(
 			attachment_num,
-			board_num, 	 
+			post_num, 	 
 			name, 	 
 			file_size, 	 
 			mimetype, 	 
 			data
 		)values(
 			ATTACHMENT_SEQUENCE.nextval, 
-			#{boardNum}, 
+			#{postNum}, 
 			#{name}, 
 			#{fileSize}, 
 			#{mimetype}, 
@@ -48,15 +48,15 @@
 		</selectKey>
 	</insert>
 <!-- 답글 넣기 -->
-	<insert id="insertReplyBoard" parameterType="BoardVO">
-		INSERT INTO board (
-			board_num,    
+	<insert id="insertReplyBoard" parameterType="BoardPostVO">
+		INSERT INTO board_post(
+			post_num,    
 		  	type_num,  
 			title,  
 			user_num,      
 			username,
 			content,
-			board_group,
+			post_group,
 			step,
 			indent
 		) VALUES (
@@ -66,20 +66,20 @@
 			#{userNum},  
 			#{username},
 			#{content},
-			#{boardGroup},
+			#{postGroup},
 			#{step} + 1,
 			#{indent} + 1
 		)	
-		<selectKey keyProperty="boardNum" resultType="long" order="AFTER">
+		<selectKey keyProperty="postNum" resultType="long" order="AFTER">
 			select BOARD_SEQUENCE.currval from dual
 		</selectKey>	
 	</insert>
 	<!-- 이전 답글step 업데이트 -->
 	<!-- 이전 답글중 원글의 bstep보다 큰값이 있는경우 bstep + 1증가 -->
 	<update id="updateStep" parameterType="map">
-		update board
+		update board_post
 		   set step = step + 1
-	   where board_group = #{boardGroup} and step > #{step}	
+	   where post_group = #{postGroup} and step > #{step}	
 	</update>
 
 <!-- Read -->
@@ -88,9 +88,9 @@
 		select type_num as "typeNum", name FROM board_type
 	</select>
 <!-- 게시글 하나 읽어오기 -->
-	<select id="selectOne" parameterType="long" resultType="BoardVO">
+	<select id="selectOne" parameterType="long" resultType="BoardPostVO">
 		SELECT
-			board_num as "boardNum",
+			post_num as "postNum",
 			type.type_num as "type.typeNum",
 			type.name as "type.name",
 			title,
@@ -100,19 +100,19 @@
 			updated_at as "updatedAt",
 			hit,
 			content,
-			board_group as "boardGroup",
+			post_group as "postGroup",
 			step,
 			indent
 		FROM
-		  board ,board_type type
-		where board.type_num = type.type_num	
-			and board.board_num	= #{boardNum}	
+		  board_post,board_type type
+		where board_post.type_num = type.type_num	
+			and board_post.post_num	= #{postNum}	
 	</select>
 <!-- 특정 게시글의 첨부파일 가져오기 -->
 	<select id="selectAllAttachments" parameterType="long" resultType="AttachmentFileVO">
 		SELECT 
 			attachment_num as "attachmentNum", 
-			board_num as "boardNum", 
+			post_num as "postNum", 
 			name, 
 			file_size as "fileSize", 
 			mimetype, 
@@ -120,14 +120,14 @@
 			created_at as "createdAt", 
 			updated_at as "updatedAt"
 		FROM attachment_file
-		WHERE board_num = #{boardNum}	
+		WHERE post_num = #{postNum}	
 		ORDER BY attachment_num desc  
 	</select>
 <!-- 첨부파일 열기 -->
 	<select id="getAttachment" parameterType="long" resultType="AttachmentFileVO">
 		SELECT 
 			attachment_num as "attachmentNum", 
-			board_num as "boardNum", 
+			post_num as "postNum", 
 			name, 
 			file_size as "fileSize", 
 			mimetype, 
@@ -139,9 +139,9 @@
 	</select>
 <!-- 게시글 목록 가져오기 -->
 <!-- // 1) 전체 -->
-	<select id="selectAllBoards" resultType="BoardVO">
+	<select id="selectAllBoards" resultType="BoardPostVO">
 		SELECT
-			board_num as "boardNum",
+			post_num as "postNum",
 			type.type_num as "type.typeNum",
 			type.name as "type.name",
 			title,
@@ -151,18 +151,18 @@
 			updated_at as "updatedAt",
 			hit,
 			content,
-			board_group as "boardGroup",
+			post_group as "postGroup",
 			step,
 			indent
 		FROM
-		  	board ,board_type type
-		WHERE board.type_num = type.type_num	
-    	ORDER BY board.board_group desc, board.step asc		
+		  	board_post ,board_type type
+		WHERE board_post.type_num = type.type_num	
+    	ORDER BY board_post.post_group desc, board_post.step asc		
 	</select>
 <!-- // 2) 검색어 게시글 검색(전체, 제목, 내용, 작성자ID, 별칭) -->
-	<select id="selectBoards" parameterType="map" resultType="BoardVO">
+	<select id="selectBoards" parameterType="map" resultType="BoardPostVO">
 		SELECT
-			"boardNum",
+			"postNum",
 			"type.typeNum",
 			"type.name",
 			title,
@@ -172,13 +172,13 @@
 			"updatedAt",
 			hit,
 			content,
-			"boardGroup",
+			"postGroup",
 			step,
 			indent,
 			hasPicture
 		FROM (SELECT
-					row_number() over(order by board_group desc, step asc) as num,
-					board_num as "boardNum",
+					row_number() over(order by post_group desc, step asc) as num,
+					post_num as "postNum",
 					type.type_num as "type.typeNum",
 					type.name as "type.name",
 					title,
@@ -188,16 +188,16 @@
 					updated_at as "updatedAt",
 					hit,
 					content,
-					board_group as "boardGroup",
+					post_group as "postGroup",
 					step,
 					indent,
-					case when exists (select attachment_num from attachment_file attach where board.board_num = attach.board_num) then 'T' else 'F' END   as hasPicture
+					case when exists (select attachment_num from attachment_file attach where board_post.post_num = attach.post_num) then 'T' else 'F' END   as hasPicture
 <!-- 					'c' as hasPicture -->
 				FROM
-				  	board ,board_type type
-				WHERE board.type_num = type.type_num
+				  	board_post ,board_type type
+				WHERE board_post.type_num = type.type_num
 				
-<!-- 	    	ORDER BY board.board_group desc, board.step asc	)	 -->
+<!-- 	    	ORDER BY board_post.post_group desc, board_post.step asc	)	 -->
 		<if test="searchType != null and list != null"> 
 		   	AND
 	 		<foreach item="item" collection="list" open="(" separator="or" close=")">   		
@@ -237,9 +237,9 @@
 	</select>
 <!-- 전체 게시글 수 -->
 	<select id="countTotalBoardRows" parameterType="map" resultType="long">
-		SELECT COUNT(board_num) as totalcnt
-		FROM board, board_type type
-		WHERE board.type_num = type.type_num
+		SELECT COUNT(post_num) as totalcnt
+		FROM board_post, board_type type
+		WHERE board_post.type_num = type.type_num
 		<if test="searchType != null and list != null"> 
 		   		and
 			<foreach item="item" collection="list"
@@ -281,29 +281,29 @@
 	
 <!-- Update -->
 <!-- 게시글 수정  -->
-	<update id="update" parameterType="BoardVO">
-		UPDATE 	board	
+	<update id="update" parameterType="BoardPostVO">
+		UPDATE 	board_post	
 		SET   	type_num = #{type.typeNum},
 			 	title    = #{title},
 			 	content  = #{content},
 				updated_at = SYSTIMESTAMP	 		 
-		WHERE 	board_num = #{boardNum}	
+		WHERE 	post_num = #{postNum}	
 	</update>
 	
 	<update id="updateAttachmentFile" parameterType="AttachmentFileVO">
 		UPDATE attachment_file
 		SET 			
-			board_num = #{boardNum}
+			post_num = #{postNum}
 			name = #{name}
 			updated_at = SYSTIMESTAMP
 		WHERE ATTACHMENT_NUM = #{attachmentNum}
 	</update>
 
 <!-- Delete -->
-<!-- 게시글 삭제 -->
+<!-- 게시글 삭제 --> 
 	<delete id="delete" parameterType="long">
-		DELETE FROM board
-		WHERE board_num = #{boardNum}		
+		DELETE FROM board_post
+		WHERE post_num = #{postNum}		
 	</delete>
 <!-- 첨부파일 1개 삭제 -->
 	<delete id="deleteAttachmentFile" parameterType="long">
@@ -313,7 +313,7 @@
 <!-- 첨부파일 전체 삭제	 -->
 	<delete id="deleteAllAttachments" parameterType="long">
 		DELETE FROM attachment_file
-		WHERE board_num = #{boardNum}
+		WHERE post_num = #{postNum}
 	</delete>
 </mapper>
 

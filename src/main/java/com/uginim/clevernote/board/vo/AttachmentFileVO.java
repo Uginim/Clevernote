@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class AttachmentFileVO {
 	private long attachmentNum; // 첨부파일 번호
-	private long boardNum; // 게시글 번호
+	private long postNum; // 게시글 번호
 	private String name;  // 파일명
 	private long fileSize; // 파일 사이즈
 	private String mimetype; // 첨부파일 타입

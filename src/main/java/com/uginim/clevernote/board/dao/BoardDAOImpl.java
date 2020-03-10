@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.uginim.clevernote.board.vo.AttachmentFileVO;
 import com.uginim.clevernote.board.vo.BoardTypeVO;
-import com.uginim.clevernote.board.vo.BoardVO;
+import com.uginim.clevernote.board.vo.BoardPostVO;
 
 @Repository
 public class BoardDAOImpl implements BoardDAO {
@@ -29,7 +29,7 @@ public class BoardDAOImpl implements BoardDAO {
 	/* Create */
 	// 게시글 작성
 	@Override
-	public int insertBoard(BoardVO board) {
+	public int insertBoard(BoardPostVO board) {
 		return sqlSession.insert("mappers.BoardDAO-mapper.insertBoard", board);
 	}
 	
@@ -42,16 +42,16 @@ public class BoardDAOImpl implements BoardDAO {
 	// 답글 넣기
 	@Transactional
 	@Override
-	public int insertReplyBoard(BoardVO board) {
+	public int insertReplyBoard(BoardPostVO board) {
 		//1) 이전답글 step업데이트
-		updateStep(board.getBoardGroup(),board.getStep());
+		updateStep(board.getPostGroup(),board.getStep());
 		//2) 답글달기
 		return sqlSession.insert("mappers.BoardDAO-mapper.insertReplyBoard", board);	
 	}
 	//이전 답글 step 업데이트
-	private int updateStep(long boardGroup, int step) {
+	private int updateStep(long postGroup, int step) {
 		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("boardGroup", boardGroup);
+		map.put("postGroup", postGroup);
 		map.put("step",step);
 		return sqlSession.update("mappers.BoardDAO-mapper.updateStep",map);
 	}
@@ -65,14 +65,14 @@ public class BoardDAOImpl implements BoardDAO {
 	
 	// 게시글 하나 읽어오기
 	@Override
-	public BoardVO selectOne(long boardNum) {
-		return sqlSession.selectOne("mappers.BoardDAO-mapper.selectOne", boardNum);
+	public BoardPostVO selectOne(long postNum) {
+		return sqlSession.selectOne("mappers.BoardDAO-mapper.selectOne", postNum);
 	}
 	
 	// 특정 게시글의 첨부파일 가져오기
 	@Override
-	public List<AttachmentFileVO> selectAllAttachments(long boardNum) {
-		return sqlSession.selectList("mappers.BoardDAO-mapper.selectAllAttachments",boardNum);
+	public List<AttachmentFileVO> selectAllAttachments(long postNum) {
+		return sqlSession.selectList("mappers.BoardDAO-mapper.selectAllAttachments",postNum);
 
 	}
 
@@ -85,13 +85,13 @@ public class BoardDAOImpl implements BoardDAO {
 	// 게시글 목록 가져오기
 		// 1) 전체
 	@Override
-	public List<BoardVO> selectAllBoards() {
+	public List<BoardPostVO> selectAllBoards() {
 		return sqlSession.selectList("mappers.BoardDAO-mapper.selectAllBoards");
 	}
 	// 2) 검색어 게시글 검색(전체, 제목, 내용, 작성자ID, 별칭)
 
 	@Override
-	public List<BoardVO> selectBoards(long startRowNum, long endRowNum, String searchType, String keyword) {
+	public List<BoardPostVO> selectBoards(long startRowNum, long endRowNum, String searchType, String keyword) {
 		Map<String,Object> map = new HashMap<>();
 		map.put("startRowNum", startRowNum);
 		map.put("endRowNum", endRowNum);
@@ -121,7 +121,7 @@ public class BoardDAOImpl implements BoardDAO {
 	/* Update */
 	// 게시글 수정
 	@Override
-	public int update(BoardVO boardVO) {
+	public int update(BoardPostVO boardVO) {
 		return sqlSession.update("mappers.BoardDAO-mapper.update", boardVO );
 	}
 	// 첨부파일 수정
@@ -133,8 +133,8 @@ public class BoardDAOImpl implements BoardDAO {
 	/* Delete */
 	// 게시글 삭제
 	@Override
-	public int delete(long boardNum) {
-		return sqlSession.delete("mappers.BoardDAO-mapper.delete", boardNum );
+	public int delete(long postNum) {
+		return sqlSession.delete("mappers.BoardDAO-mapper.delete", postNum );
 	}
 
 	// 첨부파일 1개 삭제
@@ -145,8 +145,8 @@ public class BoardDAOImpl implements BoardDAO {
 
 	// 첨부파일 전체 삭제
 	@Override
-	public int deleteAllAttachments(long boardNum) {
-		return sqlSession.delete("mappers.BoardDAO-mapper.deleteAllAttachments", boardNum );
+	public int deleteAllAttachments(long postNum) {
+		return sqlSession.delete("mappers.BoardDAO-mapper.deleteAllAttachments", postNum );
 	}
 
 }

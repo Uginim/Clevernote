@@ -75,27 +75,37 @@
         var readModeElements = document.getElementsByClassName("");
         
         
-        
-        deleteBtn.addEventListener("click",function(e){
-        	e.preventDefault();
-        	if(confirm("삭제하시겠습니까?")){
- 						console.log("삭제"+e.target.getAttribute('data-bnum'));
- 						var returnPage = e.target.getAttribute('data-returnPage');
- 						var bnum = e.target.getAttribute('data-bnum');
- 						location.href = "/board/delete/"+returnPage+"/"+bnum;          }	
-        });
-        replyBtn.addEventListener("click",function(e){
-        	e.preventDefault();	
-					console.log("답글달기"+e.target.getAttribute('data-bnum')); 
+        if(deleteBtn){
+	        deleteBtn.addEventListener("click",function(e){
+	        	e.preventDefault();
+	        	if(confirm("삭제하시겠습니까?")){
+	 						console.log("삭제"+e.target.getAttribute('data-bnum'));
+	 						var returnPage = e.target.getAttribute('data-returnPage');
+	 						var bnum = e.target.getAttribute('data-bnum');
+	 						location.href = "/board/delete/"+returnPage+"/"+bnum;          }	
+	        });
+        }
+        if(replyBtn){
+	        replyBtn.addEventListener("click",function(e){
+	        	e.preventDefault();	
+						console.log("답글달기"+e.target.getAttribute('data-bnum')); 
+						var returnPage = e.target.getAttribute('data-returnPage');
+	
+						var bnum = e.target.getAttribute('data-bnum');
+	// 					location.href = getContextPath()+"/board/replyForm/"+returnPage+"/"+bnum;
+						location.href = "/board/reply/page/"+returnPage+"/"+bnum;
+	        });            
+		}
+		if(modifyBtn){
+	        modifyBtn.addEventListener("click",function(e){
+	        	if(confirm("수정하시겠습니까?")){
+					console.log("수정"+e.target.getAttribute('data-bnum'));
 					var returnPage = e.target.getAttribute('data-returnPage');
-
 					var bnum = e.target.getAttribute('data-bnum');
-// 					location.href = getContextPath()+"/board/replyForm/"+returnPage+"/"+bnum;
-					location.href = "/board/reply/page/"+returnPage+"/"+bnum;
-        });
-        modifyBtn.addEventListener("click",function(e){
-            
-        })
+					location.href = "/board/modify/"+bnum+"/"+returnPage;          
+				}	
+		    });
+		}
        
         // 삭제
         console.log("deleteFileBtns",deleteFileBtns);
@@ -140,7 +150,7 @@
 <h3>게시글 보기</h3>
 <form:form modelAttribute="board" action='${pageContext.request.contextPath}/board/modify/${returnPage }'
 		method="POST" id="modify-form" enctype="multipart/form-data">
-		<form:input type="hidden" path="boardNum"/>
+		<form:input type="hidden" path="postNum"/>
 		<form:input type="hidden" path="username"/>
 		<form:input type="hidden" path="userNum"/>
 		<form:textarea style="display:none;" path="content"></form:textarea>
@@ -181,10 +191,10 @@
             <td class="no-border"></td>
             <td class="no-border"></td>
             <td class="tools" colspan="3">
-                <button type="button" id="replyBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">답글</button> 
-                <c:if test="sessionUser.userNum == board.userNum">               
-	                <button type="button" id="deleteBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">삭제</button>
-	                <button type="button" id="modifyBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">수정</button>
+                <button type="button" id="replyBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">답글</button> 
+                <c:if test="${sessionUser.userNum == board.userNum}">               
+	                <button type="button" id="deleteBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">삭제</button>
+	                <button type="button" id="modifyBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">수정</button>
                 </c:if>
                 <button type="button" data-returnPage="${returnPage }" class="listBtn" >목록</button>
             </td>
@@ -193,15 +203,15 @@
         <tr class="attachments">
             <th><label>첨부목록</label></th>
             <td  colspan="8">
-            		<ul id="file-list">
+           		<ul id="file-list">
             		<c:if test="${!empty files}">
-	                <c:forEach var="file" items="${files}">
-	                		<li class="file-item" data-fid="${file.attachmentNum}">
-	                    ${file.name } || ${file.fileSize } || ${file.mimetype } 
-	                    </li>
-	                </c:forEach>
-								</c:if>
-								</ul>
+		                <c:forEach var="file" items="${files}">
+		                		<li class="file-item" data-fid="${file.attachmentNum}">
+		                    ${file.name } || ${file.fileSize } || ${file.mimetype } 
+		                    </li>
+		                </c:forEach>
+					</c:if>
+				</ul>
             </td>
             
         </tr> 

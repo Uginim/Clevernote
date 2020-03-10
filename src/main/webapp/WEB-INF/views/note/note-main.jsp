@@ -29,20 +29,33 @@ window.addEventListener('load',init);
 function init(){
 	var categorySection = document.querySelector('section#category'); // 카데고리 리스트
 	var categoryList = document.querySelector("section#category .list")
-	var noteList = document.getElementById('note-list'); // 노트 리스트
-	var addNewNoteBtn = document.getElementById('add-new-note-btn'); // 새 노트 
-	var noteContent = document.querySelector('#main-content .content-body'); // 노트 컨텐트
+	var noteList = document.querySelector('#note ul.list'); // 노트 리스트
+	var addNewNoteBtn = document.querySelector('#add-new-note-btn'); // 새 노트 
+// 	var noteContent = document.querySelector('#main-content .content-body'); // 노트 컨텐트
 	var noteEditor= document.querySelector('#main-content .editor'); // 에디터
-	var noteCounterNum = document.querySelector("#note-list .counter>.number"); // 노트 개수
-	var categoryCounterNum = document.querySelector("#category-list .counter>.number"); // 노트 개수
+	var noteCounterNum = document.querySelector("#note .counter>.number"); // 노트 개수
+	var categoryCounterNum = document.querySelector("#category  .counter>.number"); // 노트 개수
 	var categoryBtn = document.querySelector('#category-btn');
 
 	var aside = document.querySelector('body>aside');
     var toolbox = document.querySelector('body>aside>#toolbox');        
     var mainContent = document.querySelector('#main-content');
     var mainHeader = document.querySelector('header#main');
+    console.log("categorySection:"+categorySection);
+    console.log("categoryList:"+categoryList);
+    console.log("noteList:"+noteList);
+    console.log("addNewNoteBtn:"+addNewNoteBtn);
+//     console.log("noteContent:"+noteContent);
+    console.log("noteEditor:"+noteEditor);
+    console.log("noteCounterNum:"+noteCounterNum);
+    console.log("categoryCounterNum:"+categoryCounterNum);
+    console.log("categoryBtn:"+categoryBtn);
+    console.log("aside:"+aside);
+    console.log("toolbox:"+toolbox);
+    console.log("mainContent:"+mainContent);
+    console.log("mainHeader:"+mainHeader);
     
-		console.log("noteCounterNum:"+noteCounterNum);
+	
 	
 	// category 갱신하기
 	requestCategories( categories => {
@@ -60,18 +73,22 @@ function init(){
 	categoryList.addEventListener('click',(e)=>{	
 		var list = e.composedPath();
 		var i = 0;
+		console.log("카데고리 리스트 클릭");
 		while(i++<list.length){
-			if(item.tagName==='li' && item.classList.){
-				requestJsonDataByAjax('GET',"/notes/"+item.getAttribute('date-num'),(data)=>{
-					
-				});		
+			// 리스트 태그가 클릭되었을 시 
+			if(list[i].tagName==='li' && 
+					list[i].classList.contains("category-list-item")){
+				console.log(list[i]);
+// 				requestJsonDataByAjax('GET',"/notes/"+item.getAttribute('date-num'),(data)=>{					
+// 				});		
 			}
 			break;
 		}
 				
 		
 	},true);
-
+	
+	// 에디터 추가
 	const suneditor = SUNEDITOR.create(noteEditor,{
 	    // All of the plugins are loaded in the "window.SUNEDITOR" object in dist/suneditor.min.js file
 	    // Insert options

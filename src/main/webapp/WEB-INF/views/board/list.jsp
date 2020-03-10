@@ -110,7 +110,7 @@ h3.title {
 				<c:forEach var="row" items="${list}">
 					<fmf:formatDate value="${row.createdAt}" pattern="yyyy-MM-dd" var="createdAt"/>
 					<tr>
-						<td>${row.boardNum}</td>
+						<td>${row.postNum}</td>
 						<td>${row.type.name}</td>
 						<td>
 						<c:forEach begin="1" end="${row.indent}">
@@ -119,7 +119,7 @@ h3.title {
 						<c:if test="${row.indent > 0 }">
 						ㄴ
 						</c:if>
-						<a href="${pageContext.request.contextPath}/board/view/${pageManager.rc.currentPage}/${row.boardNum }">${row.title}${row.hasPicture }</a>
+						<a href="${pageContext.request.contextPath}/board/view/${pageManager.rc.currentPage}/${row.postNum }">${row.title}${row.hasPicture }</a>
 						</td>
 						<td><b>${row.username}</b><!-- (${row.userNum}) --></td>
 <%-- 						<td>${row.bcdate}</td> --%>
@@ -177,6 +177,5 @@ h3.title {
 			</div>
 		</div>
 	</div>
-	${pageManager}
 </body>
 </html>

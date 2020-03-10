@@ -75,7 +75,7 @@
                             <form:options path="type.typeNum" items="${boardTypes}" itemValue="typeNum" itemLabel="name" />
                         </form:select>                        
                         <form:hidden path="type.typeNum"/>
-                        <form:hidden path="boardGroup" value="${board.boardGroup}"/>
+                        <form:hidden path="postGroup" value="${board.postGroup}"/>
                         <form:hidden path="indent" value="${board.indent}"/>
                         <form:hidden path="step" value="${board.step}"/>
                     </span>                    

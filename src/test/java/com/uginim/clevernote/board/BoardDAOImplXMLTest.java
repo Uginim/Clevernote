@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.uginim.clevernote.board.dao.BoardDAO;
-import com.uginim.clevernote.board.vo.BoardVO;
+import com.uginim.clevernote.board.vo.BoardPostVO;
 
 
 @ExtendWith(SpringExtension.class)
@@ -33,7 +33,7 @@ public class BoardDAOImplXMLTest {
 	@Named("게시글목록")
 	@Disabled
 	public void list() {
-		List<BoardVO> list= boardDAO.selectAllBoards();
+		List<BoardPostVO> list= boardDAO.selectAllBoards();
 		assertNotNull(list);
 		logger.info(list.toString());
 	}
@@ -48,11 +48,11 @@ public class BoardDAOImplXMLTest {
 //		RecordCriteria recordCriteria = new RecordCriteria(reqPage);
 //		logger.info(""+recordCriteria.getStartRec());
 //		logger.info(""+recordCriteria.getEndRec());
-//		List<BoardVO> list = boardDAO.list( recordCriteria.getStartRec(), 
+//		List<BoardPostVO> list = boardDAO.list( recordCriteria.getStartRec(), 
 //																				recordCriteria.getEndRec(), 
 //																				"TC", "코비드 제목");
 //		logger.info("검색결과 :" + list.size());
-//		for(BoardVO boardVO : list) {
+//		for(BoardPostVO boardVO : list) {
 //			logger.info(boardVO.toString());
 //		}
 		

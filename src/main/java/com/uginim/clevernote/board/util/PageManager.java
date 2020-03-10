@@ -46,7 +46,7 @@ public class PageManager{
 		// 최종 페이지 번호 = 
 		// ceil("전체 row 수" / "한페이지에 표시될 페이지링크 수")
 		int rowsPerPage = getRowCreteria().getRowsPerPage();
-		int finalEndPage = (int)Math.ceil( (double)this.totalRowsNum * rowsPerPage );
+		int finalEndPage = (int)Math.ceil( (double)this.totalRowsNum / rowsPerPage );
 		setFinalEndPage(finalEndPage);
 		if(finalEndPage < endPageNum) {
 			setEndPageNum(finalEndPage);

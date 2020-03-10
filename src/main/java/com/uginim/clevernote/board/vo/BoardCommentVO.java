@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class BoardCommentVO {
-	private long CommentNum; // 댓글 번호
-	private long boardNum; // 개시글 번호
+	private long commentNum; // 댓글 번호
+	private long postNum; // 개시글 번호
 	private long userNum; // 작성자 번호
 	private String username; // 작성자 이름
 	private Date createdAt; // 생성일시
@@ -17,6 +17,7 @@ public class BoardCommentVO {
 	private int step; // 댓글 단계
 	private int indent; // 댓글 
 	private long parentNum; // 부모 번호
-	
+	private long like; // 좋음
+	private long dislike; // 싫음
 	
 }

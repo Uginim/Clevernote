@@ -18,7 +18,10 @@
 	    CATEGORY_NUM AS "categoryNum",
 	    OWNER_NUM AS "ownerNum",
 	    CREATEd_AT AS "createdAt",
-	    updated_at AS "updatedAt"
+	    updated_at AS "updatedAt",
+	    (SELECT COUNT(note_num)
+		FROM note
+		WHERE note.category_num = category.category_num) as "noteCount"
 	FROM category
 	WHERE CATEGORY_NUM = #{categoryNum}
 </select>
@@ -29,7 +32,10 @@
 	    CATEGORY_NUM AS "categoryNum",
 	    OWNER_NUM AS "ownerNum",
 	    CREATEd_AT AS "createdAt",
-	    updated_at AS "updatedAt"
+	    updated_at AS "updatedAt",
+	    (SELECT COUNT(note_num)
+		FROM note
+		WHERE note.category_num = category.category_num) as "noteCount"
 	FROM category
 	WHERE OWNER_NUM = #{ownerNum}
 </select>

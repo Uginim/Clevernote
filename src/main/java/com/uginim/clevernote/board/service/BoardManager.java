@@ -19,7 +19,7 @@ import com.uginim.clevernote.board.util.RowCriteria;
 import com.uginim.clevernote.board.util.SearchedRowCriteria;
 import com.uginim.clevernote.board.vo.AttachmentFileVO;
 import com.uginim.clevernote.board.vo.BoardTypeVO;
-import com.uginim.clevernote.board.vo.BoardVO;
+import com.uginim.clevernote.board.vo.BoardPostVO;
 
 @Service
 public class BoardManager implements BoardService {
@@ -37,26 +37,26 @@ public class BoardManager implements BoardService {
 	// 게시글 작성
 	@Override
 	@Transactional
-	public int write(BoardVO board) {
+	public int write(BoardPostVO board) {
 		// 1) 게시글 insert
 		int state = boardDAO.insertBoard(board);
 		
 		// 2) 첨부파일
 		logger.info("첨부파일의 수:"+board.getFiles().size());
 		if(hasFile(board)) {
-			writeFiles(board.getFiles(), board.getBoardNum());
+			writeFiles(board.getFiles(), board.getPostNum());
 		}
 		return state;
 	}
 	
 	// 첨부파일 저장하기
-	private void writeFiles(List<MultipartFile> files, long boardNum) {
+	private void writeFiles(List<MultipartFile> files, long postNum) {
 		AttachmentFileVO attachment = new AttachmentFileVO();
 		for(MultipartFile file : files) {			
 			logger.info("파일 첨부: " + file.getOriginalFilename() + " size:" + file.getSize());
 			if(file.getSize()>0) {
 				// 게시글 번호
-				attachment.setBoardNum(boardNum);
+				attachment.setPostNum(postNum);
 				// 첨부파일 명
 				attachment.setName(file.getOriginalFilename());
 				// 첨부파일 크기
@@ -78,26 +78,26 @@ public class BoardManager implements BoardService {
 	// 게시글 수정
 	@Override
 	@Transactional
-	public int modify(BoardVO board) {
+	public int modify(BoardPostVO board) {
 		// 1) 게시글 수정
 		int state = boardDAO.update(board);
 		// 2) 첨부파일 추가
 		if(hasFile(board)) {
-			writeFiles(board.getFiles(), board.getBoardNum());
+			writeFiles(board.getFiles(), board.getPostNum());
 		}
 		return state;
 	}
 	// 파일을 소유 여부 
-	private boolean hasFile(BoardVO board) {
+	private boolean hasFile(BoardPostVO board) {
 		return board.getFiles() !=null && board.getFiles().size() > 0;
 	}
 
 	// 게시글 삭제
 	@Override
 	@Transactional
-	public int delete(long boardNum) {
-		boardDAO.deleteAllAttachments(boardNum);
-		return boardDAO.delete(boardNum) ;
+	public int delete(long postNum) {
+		boardDAO.deleteAllAttachments(postNum);
+		return boardDAO.delete(postNum) ;
 		
 	}
 
@@ -116,11 +116,11 @@ public class BoardManager implements BoardService {
 	// 게시글 읽기
 	@Override
 	@Transactional
-	public Map<String, Object> view(long boardNum) {
+	public Map<String, Object> view(long postNum) {
 		// 1) 게시글 가져오기
-		BoardVO board = boardDAO.selectOne(boardNum);
+		BoardPostVO board = boardDAO.selectOne(postNum);
 		// 2) 첨부파일 가져오기
-		List<AttachmentFileVO> files = boardDAO.selectAllAttachments(boardNum);
+		List<AttachmentFileVO> files = boardDAO.selectAllAttachments(postNum);
 		// 3) 조회수 + 1 증가
 		board.setHit(board.getHit()+1);
 		boardDAO.update(board);
@@ -135,7 +135,7 @@ public class BoardManager implements BoardService {
 
 	// 게시글 목록
 	@Override
-	public List<BoardVO> list(int curPage, String searchType, String keyword) {
+	public List<BoardPostVO> list(int curPage, String searchType, String keyword) {
 		RowCriteria rowCriteria = new RowCriteria(curPage);
 		return boardDAO.selectBoards(
 				rowCriteria.getStartRowNum(), 
@@ -161,15 +161,15 @@ public class BoardManager implements BoardService {
 	// 게시글 답글 작성
 	@Override
 	@Transactional
-	public int reply(BoardVO replyBoard) {
+	public int reply(BoardPostVO replyBoard) {
 		// 1) 게시글 답글 작성
-		logger.info("before boardNum :"+replyBoard.getBoardNum());
+		logger.info("before postNum :"+replyBoard.getPostNum());
 		int state = boardDAO.insertReplyBoard(replyBoard);
-		logger.info("after boardNum :"+replyBoard.getBoardNum());
+		logger.info("after postNum :"+replyBoard.getPostNum());
 		// 3) 첨부파일 있는 경우
 		logger.info("첨부개수"+replyBoard.getFiles().size());
 		if(hasFile(replyBoard)) {
-			writeFiles(replyBoard.getFiles(), replyBoard.getBoardNum());
+			writeFiles(replyBoard.getFiles(), replyBoard.getPostNum());
 		}
 		return state;
 	}

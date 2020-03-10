@@ -48,25 +48,27 @@
 
             boardForm.submit();
             
-				},false);		
-				// 취소 버튼 클릭시
-				cancelBtn.addEventListener("click", function(e) {
-						e.preventDefault();
-				},false);		
-				// 목록 버튼 클릭시
-				
-				listBtn.addEventListener("click",function(e){
-					e.preventDefault();
-					console.log("목록");
-	 				var returnPage = e.target.getAttribute('data-returnPage');
-					location.href=getContextPath()+"/board/list/"+returnPage;
-				},false);   
+		},false);		
+		// 취소 버튼 클릭시
+		cancelBtn.addEventListener("click", function(e) {
+				e.preventDefault();
+				console.log("취소");
+					var returnPage = e.target.getAttribute('data-returnPage');
+				location.href="/board/list/"+returnPage;
+		},false);		
+		// 목록 버튼 클릭시
+		
+		listBtn.addEventListener("click",function(e){
+			e.preventDefault();
+			console.log("목록");
+				var returnPage = e.target.getAttribute('data-returnPage');
+			location.href="/board/list/"+returnPage;
+		},false);   
     }
     </script>
 </head>
 
 <body>
-    ${sessionUser}
     <h4>새 글 쓰기</h4>
 <%--         <form:form  modelAttribute="board" id="write-form" --%>
         <form:form  modelAttribute="board" 
@@ -107,7 +109,7 @@
             <div>
 		            <span>            	
 		                <form:button class="button" id="submit-btn">등록</form:button>
-		                <form:button class="button" id="cancel-btn">취소</form:button>
+		                <form:button class="button" data-returnPage="${returnPage }" id="cancel-btn">취소</form:button>
 		                <form:button class="button" data-returnPage="${returnPage }" id="list-btn">목록</form:button>
                 </span>
             </div>

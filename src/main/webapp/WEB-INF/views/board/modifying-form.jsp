@@ -65,152 +65,132 @@
 
 
         
-        var listBtns = document.getElementsByClassName('listBtn');
-        var deleteBtn = document.getElementById('deleteBtn');
-        var replyBtn = document.getElementById('replyBtn');
-        var deleteFileBtns = document.getElementsByClassName('delete-file-btn');
-        
-        var saveBtn = document.getElementById("saveBtn");
-        var readModeElements = document.getElementsByClassName("");
-        
-        
-        
-        deleteBtn.addEventListener("click",function(e){
-        	e.preventDefault();
-        	if(confirm("삭제하시겠습니까?")){
- 						console.log("삭제"+e.target.getAttribute('data-bnum'));
- 						var returnPage = e.target.getAttribute('data-returnPage');
- 						var bnum = e.target.getAttribute('data-bnum');
- 						location.href = getContextPath()+"/board/delete/"+returnPage+"/"+bnum;          }	
-        });
-        replyBtn.addEventListener("click",function(e){
-        	e.preventDefault();	
-					console.log("답글달기"+e.target.getAttribute('data-bnum')); 
-					var returnPage = e.target.getAttribute('data-returnPage');
+        var listBtn = document.getElementById('list-btn');
+        var cancelBtn = document.getElementById('cancel-btn');
+        var submitBtn = document.getElementById('submit-btn');
+		var modifyForm = document.getElementById('modify-form');        
 
-					var bnum = e.target.getAttribute('data-bnum');
-// 					location.href = getContextPath()+"/board/replyForm/"+returnPage+"/"+bnum;
-					location.href = "replyForm/"+returnPage+"/"+bnum;
-        });
-        deleteBtn.addEventListener("click",function(e){
+     	// 등록 버튼 클릭시
+        submitBtn.addEventListener("click", function(e) {
+            e.preventDefault();
+
+            modifyForm.submit();
             
-        });
-       
-        // 삭제
-        console.log("deleteFileBtns",deleteFileBtns);
-        Array.prototype.forEach.call(deleteFileBtns, element => {
-        		element.addEventListener("click",function(e){
-            		var fid = e.target.getAttribute('data-fid');
-            		var xhr = new XMLHttpRequest();
-            		xhr.addEventListener("load",deleteFileItem);
-            		xhr.open("DELETE",getContextPath()+"/board/file/"+fid,true);
-            		xhr.send(); 
-            		
-            });    
-				}); 
-     		// 목록 버튼 클릭시		
-     		console.log("목록 버튼 이벤트리스너 추가");
-        Array.prototype.forEach.call(listBtns, element => {
-            console.log("목록 버튼 이벤트리스너 추가"+element);
-        		element.addEventListener("click",function(e){            		
-        			e.preventDefault();
-        			console.log("목록");
-        				var returnPage = e.target.getAttribute('data-returnPage');
-        			location.href="/board/list/"+returnPage;
-            });    
-				}); 
+		},false);	
+		// 취소 버튼 클릭시        
+        cancelBtn.addEventListener("click", function(e) {
+				e.preventDefault();
+				console.log("취소");
+				var returnPage = e.target.getAttribute('data-returnPage');
+				var bnum = e.target.getAttribute('data-bnum');
 				
-    }
-    function deleteFileItem(e){
-    		//var deleteFileBtns = document.getElementsByClassName('file-item');
-    		var list = document.querySelector('#file-list');
-    		console.log(e.target.responseText,e.target.readyState, e.target.status);    		
-    		if (e.target.readyState===4 && e.target.status == 200){
-	    		var fid = e.target.responseText.split(':')[1];
-	    		var deleteTarget = document.querySelector('.file-item[data-fid="'+fid+'"]');
-	    		list.removeChild(deleteTarget);
-	        
-       	}
+				location.href="/board/view/"+returnPage+"/"+bnum ;
+		},false);		
+        
+		// 목록 버튼 클릭시		
+		listBtn.addEventListener("click",function(e){
+			e.preventDefault();
+			console.log("목록");
+				var returnPage = e.target.getAttribute('data-returnPage');
+			location.href="/board/list/"+returnPage;
+		},false);  
+				
     }
 
 </script>
 </head>
 <body>
-<h3>게시글 보기</h3>
-<form:form modelAttribute="board" action='${pageContext.request.contextPath}/board/modify/${returnPage }'
+	<h3>게시글 보기</h3>
+	<form:form modelAttribute="board"
+		action='${pageContext.request.contextPath}/board/modify/${returnPage }'
 		method="POST" id="modify-form" enctype="multipart/form-data">
-		<form:input type="hidden" path="boardNum"/>
-		<form:input type="hidden" path="username"/>
-		<form:input type="hidden" path="userNum"/>
+		<form:input type="hidden" path="postNum" />
+		<form:input type="hidden" path="username" />
+		<form:input type="hidden" path="userNum" />
 		<form:textarea style="display:none;" path="content"></form:textarea>
-    <table>
-        <tr class="category">
-            <th><label>분류</label></th>
-            <td colspan="6" class="">${board.type.name}</td>
-            <th class=""><label>조회수</label></th>
-            <td  class="">${board.hit}</td>
-        
-        </tr> 
-        <tr class="title">
-            <th><label>제목</label></th>
-            <td class=""  colspan="8">${board.title}</td>
-            
-        </tr>
-        <tr class="author">
-            <th><label>작성자</label></th>
-            <td class="normal-mode"  colspan="8"><b>${board.username}</b>(${board.userNum})</td>
-            
+		<table>
+			<tr class="category">
+				<td>
+				<form:label path="type.typeNum">분류</form:label>
+				</td>
+				<td class="" colspan="8">
+					<form:select path="type.typeNum" id="type" cols="70">
+						<option value="0">== 선 택 ==</option>
+						<form:options path="type.typeNum" items="${boardTypes}"
+							itemValue="typeNum" itemLabel="name" />
+					</form:select>
+				</td>
 
-        </tr> 
-        <tr class="content">
-            <th><label>내용</label></th>
-            <td class=""  colspan="8">${board.content}</td>
-            
-            
-             
-        </tr> 
-        
-        <tr class=" tools">
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="tools" colspan="3">
-                <button type="button" id="replyBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">답글</button>                
-                <button type="button" id="deleteBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">삭제</button>
-                <button type="button" data-returnPage="${returnPage }" class="listBtn" >목록</button>
-            </td>
-        </tr>
-        
-        <tr class="attachments">
-            <th><label>첨부목록</label></th>
-            <td  colspan="8">
-            		<ul id="file-list">
-            		<c:if test="${!empty files}">
-	                <c:forEach var="file" items="${files}">
-	                		<li class="file-item" data-fid="${file.fid}">
-	                    ${file.fname } || ${file.fsize } || ${file.ftype } 
-	                    </li>
-	                </c:forEach>
-								</c:if>
-								</ul>
-            </td>            
-        </tr> 
-        <tr>
-        <div>
-		            <span>            	
-		                <form:button class="button" id="submit-btn">등록</form:button>
-		                <form:button class="button" id="cancel-btn">취소</form:button>
-		                <form:button class="button" data-returnPage="${returnPage }" id="list-btn">목록</form:button>
-                </span>
-            </div>
-        </tr>
-    </table>
-</form:form>
+			</tr>
+			<tr class="title">
+				<th><label>제목</label></th>
+				<td class="" colspan="8">
+<!-- 					<div> -->
+						<form:input path="title" type="text" cols="70" value="${board.title}"/>
+<!-- 					</div> -->
+						<form:errors cssClass="error" path="title"/>
+
+				</td>
+				
+			</tr>
+			<tr class="author">
+				<th><label>작성자</label></th>
+				<td class="normal-mode" colspan="8"><b>${board.username}</b>(${board.userNum})</td>
+
+
+			</tr>
+			<tr class="content">
+				<th><label>내용</label></th>
+				<td class="" colspan="8">
+					<form:textarea path="content" id="" cols="70" rows="40" />							
+
+					<form:errors path="content" cssClass="error"/>
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					<form:label path="files">첨부</form:label>
+				</td>
+				<td colspan="9">
+				<input type="file" name="files" multiple/>
+                    <form:errors path="files"/>
+				</td>
+			</tr>
+			<tr class=" tools">
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="no-border"></td>
+				<td class="tools" colspan="3">
+					<button type="button" id="submit-btn" data-returnPage="${returnPage }"
+						data-bnum="${board.postNum}">수정</button>
+					<button type="button" id="cancel-btn" data-returnPage="${returnPage }"
+						data-bnum="${board.postNum}">취소</button>
+					<button type="button" data-returnPage="${returnPage }"
+						id="list-btn">목록</button>
+				</td>
+			</tr>
+
+			<tr class="attachments">
+				<th><label>첨부목록</label></th>
+				<td colspan="8">
+					<ul id="file-list">
+						<c:if test="${!empty files}">
+							<c:forEach var="file" items="${files}">
+								<li class="file-item" data-fid="${file.attachmentNum}">
+									${file.name } || ${file.fileSize } || ${file.mimetype }</li>
+							</c:forEach>
+						</c:if>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</form:form>
 
 </body>
 </html>

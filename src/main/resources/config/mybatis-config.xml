@@ -13,7 +13,7 @@
 				
 		<typeAlias type="com.uginim.clevernote.user.vo.UserVO" alias="UserVO"/>
 		
-		<typeAlias type="com.uginim.clevernote.board.vo.BoardVO" alias="BoardVO"/>
+		<typeAlias type="com.uginim.clevernote.board.vo.BoardPostVO" alias="BoardPostVO"/>
 		<typeAlias type="com.uginim.clevernote.board.vo.AttachmentFileVO" alias="AttachmentFileVO"/>
 		<typeAlias type="com.uginim.clevernote.board.vo.BoardTypeVO" alias="BoardTypeVO"/>
 		<typeAlias type="com.uginim.clevernote.board.vo.BoardCommentVO" alias="BoardCommentVO"/>
