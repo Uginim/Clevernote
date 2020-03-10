@@ -40,9 +40,12 @@
 			#{boardNum}, 
 			#{name}, 
 			#{fileSize}, 
-			#{mimeType}, 
+			#{mimetype}, 
 			#{data} 				
 		)		
+		<selectKey keyProperty="attachmentNum" resultType="long" order="AFTER">
+			select ATTACHMENT_SEQUENCE.currval from dual
+		</selectKey>
 	</insert>
 <!-- 답글 넣기 -->
 	<insert id="insertReplyBoard" parameterType="BoardVO">
@@ -113,7 +116,7 @@
 			name, 
 			file_size as "fileSize", 
 			mimetype, 
-			data, 
+<!-- 			data,  -->
 			created_at as "createdAt", 
 			updated_at as "updatedAt"
 		FROM attachment_file
@@ -171,7 +174,8 @@
 			content,
 			"boardGroup",
 			step,
-			indent	
+			indent,
+			hasPicture
 		FROM (SELECT
 					row_number() over(order by board_group desc, step asc) as num,
 					board_num as "boardNum",
@@ -186,7 +190,9 @@
 					content,
 					board_group as "boardGroup",
 					step,
-					indent
+					indent,
+					case when exists (select attachment_num from attachment_file attach where board.board_num = attach.board_num) then 'T' else 'F' END   as hasPicture
+<!-- 					'c' as hasPicture -->
 				FROM
 				  	board ,board_type type
 				WHERE board.type_num = type.type_num

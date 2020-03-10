@@ -53,7 +53,7 @@ public class BoardManager implements BoardService {
 	private void writeFiles(List<MultipartFile> files, long boardNum) {
 		AttachmentFileVO attachment = new AttachmentFileVO();
 		for(MultipartFile file : files) {			
-			logger.info("파일 첨부: " + file.getOriginalFilename());
+			logger.info("파일 첨부: " + file.getOriginalFilename() + " size:" + file.getSize());
 			if(file.getSize()>0) {
 				// 게시글 번호
 				attachment.setBoardNum(boardNum);
@@ -160,14 +160,16 @@ public class BoardManager implements BoardService {
 
 	// 게시글 답글 작성
 	@Override
+	@Transactional
 	public int reply(BoardVO replyBoard) {
 		// 1) 게시글 답글 작성
+		logger.info("before boardNum :"+replyBoard.getBoardNum());
 		int state = boardDAO.insertReplyBoard(replyBoard);
-		
+		logger.info("after boardNum :"+replyBoard.getBoardNum());
 		// 3) 첨부파일 있는 경우
 		logger.info("첨부개수"+replyBoard.getFiles().size());
 		if(hasFile(replyBoard)) {
-			writeFiles(replyBoard.getFiles(), replyBoard.getBoardGroup());
+			writeFiles(replyBoard.getFiles(), replyBoard.getBoardNum());
 		}
 		return state;
 	}

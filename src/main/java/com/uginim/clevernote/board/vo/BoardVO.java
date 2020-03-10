@@ -21,7 +21,17 @@ public class BoardVO {
 	private long boardGroup; // 게시글 그룹
 	private int step; // 게시글 단계
 	private int indent; // 게시글 깊이
+//	private char hasPicture;
 	private boolean hasPicture;
+	public void setHasPicture(boolean hasPicture) {
+		this.hasPicture=hasPicture;
+	}
+	public void setHasPicture(char c) {
+		if(c == 't' || c =='T')
+			this.hasPicture = true; 
+		else if(c == 'f' || c =='F')
+			this.hasPicture = false;
+	}
 	// 첨부파일
 	private List<MultipartFile> files;
 }
