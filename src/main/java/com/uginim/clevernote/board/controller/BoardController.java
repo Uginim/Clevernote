@@ -231,11 +231,8 @@ public class BoardController {
 		replyBoard.setUsername(user.getUsername());
 		boardManager.reply(replyBoard);
 		
-<<<<<<< HEAD
+
 		//		return "redirect:/board/list/"+returnPage;
-=======
-//		return "redirect:/board/list/"+returnPage;
->>>>>>> branch 'develop' of https://github.com/Uginim/clevernote.git
 		return "redirect:/board/view/"+returnPage+"/"+replyBoard.getBoardNum();
 
 	}

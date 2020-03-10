@@ -68,6 +68,7 @@
         var listBtns = document.getElementsByClassName('listBtn');
         var deleteBtn = document.getElementById('deleteBtn');
         var replyBtn = document.getElementById('replyBtn');
+        var modifyBtn = document.getElementById('modifyBtn');
         var deleteFileBtns = document.getElementsByClassName('delete-file-btn');
         
         var saveBtn = document.getElementById("saveBtn");
@@ -92,9 +93,9 @@
 // 					location.href = getContextPath()+"/board/replyForm/"+returnPage+"/"+bnum;
 					location.href = "/board/reply/page/"+returnPage+"/"+bnum;
         });
-        deleteBtn.addEventListener("click",function(e){
+        modifyBtn.addEventListener("click",function(e){
             
-        });
+        })
        
         // 삭제
         console.log("deleteFileBtns",deleteFileBtns);
@@ -180,8 +181,11 @@
             <td class="no-border"></td>
             <td class="no-border"></td>
             <td class="tools" colspan="3">
-                <button type="button" id="replyBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">답글</button>                
-                <button type="button" id="deleteBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">삭제</button>
+                <button type="button" id="replyBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">답글</button> 
+                <c:if test="sessionUser.userNum == board.userNum">               
+	                <button type="button" id="deleteBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">삭제</button>
+	                <button type="button" id="modifyBtn" data-returnPage="${returnPage }" data-bnum="${board.boardNum}">수정</button>
+                </c:if>
                 <button type="button" data-returnPage="${returnPage }" class="listBtn" >목록</button>
             </td>
         </tr>
