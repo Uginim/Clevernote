@@ -81,7 +81,7 @@
  						console.log("삭제"+e.target.getAttribute('data-bnum'));
  						var returnPage = e.target.getAttribute('data-returnPage');
  						var bnum = e.target.getAttribute('data-bnum');
- 						location.href = getContextPath()+"/board/delete/"+returnPage+"/"+bnum;          }	
+ 						location.href = "/board/delete/"+returnPage+"/"+bnum;          }	
         });
         replyBtn.addEventListener("click",function(e){
         	e.preventDefault();	
@@ -90,7 +90,7 @@
 
 					var bnum = e.target.getAttribute('data-bnum');
 // 					location.href = getContextPath()+"/board/replyForm/"+returnPage+"/"+bnum;
-					location.href = "replyForm/"+returnPage+"/"+bnum;
+					location.href = "/board/reply/page/"+returnPage+"/"+bnum;
         });
         deleteBtn.addEventListener("click",function(e){
             
@@ -103,7 +103,7 @@
             		var fid = e.target.getAttribute('data-fid');
             		var xhr = new XMLHttpRequest();
             		xhr.addEventListener("load",deleteFileItem);
-            		xhr.open("DELETE",getContextPath()+"/board/file/"+fid,true);
+            		xhr.open("DELETE","/board/file/"+fid,true);
             		xhr.send(); 
             		
             });    
@@ -192,8 +192,8 @@
             		<ul id="file-list">
             		<c:if test="${!empty files}">
 	                <c:forEach var="file" items="${files}">
-	                		<li class="file-item" data-fid="${file.fid}">
-	                    ${file.fname } || ${file.fsize } || ${file.ftype } 
+	                		<li class="file-item" data-fid="${file.attachmentNum}">
+	                    ${file.name } || ${file.fileSize } || ${file.mimetype } 
 	                    </li>
 	                </c:forEach>
 								</c:if>
