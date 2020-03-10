@@ -178,7 +178,11 @@ public class BoardController {
 		}
 	}
 	
-	
+	@GetMapping("/modify/{bnum}")
+	public String getModifyingPage()
+	{
+		return "board/modifying-form";
+	}
 	// 게시글 수정
 	@PostMapping("/modify/{returnPage}")
 	public String modify(
@@ -207,7 +211,7 @@ public class BoardController {
 		board.setContent("[원글]" +board.getContent());
 		model.addAttribute("board", board);
 		
-		return "/board/replying-form";
+		return "board/replying-form";
 	}
 	
 	// 답글 처리
@@ -227,7 +231,9 @@ public class BoardController {
 		replyBoard.setUsername(user.getUsername());
 		boardManager.reply(replyBoard);
 		
-		return "redirect:/board/list/"+returnPage;
+		//		return "redirect:/board/list/"+returnPage;
+		return "redirect:/board/view/"+returnPage+"/"+replyBoard.getBoardNum();
+
 	}
 	
 }

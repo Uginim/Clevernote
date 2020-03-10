@@ -50,7 +50,7 @@ public class LoginController {
 			if(state == LoginService.LOGIN_SUCCESS) {				
 				return "redirect:"+ ((next!=null)?next : "/");
 			}else {
-				return "/signin";
+				return "signin";
 			}			
 		}	
 	}
