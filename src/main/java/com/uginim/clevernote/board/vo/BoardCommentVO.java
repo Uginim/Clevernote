@@ -13,9 +13,6 @@ public class BoardCommentVO {
 	private Date createdAt; // 생성일시
 	private Date updatedAt; // 수정 일시
 	private String content; // 내용
-	private long commentGroup; // 댓글 그룹 
-	private int step; // 댓글 단계
-	private int indent; // 댓글 
 	private long parentNum; // 부모 번호
 	private long like; // 좋음
 	private long dislike; // 싫음

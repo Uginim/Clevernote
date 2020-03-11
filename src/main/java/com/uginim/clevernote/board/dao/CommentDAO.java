@@ -17,13 +17,21 @@ public interface CommentDAO {
 	int insert(BoardCommentVO comment);
 	/* Read */	
 	/**
-	 * 게시글의 모든 댓글을 가져옴(대신 일부만) 
+	 * 게시글의 모든 댓글을 가져옴(일부만) 
 	 * @param postNum 게시글 번호
-	 * @param lastCommentTime 마지막 댓글
+	 * @param lastCommentTime 마지막 댓글의 시간
 	 * @param max 가져올 댓글 수 최대값
 	 * @return 댓글 리스트
 	 */
-	List<BoardCommentVO> selectCommentList(long postNum, Date lastCommentTime, int max);
+	List<BoardCommentVO> selectRootCommentList(long postNum, Date lastCommentTime, int max);
+	/**
+	 * 게시글의 모든 댓글을 가져옴()
+	 * @param postNum
+	 * @param baseValue 
+	 * @param max 가져올 댓글의 최대 값
+	 * @return
+	 */
+	List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, int max);
 	/**
 	 * 게시글의 모든 댓글을 가져옴(대신 일부만) 
 	 * @param postNum 게시글 번호
@@ -32,7 +40,13 @@ public interface CommentDAO {
 	 * @param orderType 순서
 	 * @return 댓글 리스트
 	 */
-	List<BoardCommentVO> selectCommentList(long postNum, Date lastCommentTime, int max, String orderType);
+	List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, int max, String orderType);
+	
+	// 남은 댓글 여부
+	
+	// 이후 변경 내역 여부
+	// 댓글 하나 새로 불러오기 
+	
 	/* Update */
 	/**
 	 * 댓글 수정하기
