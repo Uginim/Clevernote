@@ -46,7 +46,7 @@
 	SET title = #{title},
 	    category_num = #{categoryNum},
 	    owner_num = #{ownerNum},
-	    updated_at = SYSTIMESTAMP    
+	    updated_at = SYSTIMESTAMP     
 	WHERE
 	    category_num = #{categoryNum}
 </update>

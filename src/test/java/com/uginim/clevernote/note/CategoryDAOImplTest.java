@@ -25,6 +25,7 @@ import com.uginim.clevernote.user.vo.UserVO;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = "file:src/main/webapp/WEB-INF/spring/root-context.xml")
+//@ContextConfiguration(locations = "")
 public class CategoryDAOImplTest {
 	static final Logger logger = LoggerFactory.getLogger(CategoryDAOImplTest.class);
 	@Inject

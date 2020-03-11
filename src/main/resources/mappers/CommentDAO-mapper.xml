@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.CommentDAO-mapper">
+<!-- 댓글 추가 -->
+	<insert id="insert">
+	INSERT INTO board_comment (
+	    comment_num, 
+	    user_num, 
+	    post_num, 
+	    content, 
+	    username,
+	    parent_num
+	    )
+	VALUES (
+	    BOARD_COMMENT_SEQUENCE.nextval,
+	    #{userNum},
+	    #{postNum},
+	    #{content},
+	    #{username},	    
+<!-- 	    null -->
+		    <choose>
+		    	<when test="parentNum != 0">
+		    		#{parentNum}
+		    	</when>
+		    	<otherwise>
+		    		null
+		    	</otherwise>
+		    </choose>    
+	    )
+    	<selectKey keyProperty="commentNum" order="AFTER" resultType="long">
+    		SELECT BOARD_COMMENT_SEQUENCE.currval 
+    		FROM dual
+    	</selectKey>
+	</insert>
+<!-- 게시글의 댓글들을 가져옴  -->
+	<select id="selectRootCommentList">
+		 
+		
+	</select>
+<!-- 남은 댓글 개수를 가져온다	 -->
+	<select id="countRestComment">
+	</select>
+<!-- 내 모든 댓글을 가져옴	 -->
+<!-- 게시글 내 모든 댓글을 가져옴	 -->
+	<select id="selectAllMyComments">
+	</select>
+	
+<!-- 이후 변경 내역 여부	 -->
+	<select id="selectAllHistory">
+	</select>
+<!-- 댓글 가져오기	 -->
+	<select id="selectOneComment">
+	</select>
+<!-- 댓글 수정하기	 -->
+	<update id="update">
+	</update>
+<!-- 댓글 삭제하기	 -->
+	<delete id="delete">
+	</delete>
+	
+<!-- 새 vote 데이터를 넣는다. 중복되면 넣지 않는다. -->
+	<insert id="insertNewVote">
+	</insert>
+	
+<!-- 해당 유저가 좋아요 표시한 댓글들의 vote 객체 -->
+<!-- 해당 포스트에서 좋아요 표시한 댓글들의 vote 객체 -->
+	<select id="selectMyAllVotes">
+	</select>
+	
+
+<!-- vote를 삭제한다.	 -->
+	<delete id="deleteVote">
+	</delete>
+	
+	
+</mapper>

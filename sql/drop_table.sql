@@ -1,0 +1,11 @@
+drop table APP_USER;
+drop table ATTACHMENT_FILE;
+drop table BOARD_COMMENT;
+drop table BOARD_POST;
+drop table BOARD_TYPE;
+drop table CATEGORY;
+drop table COMMENT_CHANGE_HISTORY;
+drop table COMMENT_VOTE;
+drop table NOTE;
+drop table TAG;
+drop table TAGGING;

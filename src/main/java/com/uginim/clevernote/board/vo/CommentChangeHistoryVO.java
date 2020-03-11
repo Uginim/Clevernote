@@ -6,4 +6,5 @@ public class CommentChangeHistoryVO {
 		long postNum; // post별로 조회하기 쉽도록 
 		long commentNum;		
 		Date createdAt;		
+		char type;
 }

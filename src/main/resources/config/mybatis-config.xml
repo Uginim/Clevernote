@@ -18,6 +18,7 @@
 		<typeAlias type="com.uginim.clevernote.board.vo.BoardTypeVO" alias="BoardTypeVO"/>
 		<typeAlias type="com.uginim.clevernote.board.vo.BoardCommentVO" alias="BoardCommentVO"/>
 		<typeAlias type="com.uginim.clevernote.board.vo.VoteVO" alias="VoteVO"/>
+		<typeAlias type="com.uginim.clevernote.board.vo.CommentChangeHistoryVO" alias="CommentChangeHistoryVO"/>
 		
 		
 	</typeAliases>
