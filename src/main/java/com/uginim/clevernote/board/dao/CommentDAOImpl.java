@@ -33,37 +33,37 @@ public class CommentDAOImpl implements CommentDAO {
 	}
 	/* Read */	
 	/**
-	 * 게시글의 댓글들을 가져옴(부모만) 
+	 * 게시글의 댓글들을 가져옴(답글 아님) 
 	 * @param postNum 게시글 번호
 	 * @param lastCommentTime 마지막 댓글의 시간
 	 * @param rowNum 가져올 댓글 수
 	 * @return 댓글 리스트
 	 */
 	@Override
-	public List<BoardCommentVO> selectRootCommentList(long postNum, Date lastCommentTime, long requiredRowNum) {		
+	public List<BoardCommentVO> selectRootCommentList(long postNum, Date lastCommentTime, long countOfRow) {		
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("postNum", postNum);
 		map.put("lastCommentTime", lastCommentTime);
-		map.put("requiredRowNum", requiredRowNum);		
+		map.put("countOfRow", countOfRow);		
 		return session.selectList("mappers.CommentDAO-mapper.selectRootCommentList",map);
 	}
 	/**
-	 * 게시글의 댓글들을 가져옴()
-	 * @param postNum
-	 * @param baseValue 
+	 * 게시글의 댓글들을 가져옴(답글 아님)
+	 * @param postNum 게시글 번호
+	 * @param baseValue 대상 기준 (이것보다 큰 값)
 	 * @param rowNum 가져올 댓글 수
 	 * @return 댓글 리스트
 	 */
 	@Override
-	public List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, long requiredRowNum) {
+	public List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, long countOfRow) {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("postNum", postNum);
 		map.put("baseValue", baseValue);
-		map.put("requiredRowNum", requiredRowNum);		
+		map.put("countOfRow", countOfRow);		
 		return session.selectList("mappers.CommentDAO-mapper.selectRootCommentList",map);
 	}
 	/**
-	 * 게시글의 댓글들을 가져옴(순서 포함) 
+	 * 게시글의 댓글들을 가져옴(답글 아님,순서 포함) 
 	 * @param postNum 게시글 번호
 	 * @param lastCommentTime 마지막 댓글
 	 * @param rowNum 가져올 댓글 수
@@ -71,14 +71,50 @@ public class CommentDAOImpl implements CommentDAO {
 	 * @return 댓글 리스트
 	 */
 	@Override
-	public List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, long requiredRowNum, String order) {
+	public List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, long countOfRow, String order) {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("postNum", postNum);
 		map.put("baseValue", baseValue);
-		map.put("requiredRowNum", requiredRowNum);		
+		map.put("countOfRow", countOfRow);		
 		map.put("order", order);		
 		return session.selectList("mappers.CommentDAO-mapper.selectRootCommentList",map);
 	}
+	// 자식 댓글을 가져옴
+	/**
+	 * 자식 댓글을 가져옴
+	 * @param parentNum 부모번호
+	 * @param lastCommentTime 기준 시간(이시간 이후)
+	 * @param countOfRow  요청
+	 * @return 댓글 리스트 
+	 */
+	@Override
+//	public List<BoardCommentVO> selectChildCommentList(long postNum, long parentNum, Date lastCommentTime, long countOfRow){
+	public List<BoardCommentVO> selectChildCommentList(long parentNum, Date lastCommentTime, long countOfRow){
+		Map<String,Object> map = new HashMap<String, Object>();
+//		map.put("postNum", postNum);
+		map.put("parentNum", parentNum);
+		map.put("lastCommentTime", lastCommentTime);
+		map.put("countOfRow", countOfRow);
+		return session.selectList("mappers.CommentDAO-mapper.selectChildCommentList", map);
+	}
+	/**
+	 * 자식 댓글을 가져옴
+	 * @param parentNum 부모번호
+	 * @param baseValue 대상 기준(이거보다 큰 값)
+	 * @param rowNum  요청
+	 * @return 댓글 리스트 
+	 */
+	@Override
+//	public List<BoardCommentVO> selectChildCommentList(long postNum, long parentNum,long baseValue, long countOfRow){
+	public List<BoardCommentVO> selectChildCommentList(long parentNum,long baseValue, long countOfRow){
+		Map<String,Object> map = new HashMap<String, Object>();
+//		map.put("postNum", postNum);
+		map.put("parentNum", parentNum);
+		map.put("baseValue", baseValue);
+		map.put("countOfRow", countOfRow);
+		return session.selectList("mappers.CommentDAO-mapper.selectChildCommentList", map);
+	}
+	
 	// 남은 댓글 개수
 	/**
 	 * 남은 댓글 개수를 가져온다.
@@ -183,18 +219,27 @@ public class CommentDAOImpl implements CommentDAO {
 	/* Vote */
 	/* Create */
 	/**
-	 * 새 vote 데이터를 넣는다. 중복되면 넣지 않는다.
+	 * 새 vote 데이터를 넣는다. 
 	 * @param vote
 	 * @return 성공 시 1 중복 시 2
 	 */
 	@Override
 	public int insertNewVote(VoteVO vote) {		
-		return session.insert("mappers.CommentDAO-mapper.insertNewVote",vote);
+		return session.update("mappers.CommentDAO-mapper.insertNewVote",vote);
+	}
+	/**
+	 * 새 vote 데이터를 넣는다. 중복되면 넣지 않는다.
+	 * @param vote
+	 * @return 성공 시 1 중복 시 2
+	 */
+	@Override
+	public int mergeNewVote(VoteVO vote) {		
+		return session.update("mappers.CommentDAO-mapper.mergeNewVote",vote);
 	}
 
 	/* Read */
 	/**
-	 * 해당 유저가 좋아요 표시한 댓글들의 vote 객체
+	 * 유저의 vote 객체
 	 * @param userNum 사용자 번호
 	 * @return vote 객체 리스트
 	 */
@@ -204,16 +249,16 @@ public class CommentDAOImpl implements CommentDAO {
 	}
 
 	/**
-	 * 해당 포스트에서 좋아요 표시한 댓글들의 vote 객체
+	 * 유저가 포스트에서 투표한 vote 객체
 	 * @param postNum 게시글 번호
 	 * @param userNum 사용자 번호
 	 * @return vote 객체 리스트
 	 */
 	@Override
-	public List<VoteVO> selectMyAllVotes(long postNum, long userNum) {
+	public List<VoteVO> selectMyAllVotes(long userNum, long postNum) {
 		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("postNum", postNum);
 		map.put("userNum", userNum);
+		map.put("postNum", postNum);
 		return session.selectList("mappers.CommentDAO-mapper.selectMyAllVotes",map);
 	}
 

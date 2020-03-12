@@ -2,13 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mappers.CommentDAO-mapper">
 <!-- 댓글 추가 -->
-	<insert id="insert">
+	<insert id="insert" parameterType="BoardCommentVO">
 	INSERT INTO board_comment (
 	    comment_num, 
 	    user_num, 
 	    post_num, 
 	    content, 
 	    username,
+	    target_num,
 	    parent_num
 	    )
 	VALUES (
@@ -16,13 +17,15 @@
 	    #{userNum},
 	    #{postNum},
 	    #{content},
-	    #{username},	    
+	    #{username},		       
 <!-- 	    null -->
 		    <choose>
-		    	<when test="parentNum != 0">
+		    	<when test="parentNum != 0 and targetNum != 0">
+		    		#{targetNum}, 
 		    		#{parentNum}
 		    	</when>
 		    	<otherwise>
+		    		null,
 		    		null
 		    	</otherwise>
 		    </choose>    
@@ -32,44 +35,297 @@
     		FROM dual
     	</selectKey>
 	</insert>
-<!-- 게시글의 댓글들을 가져옴  -->
-	<select id="selectRootCommentList">
-		 
+<!-- 게시글의 루트 댓글들을 가져옴  -->
+	<select id="selectRootCommentList" parameterType="map" resultType="BoardCommentVO">
 		
+		select * FROM (
+			SELECT 
+			    row_number() over (ORDER BY <choose>
+				    <when test="lastCommentTime != null">
+					created_at
+					</when>				
+					<when test="baseValue  != null ">
+					comment_num
+					</when>
+					<otherwise>
+					created_at
+					</otherwise>
+			    </choose> ASC ) as  "row_num",
+			    "comment".comment_num AS "commentNum",
+			    "comment".user_num AS "userNum",
+			    "comment".POST_NUM AS "postNum",
+			    "comment".CONTENT AS "content",
+			    "comment".CREATED_AT AS "createdAt",
+			    "comment".UPDATED_AT AS "updatedAt",
+			    "comment".USERNAME AS "username"
+			    ,nvl("child"."childrenCount",0) AS "childrenCount" ,
+		        nvl("vote"."like",0) AS "like",
+		        nvl("vote"."dislike",0) AS "dislike"
+			FROM board_comment "comment",
+			        (SELECT parent_num, COUNT(comment_num) "childrenCount"
+			            FROM board_comment 
+			            WHERE  post_num = #{postNum} 
+			            AND parent_num IS NOT NULL 
+			            GROUP BY parent_num) "child",
+			        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+				        FROM comment_vote, board_comment
+				        WHERE board_comment.comment_num = comment_vote.comment_num                        
+				        GROUP BY board_comment.comment_num) "vote"  
+			WHERE "comment".post_num = #{postNum}
+			AND "comment".comment_num = "child".parent_num(+)
+			AND "vote".comment_num(+) = "comment".comment_num 
+			AND "comment".parent_num IS NULL 
+			AND "comment".TARGET_NUM IS NULL
+			<choose>
+				<when test="lastCommentTime != null">
+				AND "comment".CREATED_AT > #{lastCommentTime}
+				</when>
+				<when test="baseValue  != null ">
+				AND "comment".comment_num > #{baseValue}
+				</when>
+			</choose>			
+			)
+			WHERE "row_num" <![CDATA[<=]]> #{countOfRow}
+			ORDER BY <choose>
+				    <when test="lastCommentTime != null">
+					"createdAt"
+					</when>				
+					<when test="baseValue  != null ">
+					""commentNum
+					</when>
+					<otherwise>
+					"createdAt"
+					</otherwise> </choose> ASC
 	</select>
-<!-- 남은 댓글 개수를 가져온다	 -->
-	<select id="countRestComment">
+<!-- 자식 댓글을 가져옴	 -->
+	<select id="selectChildCommentList" parameterType="map" resultType="BoardCommentVO" >
+		SELECT * FROM (
+		    SELECT  
+		        row_number() over (ORDER BY <choose>
+				    <when test="lastCommentTime != null">
+					created_at
+					</when>				
+					<when test="baseValue  != null ">
+					comment_num
+					</when>
+					<otherwise>
+					created_at
+					</otherwise>
+			    </choose> ASC ) AS  "row_num",
+		        "comment".comment_num AS "commentNum",
+		        "comment".user_num AS "userNum",
+		        "comment".POST_NUM AS "postNum",
+		        "comment".CONTENT AS "content",
+		        "comment".CREATED_AT AS "createdAt",
+		        "comment".UPDATED_AT AS "updatedAt",
+		        "comment".USERNAME AS "username",
+		        "comment".PARENT_NUM AS "parentNum",
+		        "comment".TARGET_NUM AS "targetNum",
+		        nvl("vote"."like",0) AS "like",
+		        nvl("vote"."dislike",0) AS "dislike"
+		    FROM board_comment "comment",
+		        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+		        FROM comment_vote, board_comment
+		        WHERE board_comment.comment_num = comment_vote.comment_num
+		        AND board_comment.parent_num = #{parentNum}
+		        <choose>
+					<when test="lastCommentTime != null">
+					AND board_comment.CREATED_AT > #{lastCommentTime}
+					</when>
+					<when test="baseValue  != null ">
+					AND board_comment.comment_num > #{baseValue}
+					</when>
+				</choose>
+		        GROUP BY board_comment.comment_num) "vote"
+		    WHERE "vote".comment_num(+) = "comment".comment_num    
+		    AND "comment".parent_num IS NOT NULL 
+		    AND "comment".TARGET_NUM IS NOT NULL
+		    AND "comment".parent_num = #{parentNum}
+		    <choose>
+				<when test="lastCommentTime != null">
+				AND "comment".CREATED_AT > #{lastCommentTime}
+				</when>
+				<when test="baseValue  != null ">
+				AND "comment".comment_num > #{baseValue}
+				</when>
+			</choose>
+		) WHERE "row_num" <![CDATA[<=]]> #{countOfRow}
+	</select>
+<!-- 남은 루트 댓글 개수를 가져온다	 -->
+	<select id="countRestComment" parameterType="map" resultType="long">
+		SELECT COUNT(comment_num)
+		FROM board_comment
+		WHERE post_num = #{postNum}
+		<choose>
+			<when test="lastCommentTime != null">
+			AND CREATED_AT > #{lastCommentTime}
+			</when>
+			<when test="lastCommentNum  != null ">
+			AND comment_num > #{lastCommentNum}
+			</when>
+		</choose>
+		AND parent_num IS NULL 
+		AND target_num IS NULL 
 	</select>
 <!-- 내 모든 댓글을 가져옴	 -->
 <!-- 게시글 내 모든 댓글을 가져옴	 -->
-	<select id="selectAllMyComments">
+	<select id="selectAllMyComments" parameterType="map" resultType="BoardCommentVO">
+		SELECT 
+		    comment_num "commentNum",
+		    user_num "userNum",
+		    post_num "postNum",
+		    content,
+		    created_at "createdAt",
+		    updated_at "updatedAt",
+		    username username,
+		    nvl(parent_num,0) "parentNum",
+		    nvl(target_num,0) "targetNum"
+		FROM board_comment
+		WHERE user_num = #{userNum}
+		<if test="postNum != null">
+			AND post_num = #{postNum}
+		</if>		
 	</select>
 	
 <!-- 이후 변경 내역 여부	 -->
-	<select id="selectAllHistory">
+	<select id="selectAllHistory" parameterType="map" resultType="CommentChangeHistoryVO">
+		SELECT 
+		    post_num "postNum",
+		    comment_num "commentNum",
+		    created_at "createdAT",
+		    type "type"
+		FROM comment_change_history
+		WHERE post_num = #{postNum}
+		AND created_at > #{createdAt}
 	</select>
 <!-- 댓글 가져오기	 -->
-	<select id="selectOneComment">
+	<select id="selectOneComment" parameterType="long" resultType="BoardCommentVO">
+		SELECT
+		        "comment".comment_num AS "commentNum",
+		        "comment".user_num AS "userNum",
+		        "comment".POST_NUM AS "postNum",
+		        "comment".CONTENT AS "content",
+		        "comment".CREATED_AT AS "createdAt",
+		        "comment".UPDATED_AT AS "updatedAt",
+		        "comment".USERNAME AS "username",
+		        nvl("comment".PARENT_NUM,0) AS "parentNum",
+		        nvl("comment".TARGET_NUM,0) AS "targetNum",
+		        nvl("child"."childrenCount",0) AS "childrenCount",
+		        nvl("vote"."like",0) AS "like",
+		        nvl("vote"."dislike",0) AS "dislike"
+		FROM  board_comment "comment",       
+		    ( SELECT parent_num, COUNT(comment_num) "childrenCount"
+		            FROM board_comment 
+		            WHERE  post_num = 81 
+		            AND parent_num IS NOT NULL 
+		            GROUP BY parent_num) "child",
+		    (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+		        FROM comment_vote, board_comment
+		        WHERE board_comment.comment_num = comment_vote.comment_num                        
+		        GROUP BY board_comment.comment_num) "vote"                
+		WHERE "comment".comment_num = "child".parent_num(+)
+		AND "vote".comment_num(+) = "comment".comment_num    
+		AND "comment".comment_num = #{commentNum}
 	</select>
 <!-- 댓글 수정하기	 -->
-	<update id="update">
+	<update id="update" parameterType="BoardCommentVO">
+		UPDATE board_comment 
+		SET user_num = #{userNum},
+		post_num = #{postNum},
+		content = #{content},
+		updated_at = SYSTIMESTAMP,
+		username = #{username},
+		parent_num = <choose>
+						<when test="parentNum == 0">
+							NULL
+						</when>
+						<otherwise>
+							#{parentNum}
+						</otherwise>
+					</choose> ,
+		target_num = <choose>
+						<when test="targetNum == 0">
+							NULL
+						</when>
+						<otherwise>
+							#{targetNum}
+						</otherwise>
+					</choose> 		
+		WHERE comment_num = #{commentNum}
 	</update>
 <!-- 댓글 삭제하기	 -->
-	<delete id="delete">
+	<delete id="delete" parameterType="long">
+		DELETE
+		FROM board_comment
+		WHERE comment_num = #{commentNum}
 	</delete>
-	
-<!-- 새 vote 데이터를 넣는다. 중복되면 넣지 않는다. -->
-	<insert id="insertNewVote">
+<!-- 새 vote 데이터를 넣는다	 -->
+	<insert id="insertNewVote" parameterType="VoteVO">
+		INSERT INTO comment_vote(
+        vote_num,
+        comment_num,
+        type,
+        created_at,
+        updated_at,
+        user_num
+    )
+    VALUES(
+        VOTE_SEQUENCE.nextval,
+        #{commentNum},
+        #{type},
+        SYSTIMESTAMP,
+        SYSTIMESTAMP,
+        #{userNum}
+    )   
 	</insert>
+<!-- 새 vote 데이터를 넣는다. 중복되면 넣지 않는다. -->
+	<update id="mergeNewVote" parameterType="VoteVO">
+		MERGE INTO comment_vote
+		USING dual
+		ON (comment_vote.comment_num = 1 AND comment_vote.type = 'L' AND comment_vote.user_num = 397)
+		WHEN NOT MATCHED THEN 
+		    INSERT (
+		        vote_num,
+		        comment_num,
+		        type,
+		        created_at,
+		        updated_at,
+		        user_num
+		    )
+		    VALUES(
+		        VOTE_SEQUENCE.nextval,
+		        #{commentNum},
+		        #{type},
+		        SYSTIMESTAMP,
+		        SYSTIMESTAMP,
+		        #{userNum}
+		    )    
+	</update>
 	
 <!-- 해당 유저가 좋아요 표시한 댓글들의 vote 객체 -->
 <!-- 해당 포스트에서 좋아요 표시한 댓글들의 vote 객체 -->
-	<select id="selectMyAllVotes">
+	<select id="selectMyAllVotes" >
+		SELECT 
+		    "vote".vote_num "voteNum",
+		    "vote".comment_num "comment_num",
+		    "vote".type "type",
+		    "vote".created_at "createdAt",
+		    "vote".updated_at "updatedAt",
+		    "vote".user_num "userNum"
+		FROM comment_vote "vote", board_comment "comment"
+		WHERE "comment".comment_num = "vote".comment_num
+		AND "vote".user_num = #{userNum}
+		AND "comment".post_num = #{postNum}
 	</select>
 	
 
 <!-- vote를 삭제한다.	 -->
-	<delete id="deleteVote">
+	<delete id="deleteVote"  parameterType="map">
+		DELETE FROM comment_vote
+		WHERE vote_num = #{voteNum}
+		<if test="commentNum">
+		AND comment_num = #{commentNum}
+		</if>
 	</delete>
 	
 	

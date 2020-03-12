@@ -13,8 +13,11 @@ public class BoardCommentVO {
 	private Date createdAt; // 생성일시
 	private Date updatedAt; // 수정 일시
 	private String content; // 내용
+	private long targetNum; // 대상댓글 번호
 	private long parentNum; // 부모 번호
+	private long childrenCount; // 자식 댓글 개수
 	private long like; // 좋음
 	private long dislike; // 싫음
 	
 }
+	

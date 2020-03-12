@@ -18,30 +18,52 @@ public interface CommentDAO {
 	int insert(BoardCommentVO comment);	
 	/* Read */	
 	/**
-	 * 게시글의 댓글들을 가져옴(일부만) 
+	 * 게시글의 댓글들을 가져옴(답글 아님) 
 	 * @param postNum 게시글 번호
 	 * @param lastCommentTime 마지막 댓글의 시간
-	 * @param rowNum 가져올 댓글 수
+	 * @param countOfRow 가져올 댓글 수
 	 * @return 댓글 리스트
 	 */
-	List<BoardCommentVO> selectRootCommentList(long postNum, Date lastCommentTime, long requiredRowNum);
+	List<BoardCommentVO> selectRootCommentList(long postNum, Date lastCommentTime, long countOfRow);
 	/**
-	 * 게시글의 댓글들을 가져옴()
-	 * @param postNum
-	 * @param baseValue 
-	 * @param rowNum 가져올 댓글 수
-	 * @return 댓글 리스트
-	 */
-	List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, long requiredRowNum);
-	/**
-	 * 게시글의 댓글들을 가져옴(순서 포함) 
+	 * 게시글의 댓글들을 가져옴(답글 아님)
 	 * @param postNum 게시글 번호
-	 * @param lastCommentTime 마지막 댓글
-	 * @param rowNum 가져올 댓글 수
+	 * @param baseValue 대상 기준 (이것보다 큰 값)
+	 * @param countOfRow 가져올 댓글 수
+	 * @return 댓글 리스트
+	 */
+	List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, long countOfRow);
+	/**
+	 * 게시글의 댓글들을 가져옴(답글 아님,순서 포함) 
+	 * @param postNum 게시글 번호
+	 * @param lastCommentTime 기준 시간(이시간 이후)
+	 * @param countOfRow 가져올 댓글 수
 	 * @param orderType 순서
 	 * @return 댓글 리스트
 	 */
-	List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, long requiredRowNum, String order);
+	List<BoardCommentVO> selectRootCommentList(long postNum, long baseValue, long countOfRow, String order);
+	
+	// 자식 댓글을 가져옴
+	/**
+	 * 자식 댓글을 가져옴
+	 * @param parentNum 부모번호
+	 * @param lastCommentTime 기준 시간(이시간 이후)
+	 * @param countOfRow  요청
+	 * @return 댓글 리스트 
+	 */
+//	List<BoardCommentVO> selectChildCommentList(long postNum, long parentNum, Date lastCommentTime, long countOfRow);
+	List<BoardCommentVO> selectChildCommentList(long parentNum, Date lastCommentTime, long countOfRow);
+	/**
+	 * 자식 댓글을 가져옴
+	 * @param parentNum 부모번호
+	 * @param baseValue 대상 기준(이거보다 큰 값)
+	 * @param countOfRow  요청
+	 * @return 댓글 리스트 
+	 */
+//	List<BoardCommentVO> selectChildCommentList(long postNum, long parentNum,long baseValue, long countOfRow);
+	List<BoardCommentVO> selectChildCommentList(long parentNum,long baseValue, long countOfRow);
+	
+	
 	
 	// 내 모든 댓글
 	/**
@@ -111,21 +133,22 @@ public interface CommentDAO {
 	 * @return 성공 시 1 중복 시 2
 	 */
 	int insertNewVote(VoteVO vote);
+	int mergeNewVote(VoteVO vote);
 	
 	/* Read */
 	/**
-	 * 해당 유저가 좋아요 표시한 댓글들의 vote 객체
+	 * 유저의 vote 객체
 	 * @param userNum 사용자 번호
 	 * @return vote 객체 리스트
 	 */
 	List<VoteVO> selectMyAllVotes(long userNum);
 	/**
-	 * 해당 포스트에서 좋아요 표시한 댓글들의 vote 객체
+	 * 유저가 포스트에서 투표한 vote 객체
 	 * @param postNum 게시글 번호
 	 * @param userNum 사용자 번호
 	 * @return vote 객체 리스트
 	 */
-	List<VoteVO> selectMyAllVotes(long postNum, long userNum);
+	List<VoteVO> selectMyAllVotes(long userNum, long postNum);
 	
 	
 	
