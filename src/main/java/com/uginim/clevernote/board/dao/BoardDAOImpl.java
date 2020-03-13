@@ -129,7 +129,12 @@ public class BoardDAOImpl implements BoardDAO {
 	public int updateAttachmentFile(AttachmentFileVO attachment) {
 		return sqlSession.update("mappers.BoardDAO-mapper.updateAttachmentFile",attachment);
 	}
-
+	// 조회수 1 증가
+	@Override
+	public int increaceHit(long postNum) {		
+		return sqlSession.update("mappers.BoardDAO-mapper.increaseHit",postNum);
+	}
+	
 	/* Delete */
 	// 게시글 삭제
 	@Override
@@ -148,5 +153,7 @@ public class BoardDAOImpl implements BoardDAO {
 	public int deleteAllAttachments(long postNum) {
 		return sqlSession.delete("mappers.BoardDAO-mapper.deleteAllAttachments", postNum );
 	}
+
+	
 
 }

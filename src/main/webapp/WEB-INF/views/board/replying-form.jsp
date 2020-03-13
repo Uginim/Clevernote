@@ -51,12 +51,15 @@
 				},false);		
 				// 취소 버튼 클릭시
 				cancelBtn.addEventListener("click", function(e) {
-						e.preventDefault();
+					var prevView = e.target.getAttribute('data-prevView');
+					location.href="/board/view/"+returnPage+"/"+prevView;	
+					e.preventDefault();
 				},false);		
 				// 목록 버튼 클릭시
 				listBtn.addEventListener("click", function(e) {
 						e.preventDefault();
-						location.href=getContextPath()+"/board"  
+						var returnPage = e.target.getAttribute('data-returnPage');
+						location.href="/board/list/"+returnPage
 				},false);
     }
     </script>
@@ -64,10 +67,7 @@
 
 <body>
     <h4>새 답글 글 쓰기</h3>
-<%--         <form:form  modelAttribute="board" id="write-form" --%>
-        <form:form  modelAttribute="board" 
-        action="${pageContext.request.contextPath}/board/reply/${returnPage}" method="post" enctype="multipart/form-data">
-            
+        <form:form  modelAttribute="board" action="${pageContext.request.contextPath}/board/reply/${returnPage}" method="post" enctype="multipart/form-data">        
                 <div class="row">
                     <span><label>분류</label></span><span>
                         <form:select path="type.typeNum" id="type" cols="70" disabled="true">
@@ -107,8 +107,8 @@
             <div>
 		            <span>            	
 		                <form:button class="button" id="submit-btn">등록</form:button>
-		                <form:button class="button" id="cancel-btn">취소</form:button>
-		                <form:button class="button" id="list-btn">목록</form:button>
+		                <form:button class="button" data-returnPage="${returnPage}" data-prevView="${board.postNum}" id="cancel-btn">취소</form:button>
+		                <form:button class="button" data-returnPage="${returnPage}" id="list-btn">목록</form:button>
                 </span>
             </div>
         </form:form>

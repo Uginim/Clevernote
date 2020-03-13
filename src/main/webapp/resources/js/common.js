@@ -11,3 +11,27 @@ function getContextPath() {
 		return location.host;
 	}
 }
+
+// ajax 
+function requestJson(method,uri, callback, sendData){
+	// var targetElement = document.querySelector(targetSelector);
+	var xhr = new XMLHttpRequest();	
+	xhr.addEventListener('load',e=>{
+		callback(event);		
+	});
+	xhr.open(method,uri);
+	if(sendData)
+		xhr.send(sendData);
+	else 
+		xhr.send();
+}
+
+var clevernoteUtil ={
+	"click": function(selector,callback){
+		const button = document.querySelector(selector);
+		button.addEventListener('click',(e)=>{
+			callback(e);
+		});
+	}
+
+}

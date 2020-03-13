@@ -286,7 +286,8 @@
 		SET   	type_num = #{type.typeNum},
 			 	title    = #{title},
 			 	content  = #{content},
-				updated_at = SYSTIMESTAMP	 		 
+				updated_at = SYSTIMESTAMP,
+				hit = #{hit}	 		 
 		WHERE 	post_num = #{postNum}	
 	</update>
 	
@@ -297,6 +298,13 @@
 			name = #{name}
 			updated_at = SYSTIMESTAMP
 		WHERE ATTACHMENT_NUM = #{attachmentNum}
+	</update>
+
+	<update id="increaseHit" 
+					parameterType="long">	
+		update board_post
+			 set hit = hit + 1
+		 where post_num = #{postNum}
 	</update>
 
 <!-- Delete -->

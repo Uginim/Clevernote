@@ -34,6 +34,10 @@
 			<!-- 1)특정 URL지정 -->
 <!-- 			<mapping path="/board/**/"/> -->
 			<mapping path="/note/**/"/>
+			<mapping path="/board/**"/>
+			<exclude-mapping path="/board/list/**"/>
+			<exclude-mapping path="/board/view/**"/>
+			
 			<!-- 2)빈 등록 -->
 			<beans:bean id="loginInterceptor" 
 									class="com.uginim.clevernote.interceptor.LoginInterceptor" />

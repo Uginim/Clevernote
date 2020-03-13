@@ -143,6 +143,34 @@ public class CommentDAOImpl implements CommentDAO {
 		return session.selectOne("mappers.CommentDAO-mapper.countRestComment", map);
 	}
 
+	/**
+	 * 게시글의 모든 댓글 개수를 가져옴
+	 * @param postNum 게시글 번호
+	 * @return 총 댓글 개수
+	 */
+	@Override
+	public long countTotalComments(long postNum) {
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("postNum", postNum);
+		return session.selectOne("mappers.CommentDAO-mapper.countTotalComments", map);
+	}
+	
+	
+	/**
+	 * 남은 자식 댓글 개수를 가져온다.
+	 * @param parentNum 부모댓글 번호
+	 * @param lastCommentTime 마지막 자식댓글 시간
+	 * @return 남은 댓글 개수
+	 */
+	@Override
+	public long countRestChildComments(long parentNum, Date lastCommentTime) {
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("parentNum", parentNum);
+		map.put("lastCommentTime", lastCommentTime);
+		return session.selectOne("mappers.CommentDAO-mapper.countRestChildComments", map);
+	}
+	
+	
 	// 내 모든 댓글
 	/**
 	 * 내 모든 댓글을 가져옴
@@ -156,7 +184,7 @@ public class CommentDAOImpl implements CommentDAO {
 		return session.selectList("mappers.CommentDAO-mapper.selectAllMyComments",map);
 	}
 	/**
-	 * 게시글 내 모든 댓글을 가져옴
+	 * 게시글 내 모든 댓글을 가져옴81
 	 * @param userNum 사용자 번호
 	 * @param postNum 게시글 번호
 	 * @return 댓글 리스트
@@ -181,7 +209,7 @@ public class CommentDAOImpl implements CommentDAO {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("postNum", postNum);
 		map.put("lastUpdatedTime", lastUpdatedTime);
-		return session.selectOne("mappers.CommentDAO-mapper.selectAllHistory", map);
+		return session.selectList("mappers.CommentDAO-mapper.selectAllHistory", map);
 	}
 	// 댓글 하나 불러오기
 	/**
@@ -245,7 +273,9 @@ public class CommentDAOImpl implements CommentDAO {
 	 */
 	@Override
 	public List<VoteVO> selectMyAllVotes(long userNum) {
-		return session.selectList("mappers.CommentDAO-mapper.selectMyAllVotes",userNum);
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("userNum", userNum);
+		return session.selectList("mappers.CommentDAO-mapper.selectMyAllVotes",map);
 	}
 
 	/**
@@ -269,8 +299,10 @@ public class CommentDAOImpl implements CommentDAO {
 	 * @return 성공 시 1
 	 */
 	@Override
-	public int deleteVote(long voteNum) {		
-		return session.delete("mappers.CommentDAO-mapper.deleteVote", voteNum);
+	public int deleteVote(long voteNum) {
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("voteNum", voteNum);		
+		return session.delete("mappers.CommentDAO-mapper.deleteVote", map);
 	}
 
 	/**

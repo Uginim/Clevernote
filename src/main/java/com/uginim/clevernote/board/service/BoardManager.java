@@ -18,8 +18,8 @@ import com.uginim.clevernote.board.util.PageManager;
 import com.uginim.clevernote.board.util.RowCriteria;
 import com.uginim.clevernote.board.util.SearchedRowCriteria;
 import com.uginim.clevernote.board.vo.AttachmentFileVO;
-import com.uginim.clevernote.board.vo.BoardTypeVO;
 import com.uginim.clevernote.board.vo.BoardPostVO;
+import com.uginim.clevernote.board.vo.BoardTypeVO;
 
 @Service
 public class BoardManager implements BoardService {
@@ -122,8 +122,10 @@ public class BoardManager implements BoardService {
 		// 2) 첨부파일 가져오기
 		List<AttachmentFileVO> files = boardDAO.selectAllAttachments(postNum);
 		// 3) 조회수 + 1 증가
-		board.setHit(board.getHit()+1);
-		boardDAO.update(board);
+		logger.info("조회수:"+board.getHit());
+		
+		boardDAO.increaceHit(postNum);
+		logger.info("조회수 변화:"+board.getHit());
 		
 		Map<String,Object> map = new HashMap<>();
 		map.put("board",board);

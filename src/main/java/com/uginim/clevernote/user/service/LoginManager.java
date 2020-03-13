@@ -56,4 +56,16 @@ public class LoginManager implements LoginService {
 	public boolean isLoggedIn(HttpSession session) {		
 		return session.getAttribute(KEY_LOGGED_IN_USERINFO) !=null; 
 	}
+	
+	/**
+	 * 로그인 한 유저의 정보를 가져옴
+	 * @param session 로그인 유저의 세션
+	 * @return 로그인한 유저의 vo 객체 (실패 시 null)
+	 */
+	public UserVO getLoggedInUserInfo(HttpSession session) {
+		if(isLoggedIn(session))
+			return (UserVO)session.getAttribute(KEY_LOGGED_IN_USERINFO);
+		else 
+			return null;
+	}
 }

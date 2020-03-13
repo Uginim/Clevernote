@@ -2,6 +2,8 @@ package com.uginim.clevernote.board.vo;
 
 import java.sql.Date;
 
+import lombok.Data;
+@Data
 public class CommentChangeHistoryVO {
 		long postNum; // post별로 조회하기 쉽도록 
 		long historyNum; // 변경이력 번호

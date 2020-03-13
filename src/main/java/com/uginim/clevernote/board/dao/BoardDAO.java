@@ -41,7 +41,7 @@ public interface BoardDAO {
 	// 게시글 수정
 	int update(BoardPostVO boardVO);
 //	//조회수 +1 증가
-//	int updateHit(String bnum);
+	int increaceHit(long postNum);
 	// 첨부파일 수정
 	int updateAttachmentFile(AttachmentFileVO attachment);
 	/* Delete */

@@ -10,6 +10,7 @@ public class BoardCommentVO {
 	private long postNum; // 개시글 번호
 	private long userNum; // 작성자 번호
 	private String username; // 작성자 이름
+	private String targetUsername; // 작성자 이름
 	private Date createdAt; // 생성일시
 	private Date updatedAt; // 수정 일시
 	private String content; // 내용

@@ -2,6 +2,8 @@ package com.uginim.clevernote.user.service;
 
 import javax.servlet.http.HttpSession;
 
+import com.uginim.clevernote.user.vo.UserVO;
+
 public interface LoginService {
 //	static final String KEY_LOGGED_IN_USERINFO = "sessionUser";
 	static final String KEY_LOGGED_IN_USERINFO= "sessionUser";
@@ -33,8 +35,14 @@ public interface LoginService {
 	// 로그인 여부 확인
 	/**
 	 * 로그인 여부를 확인함
-	 * @param session 세션 확인
+	 * @param session 확인할 세션 
 	 * @return
 	 */
 	boolean isLoggedIn(HttpSession session);
+	/**
+	 * 로그인 한 유저의 정보를 가져옴
+	 * @param session 로그인 유저의 세션
+	 * @return 로그인한 유저의 vo 객체 (실패 시 null)
+	 */
+	UserVO getLoggedInUserInfo(HttpSession session);
 }

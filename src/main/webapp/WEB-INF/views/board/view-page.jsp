@@ -8,41 +8,22 @@
 <meta charset="UTF-8">
 <title>${boardVO.title }</title>
 <style>
-    table{
-        border:1px solid;
-        border-collapse: collapse;
-        width:40em;
-    }
-    table td, table th{
-        padding: 0.45em;
-        border:1px solid;
-    }
+    
     input,select,textarea{
         border: none;
-    }
-    tr.content{
-        height: 20em;
-    }
-    /* tr.content>td{
-        height:auto;
-    } */
-    tr.content>td,
-    tr.content>th{
-          /* height:auto; */
-          /* height:100%; */
-          height: 20em;
-    }
+    }    
+    
     td.tools{
         display: flex;
         padding: 0;        
     }
-    tr.content>td>*{
+    tr.content>span>*{
         height:100%;
     }
     .no-border{
         border:none;
     }
-    td>*{
+    span>*{
         width:100%;
     }
     
@@ -56,25 +37,24 @@
         display: none;
     }
 </style>
-    <script src="<c:url value="/resources/js/common.js"/>"> </script>
-
+    <script src="<c:url value='/resources/js/common.js'/>"> </script>
+	<link rel="stylesheet" href="${pageContext.request.contextPath }/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" />
+	<script type="text/javascript" src="${pageContext.request.contextPath }/webjars/jquery/3.4.1/jquery.min.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath }/webjars/popper.js/2.0.2/umd/popper.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath }/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath }/resources/js/common.js" ></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath }/resources/js/comment.js" ></script>
 <script>
     window.addEventListener("load",init,false);
     
-    function init(e){
-
-
-        
+    function init(e){        
         var listBtns = document.getElementsByClassName('listBtn');
         var deleteBtn = document.getElementById('deleteBtn');
         var replyBtn = document.getElementById('replyBtn');
         var modifyBtn = document.getElementById('modifyBtn');
-        var deleteFileBtns = document.getElementsByClassName('delete-file-btn');
-        
+        var deleteFileBtns = document.getElementsByClassName('delete-file-btn');        
         var saveBtn = document.getElementById("saveBtn");
-        var readModeElements = document.getElementsByClassName("");
-        
-        
+        var readModeElements = document.getElementsByClassName("");        
         if(deleteBtn){
 	        deleteBtn.addEventListener("click",function(e){
 	        	e.preventDefault();
@@ -116,7 +96,7 @@
             		xhr.addEventListener("load",deleteFileItem);
             		xhr.open("DELETE","/board/file/"+fid,true);
             		xhr.send(); 
-            		
+            		 
             });    
 				}); 
      		// 목록 버튼 클릭시		
@@ -133,7 +113,6 @@
 				
     }
     function deleteFileItem(e){
-    		//var deleteFileBtns = document.getElementsByClassName('file-item');
     		var list = document.querySelector('#file-list');
     		console.log(e.target.responseText,e.target.readyState, e.target.status);    		
     		if (e.target.readyState===4 && e.target.status == 200){
@@ -147,76 +126,51 @@
 </script>
 </head>
 <body>
-<h3>게시글 보기</h3>
-<form:form modelAttribute="board" action='${pageContext.request.contextPath}/board/modify/${returnPage }'
-		method="POST" id="modify-form" enctype="multipart/form-data">
-		<form:input type="hidden" path="postNum"/>
-		<form:input type="hidden" path="username"/>
-		<form:input type="hidden" path="userNum"/>
-		<form:textarea style="display:none;" path="content"></form:textarea>
-    <table>
-        <tr class="category">
-            <th><label>분류</label></th>
-            <td colspan="6" class="">${board.type.name}</td>
-            <th class=""><label>조회수</label></th>
-            <td  class="">${board.hit}</td>
+<h3>${board.title}</h3>    
+    <div class="category">
+        <span><label>분류</label></span>
+        <span>${board.type.name}</span>
+        <span><label>조회수</label></span>
+        <span>${board.hit}</span>    
+    </div>
+    <div class="author">
+        <span><label>작성자</label></span>
+        <td class="normal-mode"  colspan="8"><b>${board.username}</b>(${board.userNum})</span>
         
-        </tr> 
-        <tr class="title">
-            <th><label>제목</label></th>
-            <td class=""  colspan="8">${board.title}</td>
-            
-        </tr>
-        <tr class="author">
-            <th><label>작성자</label></th>
-            <td class="normal-mode"  colspan="8"><b>${board.username}</b>(${board.userNum})</td>
-            
 
-        </tr> 
-        <tr class="content">
-            <th><label>내용</label></th>
-            <td class=""  colspan="8">${board.content}</td>
-            
-            
-             
-        </tr> 
-        
-        <tr class=" tools">
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="no-border"></td>
-            <td class="tools" colspan="3">
-                <button type="button" id="replyBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">답글</button> 
-                <c:if test="${sessionUser.userNum == board.userNum}">               
-	                <button type="button" id="deleteBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">삭제</button>
-	                <button type="button" id="modifyBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">수정</button>
-                </c:if>
-                <button type="button" data-returnPage="${returnPage }" class="listBtn" >목록</button>
-            </td>
-        </tr>
-        
-        <tr class="attachments">
-            <th><label>첨부목록</label></th>
-            <td  colspan="8">
-           		<ul id="file-list">
-            		<c:if test="${!empty files}">
-		                <c:forEach var="file" items="${files}">
-		                		<li class="file-item" data-fid="${file.attachmentNum}">
-		                    ${file.name } || ${file.fileSize } || ${file.mimetype } 
-		                    </li>
-		                </c:forEach>
-					</c:if>
-				</ul>
-            </td>
-            
-        </tr> 
-    </table>
-</form:form>
-
+    </div> 
+    <div class="content">
+        <span><label>내용</label></span>
+        <td class=""  colspan="8">${board.content}</span>
+    </div> 
+    
+    <div class=" tools">
+        <span class="tools">
+            <button type="button" id="replyBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">답글</button> 
+            <c:if test="${sessionUser.userNum == board.userNum}">               
+                <button type="button" id="deleteBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">삭제</button>
+                <button type="button" id="modifyBtn" data-returnPage="${returnPage }" data-bnum="${board.postNum}">수정</button>
+            </c:if>
+            <button type="button" data-returnPage="${returnPage }" class="listBtn" >목록</button>
+        </span>
+    </div>
+    
+    <div class="attachments">
+        <span><label>첨부목록</label></span>
+        <span>
+       		<ul id="file-list">
+        		<c:if test="${!empty files}">
+	                <c:forEach var="file" items="${files}">
+	                		<li class="file-item" data-fid="${file.attachmentNum}">
+	                    ${file.name } || ${file.fileSize } || ${file.mimetype } 
+	                    </li>
+	                </c:forEach>
+				</c:if>
+			</ul>
+        </span>        
+    </div> 
+	<%@ include file="comment.jsp"  %>
+	
+    
 </body>
 </html>

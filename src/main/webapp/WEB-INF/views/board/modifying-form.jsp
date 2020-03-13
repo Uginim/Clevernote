@@ -142,8 +142,7 @@
 			<tr class="content">
 				<th><label>내용</label></th>
 				<td class="" colspan="8">
-					<form:textarea path="content" id="" cols="70" rows="40" />							
-
+					<form:textarea path="content" id="" cols="70" rows="40" />
 					<form:errors path="content" cssClass="error"/>
 				</td>
 			</tr>

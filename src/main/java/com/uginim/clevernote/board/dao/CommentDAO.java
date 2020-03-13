@@ -84,17 +84,32 @@ public interface CommentDAO {
 	/**
 	 * 남은 댓글 개수를 가져온다.
 	 * @param postNum 게시글 번호
-	 * @param lastCommentTime 마지막 게시글 시간
+	 * @param lastCommentTime 마지막 댓글 시간
 	 * @return 남은 댓글 개수
 	 */
 	long countRestComment(long postNum, Date lastCommentTime);
 	/**
 	 * 남은 댓글 개수를 가져온다.
 	 * @param postNum 게시글 번호
-	 * @param lastCommentNum 마지막 게시글 시간
+	 * @param lastCommentNum 마지막 댓글 시간
 	 * @return 남은 댓글 개수
 	 */
 	long countRestComment(long postNum, long lastCommentNum);
+	/**
+	 * 게시글의 모든 댓글 개수를 가져옴
+	 * @param postNum 게시글 번호
+	 * @return 총 댓글 개수
+	 */
+	long countTotalComments(long postNum);
+	
+	/**
+	 * 남은 자식 댓글 개수를 가져온다.
+	 * @param parentNum 부모댓글 번호
+	 * @param lastCommentTime 마지막 자식댓글 시간
+	 * @return 남은 댓글 개수
+	 */
+	long countRestChildComments(long parentNum, Date lastCommentTime);
+	
 	// 이후 변경 내역 여부
 	/**
 	 * 댓글의 변경이력 불러오기 

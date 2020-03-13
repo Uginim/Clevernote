@@ -242,25 +242,50 @@
 			<version>1.18.10</version>
 			<scope>provided</scope>
 		</dependency>
-	<!-- JPA(java Persistance API) Validation 시작 -->
-	<dependency>
-		<groupId>org.hibernate</groupId>
-		<artifactId>hibernate-core</artifactId>
-		<version>5.4.10.Final</version>
+		
+		<!-- JPA(java Persistance API) Validation 시작 -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.4.10.Final</version>
+	
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>5.4.10.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.1.2.Final</version>
+		</dependency>
+	
+		<!-- JPA(java Persistance API) Validation 끝 -->
 
-	</dependency>
-	<dependency>
-		<groupId>org.hibernate</groupId>
-		<artifactId>hibernate-entitymanager</artifactId>
-		<version>5.4.10.Final</version>
-	</dependency>
-	<dependency>
-		<groupId>org.hibernate</groupId>
-		<artifactId>hibernate-validator</artifactId>
-		<version>6.1.2.Final</version>
-	</dependency>
+		<!-- Bootstrap 시작 -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>jquery</artifactId>
+		    <version>3.4.1</version>
+		</dependency>		
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>bootstrap</artifactId>
+		    <version>4.4.1-1</version>
+		</dependency>		
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>popper.js</artifactId>
+		    <version>2.0.2</version>
+		</dependency>	
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>font-awesome</artifactId>
+		    <version>5.12.0</version>
+		</dependency>			
+		<!-- Bootstrap 끝 -->
 
-	<!-- JPA(java Persistance API) Validation 끝 -->
 
 
 	</dependencies>
