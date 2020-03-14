@@ -49,7 +49,7 @@ public class CommentDAOImplTest {
 		logger.info(comment2.toString());
 	}
 	
-//	@Disabled
+	@Disabled
 	@Test
 	@DisplayName("댓글 리스트 가져오기")
 	public void selectComment() {
@@ -98,7 +98,18 @@ public class CommentDAOImplTest {
 	
 	@Disabled
 	@Test
-	@Transactional
+	public void selectOneComment() {
+		// 루트댓글
+		BoardCommentVO rootComment =  commentDAO.selectOneComment(3);
+		logger.info("root comment:\n"+rootComment);
+		// 자식 댓글
+		BoardCommentVO childComment =  commentDAO.selectOneComment(133);
+		logger.info("child comment:\n"+childComment);
+	}
+	
+//	@Disabled
+	@Test
+//	@Transactional
 	@DisplayName("투표기능 ")
 	public void selectVote() {
 		
@@ -116,7 +127,21 @@ public class CommentDAOImplTest {
 		newVote2.setType('D');
 		newVote2.setUserNum(397);
 		logger.info("insertresult2: "+commentDAO.mergeNewVote(newVote2));
-		logger.info("deleteResult2: "+commentDAO.deleteVote(newVote2.getCommentNum(),newVote2.getUserNum()));
+//		logger.info("deleteResult2: "+commentDAO.deleteVote(newVote2.getCommentNum(),newVote2.getUserNum()));
+		newVote2.setCommentNum(43);
+		newVote2.setType('D');
+		newVote2.setUserNum(398);
+		logger.info("insertresult2: "+commentDAO.mergeNewVote(newVote2));
+//		logger.info("deleteResult2: "+commentDAO.deleteVote(newVote2.getCommentNum(),newVote2.getUserNum()));
+		newVote2.setCommentNum(43);
+		newVote2.setType('D');
+		newVote2.setUserNum(399);
+		logger.info("insertresult2: "+commentDAO.mergeNewVote(newVote2));
+//		logger.info("deleteResult2: "+commentDAO.deleteVote(newVote2.getCommentNum(),newVote2.getUserNum()));
+		newVote2.setCommentNum(43);
+		newVote2.setType('L');
+		newVote2.setUserNum(399);
+		logger.info("insertresult2: "+commentDAO.mergeNewVote(newVote2));
 	}
 	
 	

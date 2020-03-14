@@ -12,22 +12,12 @@
     input,select,textarea{
         border: none;
     }    
-    
-    td.tools{
-        display: flex;
-        padding: 0;        
-    }
-    tr.content>span>*{
-        height:100%;
-    }
+   
     .no-border{
         border:none;
     }
-    span>*{
-        width:100%;
-    }
+ 
     
-    /* .{ */
     
     .attachments>td button{
         display: inline-block;
@@ -39,6 +29,7 @@
 </style>
     <script src="<c:url value='/resources/js/common.js'/>"> </script>
 	<link rel="stylesheet" href="${pageContext.request.contextPath }/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/comment.css" />
 	<script type="text/javascript" src="${pageContext.request.contextPath }/webjars/jquery/3.4.1/jquery.min.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath }/webjars/popper.js/2.0.2/umd/popper.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath }/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>

@@ -16,7 +16,7 @@ function getContextPath() {
 function requestJson(method,uri, callback, sendData){
 	// var targetElement = document.querySelector(targetSelector);
 	var xhr = new XMLHttpRequest();	
-	xhr.addEventListener('load',e=>{
+	xhr.addEventListener('load',event=>{
 		callback(event);		
 	});
 	xhr.open(method,uri);

@@ -15,19 +15,13 @@ import com.uginim.clevernote.board.dao.BoardDAO;
 import com.uginim.clevernote.board.dao.CommentDAO;
 import com.uginim.clevernote.board.vo.BoardCommentVO;
 import com.uginim.clevernote.board.vo.BoardPostVO;
+import com.uginim.clevernote.board.vo.CommentChangeHistoryVO;
 import com.uginim.clevernote.board.vo.VoteVO;
 
 @Service
 public class CommentManager implements CommentService {
 	private static final Logger logger = LoggerFactory.getLogger(CommentManager.class);
-	public static final String KEY_COMMENT_LIST = "commentList";
-	public static final String KEY_VOTE_LIST = "voteList";
-	public static final String KEY_TOTAL_COUNT = "totalCommentCount";
-	public static final String KEY_REST_COMMENTS_COUNT = "restCommentCount"; 
-	public static final String KEY_RESULT_STATE= "result_state";
-	public static final String KEY_NEW_COMMENT_NUM= "resultState";
-	public static final String KEY_LAST_COMMENT_TIME= "lastCommentTime";
-	private static final String KEY_PARENT_NUM = "parentKey";
+	
 	private final static long MAX_REQEUST_ROW = 10;
 	@Inject
 	CommentDAO commentDAO;
@@ -167,7 +161,7 @@ public class CommentManager implements CommentService {
 		}else {
 			lastTime = requestTime;
 		}
-		long count = commentDAO.countRestChildComments(parentNum, requestTime);
+		long count = commentDAO.countRestChildComments(parentNum, lastTime);
 		logger.info("KEY_REST_COMMENTS_COUNT : "+ count);
 		datas.put(KEY_REST_COMMENTS_COUNT, count);
 		
@@ -231,6 +225,142 @@ public class CommentManager implements CommentService {
 		result.put(KEY_NEW_COMMENT_NUM,comment.getCommentNum());
 		return result;
 	}
+	
+	/**
+	 * 댓글 하나의 사용자번호를 가져온다.
+	 * @param commentNum 가져올 댓글 번호
+	 * @return 댓글 의 사용자 번호 실패시 -1
+	 */
+	@Override
+	public long getCommentUserNum(long commentNum) {
+		long result = -1;
+		BoardCommentVO comment =  commentDAO.selectOneComment(commentNum);
+		try {
+			result = comment.getUserNum();			
+		}catch (Exception e) {
+			e.printStackTrace();			
+		}
+		return result;
+	}
+
+	/**
+	 * 댓글의 내용을 수정한다.
+	 * @param commentNum 대상 댓글 번호
+	 * @param Content 바뀔 내용
+	 * @return 성공 시 1
+	 */
+	@Override
+	public int updateContent(long commentNum, String content) {		
+		return commentDAO.updateContent(commentNum, content);
+	}
+	
+	/**
+	 * 댓글을 삭제한다.
+	 * @param commentNum 대상 댓글 번호
+	 * @return 성공 시 1
+	 */
+	@Override
+	public int deleteComment(long commentNum) {
+		return commentDAO.delete(commentNum);
+	}
+	
+	/**
+	 * 루트 댓글을 가져온다
+	 * @param commentNum 댓글 번호
+	 * @return 루트댓글 객체
+	 */
+	@Override
+	public BoardCommentVO getRootComment(long commentNum) {
+		return commentDAO.selectOneRootComment(commentNum);
+	}
+	
+	/**
+	 * 자식 댓글을 가져온다
+	 * @param commentNum 댓글 번호
+	 * @return 자식댓글 객체
+	 */
+	@Override
+	public BoardCommentVO getChildComment(long commentNum) {
+		return commentDAO.selectOneChildComment(commentNum);
+	}
+	
+	
+	
+	/**
+	 * 사용자의 게시글 내 선호도이력 모두 가져온다.
+	 * @param postNum 게시글 번호
+	 * @param userNum 사용자 번호
+	 * @return 투표 이력
+	 */
+	@Override
+	public List<VoteVO> getAllMyPreferenceAtPost(long postNum, long userNum) {
+		List<VoteVO> voteList= commentDAO.selectMyAllVotes(userNum, postNum);
+		return voteList;
+	}
+	
+	/**
+	 * 변경 이력을 가져옴
+	 * @param postNum 게시글 번호
+	 * @param basetime 기준 시간
+	 * @return 1.변경이력 2. 마지막 변경 시간
+	 */
+	@Override
+	public Map<String, Object> getChangeHistory(long postNum, Date basetime) {
+		Map<String, Object> datas = new HashMap<>();
+		// 1. 변경 이력
+		List<CommentChangeHistoryVO> historyList = commentDAO.selectAllHistory(postNum, basetime);
+		datas.put(KEY_HISTORY_LIST, historyList);
+		// 2. 마지막 변경 시간
+		Date lastTime = null;
+		if(historyList.size()>0) {
+			CommentChangeHistoryVO history =  historyList.get(historyList.size()-1);
+			lastTime = history.getCreatedAt();
+		}else {
+			lastTime = basetime;
+		}
+		datas.put(KEY_LAST_HITORY_TIME,lastTime);		
+		return datas;
+	}
+	
+	/**
+	 * 투표하기 
+	 * @param commentNum 댓글 번호
+	 * @param userNum 사용자 번호
+	 * @param type 투표 타입
+	 * @return 성공 시 1
+	 */
+	@Override
+	public int voteToComment(long commentNum, long userNum, char type) {
+		VoteVO vote = new VoteVO();
+		vote.setCommentNum(commentNum);
+		vote.setUserNum(userNum);
+		vote.setType(type);
+//		return commentDAO.insertNewVote(vote);
+		return commentDAO.mergeNewVote(vote);
+	}
+	
+	/**
+	 * 투표 취소
+	 * @param voteNum 투표 번호
+	 * @return 성공 시 1
+	 */
+	@Override
+	public int cancelVote(long voteNum) { 
+		return commentDAO.deleteVote(voteNum);
+	}
+	
+	/**
+	 * 투표 취소
+	 * @param commentNum 댓글 번호
+	 * @param userNum 유저 번호
+	 * @return
+	 */
+	@Override
+	public int cancelVote(long commentNum, long userNum) {
+		return commentDAO.deleteVote(commentNum, userNum);
+	}
+	
+	
 	
 
 

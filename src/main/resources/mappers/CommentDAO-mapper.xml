@@ -242,7 +242,7 @@
 		FROM  board_comment "comment",       
 		    ( SELECT parent_num, COUNT(comment_num) "childrenCount"
 		            FROM board_comment 
-		            WHERE  post_num = 81 
+		            WHERE  parent_num = #{commentNum} 
 		            AND parent_num IS NOT NULL 
 		            GROUP BY parent_num) "child",
 		    (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
@@ -253,6 +253,64 @@
 		AND "vote".comment_num(+) = "comment".comment_num    
 		AND "comment".comment_num = #{commentNum}
 	</select>
+	
+<!-- 루트 댓글을 가져옴 -->
+	<select id="selectOneRootComment" parameterType="long" resultType="BoardCommentVO">	
+			SELECT 			   
+			    "comment".comment_num AS "commentNum",
+			    "comment".user_num AS "userNum",
+			    "comment".POST_NUM AS "postNum",
+			    "comment".CONTENT AS "content",
+			    "comment".CREATED_AT AS "createdAt",
+			    "comment".UPDATED_AT AS "updatedAt",
+			    "comment".USERNAME AS "username"
+			    ,nvl("child"."childrenCount",0) AS "childrenCount" ,
+		        nvl("vote"."like",0) AS "like",
+		        nvl("vote"."dislike",0) AS "dislike"
+			FROM board_comment "comment",
+			        (SELECT parent_num, COUNT(comment_num) "childrenCount"
+			            FROM board_comment 
+			            WHERE parent_num = #{commentNum} 
+			            AND parent_num IS NOT NULL 
+			            GROUP BY parent_num) "child",
+			        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+				        FROM comment_vote, board_comment
+				        WHERE board_comment.comment_num = comment_vote.comment_num 
+				        AND board_comment.comment_num = #{commentNum}                       
+				        GROUP BY board_comment.comment_num) "vote"  
+			WHERE "comment".comment_num = #{commentNum}
+			AND "comment".comment_num = "child".parent_num(+)
+			AND "vote".comment_num(+) = "comment".comment_num 
+			AND "comment".parent_num IS NULL 
+			AND "comment".TARGET_NUM IS NULL			
+	</select>
+<!-- 자식 댓글을 가져옴	 -->
+	<select id="selectOneChildComment" parameterType="long" resultType="BoardCommentVO">
+		SELECT
+	        "comment".comment_num AS "commentNum",
+	        "comment".user_num AS "userNum",
+	        "comment".POST_NUM AS "postNum",
+	        "comment".CONTENT AS "content",
+	        "comment".CREATED_AT AS "createdAt",
+	        "comment".UPDATED_AT AS "updatedAt",
+	        "comment".USERNAME AS "username",
+	        "comment".PARENT_NUM AS "parentNum",
+	        "comment".TARGET_NUM AS "targetNum",
+	        "comment".TARGET_USERNAME AS "targetUsername",
+	        nvl("vote"."like",0) AS "like",
+	        nvl("vote"."dislike",0) AS "dislike"
+	    FROM board_comment "comment",
+	        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+	        FROM comment_vote, board_comment
+	        WHERE board_comment.comment_num = comment_vote.comment_num
+	        AND board_comment.comment_num = #{commentNum}	        
+	        GROUP BY board_comment.comment_num) "vote"
+	    WHERE "vote".comment_num(+) = "comment".comment_num    
+	    AND "comment".comment_num = #{commentNum}
+	    AND "comment".parent_num IS NOT NULL 
+	    AND "comment".TARGET_NUM IS NOT NULL	    
+	</select>	
+	
 <!-- 댓글 수정하기	 -->
 	<update id="update" parameterType="BoardCommentVO">
 		UPDATE board_comment 
@@ -277,6 +335,13 @@
 							#{targetNum}
 						</otherwise>
 					</choose> 		
+		WHERE comment_num = #{commentNum}
+	</update>
+<!-- 특정 댓글의 내용만 수정	 -->
+	<update id="updatedContent" parameterType="map">
+		UPDATE board_comment 
+		content = #{content},
+		updated_at = SYSTIMESTAMP	
 		WHERE comment_num = #{commentNum}
 	</update>
 <!-- 댓글 삭제하기	 -->
@@ -311,7 +376,7 @@
 	<update id="mergeNewVote" parameterType="VoteVO">
 		MERGE INTO comment_vote
 		USING dual
-		ON (comment_vote.comment_num = 1 AND comment_vote.type = 'L' AND comment_vote.user_num = 397)
+		ON (comment_vote.comment_num =  #{commentNum} AND comment_vote.user_num = #{userNum})
 		WHEN NOT MATCHED THEN 
 		    INSERT (
 		        vote_num,
@@ -329,6 +394,12 @@
 		        SYSTIMESTAMP,
 		        #{userNum}
 		    )
+        WHEN MATCHED THEN
+            UPDATE SET
+                updated_at = SYSTIMESTAMP,
+                type = #{type}
+            
+		 
 		 <selectKey keyProperty="voteNum" order="AFTER" resultType="long">
     		SELECT VOTE_SEQUENCE.currval FROM dual
     	</selectKey>    
@@ -361,6 +432,7 @@
 				</when>
 				<when test="commentNum != null and userNum != null">
 					comment_num = #{commentNum}
+					and user_num #{userNum}
 				</when>
 				<otherwise>
 					 1=0

@@ -110,6 +110,11 @@ public interface CommentDAO {
 	 */
 	long countRestChildComments(long parentNum, Date lastCommentTime);
 	
+	
+	
+	
+	
+	
 	// 이후 변경 내역 여부
 	/**
 	 * 댓글의 변경이력 불러오기 
@@ -125,6 +130,24 @@ public interface CommentDAO {
 	 * @return 댓글 vo
 	 */
 	BoardCommentVO selectOneComment(long commentNum);
+	
+	/**
+	 * 루트 댓글
+	 * @param commentNum 댓글 번호
+	 * @return 루트 댓글 VO
+	 */
+	BoardCommentVO selectOneRootComment(long commentNum);
+	
+	
+	/**
+	 * 자식 댓글
+	 * @param commentNum 댓글 번호
+	 * @return 자식 댓글 VO
+	 */
+	BoardCommentVO selectOneChildComment(long commentNum);
+	
+	
+	
 	/* Update */
 	/**
 	 * 댓글 수정하기
@@ -132,6 +155,16 @@ public interface CommentDAO {
 	 * @return 성공 시 1
 	 */
 	int update(BoardCommentVO comment);
+	
+	// 특정 댓글 내용만 수정
+	/**
+	 * 특정 댓글의 내용만 수정
+	 * @param commentNum 댓글번호
+	 * @param content 바꿀 내용
+	 * @return 성공 시 1
+	 */
+	int updateContent(long commentNum, String content);
+	
 	/* Delete */	
 	/**
 	 * 댓글 삭제하기

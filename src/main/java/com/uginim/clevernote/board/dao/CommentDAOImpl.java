@@ -222,6 +222,28 @@ public class CommentDAOImpl implements CommentDAO {
 		return session.selectOne("mappers.CommentDAO-mapper.selectOneComment",commentNum);
 	}
 
+	
+	/**
+	 * 루트 댓글
+	 * @param commentNum 댓글 번호
+	 * @return 루트 댓글 VO
+	 */
+	@Override
+	public BoardCommentVO selectOneRootComment(long commentNum) {
+		return session.selectOne("mappers.CommentDAO-mapper.selectOneRootComment",commentNum);
+	}
+	
+	
+	/**
+	 * 자식 댓글
+	 * @param commentNum 댓글 번호
+	 * @return 자식 댓글 VO
+	 */
+	@Override
+	public BoardCommentVO selectOneChildComment(long commentNum) {
+		return session.selectOne("mappers.CommentDAO-mapper.selectOneChildComment",commentNum);
+	}
+	
 	/* Update */
 	/**
 	 * 댓글 수정하기
@@ -233,6 +255,20 @@ public class CommentDAOImpl implements CommentDAO {
 		return session.update("mappers.CommentDAO-mapper.update", comment);
 	}
 
+	/**
+	 * 특정 댓글의 내용만 수정
+	 * @param commentNum 댓글번호
+	 * @param content 바꿀 내용
+	 * @return 성공 시 1
+	 */
+	public int updateContent(long commentNum, String content) {
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.putIfAbsent("commentNum", commentNum);
+		map.putIfAbsent("content", content);
+		return session.update("mappers.CommentDAO-mapper.updatedContent",map);
+	}
+	
+	
 	/* Delete */	
 	/**
 	 * 댓글 삭제하기
