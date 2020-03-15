@@ -38,6 +38,7 @@ public class LoginController {
 	public String login(
 			@ModelAttribute UserVO user,
 			@RequestParam(name = "next", required = false) String next,
+			Model model,
 			HttpSession session			
 			) {
 		logger.info("session for signing in :"+ session.toString());
@@ -50,7 +51,8 @@ public class LoginController {
 			if(state == LoginService.LOGIN_SUCCESS) {				
 				return "redirect:"+ ((next!=null)?next : "/");
 			}else {
-				return "signin";
+				model.addAttribute("errMsg", "비밀번호가 맞지 않습니다.");
+				return "user/sign-in-form";
 			}			
 		}	
 	}

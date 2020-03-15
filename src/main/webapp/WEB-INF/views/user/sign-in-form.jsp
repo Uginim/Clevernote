@@ -42,7 +42,7 @@
 				<div class="row">
 					<input name="pw" type="password" placeholder="비밀번호"/>
 				</div>
-				<div><span class="errmsg" id="pwMsg">${error}</span></div>		
+				<div><span class="errmsg" id="pwMsg">${error}${errMsg}</span></div>		
 				<div class="row"><button type="submit" class="loginBtn">로그인</button></div>		
 			</div>
 			<div class="keeping-login-info">

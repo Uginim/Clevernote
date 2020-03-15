@@ -5,13 +5,13 @@
      <div class="container">
          <hr>
          <div class="row justify-content-md-center" >
-             <a href="http://uginim.com">제작자 블로그</a>
+             <a class="text-muted" href="http://uginim.com">제작자 블로그</a>
              <span>|</span>
-             <a href="#">이용약관</a>
+             <a class="text-muted" href="#">이용약관</a>
              <span>|</span>
-             <a href="#">개인정보처리방침</a>
+             <a class="text-muted" href="#">개인정보처리방침</a>
              <span>|</span>
-             <a href="#">고객센터</a>
+             <a class="text-muted" href="#">고객센터</a>
          </div>
          <hr>
         <div class="row justify-content-md-center">    

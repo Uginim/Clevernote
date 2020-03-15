@@ -5,7 +5,7 @@
 <header>
   	<div class="bg-dark collapse" id="navbarHeader" style="">
     	<div class="container">
-		      <div class="row">
+		      <div class="row mb-0">
 			        <div class="col-sm-8 py-4">
 			        	<h4 class="text-white">CleverNote</h4>        	
 			          	<%@include file="/WEB-INF/views/include/nav.jsp"%>          

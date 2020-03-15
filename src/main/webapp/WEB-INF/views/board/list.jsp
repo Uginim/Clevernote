@@ -141,8 +141,8 @@ window.addEventListener("load", init,false);
 							<c:out value="${pageManager.src.searchType == 'C' ? 'selected':'' }" />>내용</option>
 						<option value="N"
 							<c:out value="${pageManager.src.searchType == 'N' ? 'selected':'' }" />>작성자</option>
-						<option value="I"
-							<c:out value="${pageManager.src.searchType == 'I' ? 'selected':'' }" />>아이디</option>
+						<%-- <option value="I"
+							<c:out value="${pageManager.src.searchType == 'I' ? 'selected':'' }" />>아이디</option> --%>
 					</select>
 				</div>
 				<input type="search" class="form-control mr-sm-2" name="keyword" id="keyword" value="${pageManager.src.keyword }"/>

@@ -220,6 +220,7 @@
 		    comment_num "commentNum",
 		    created_at "createdAt",
 		    history_num "historyNum",
+		    user_num "userNum",
 		    type "type"
 		FROM comment_change_history
 		WHERE post_num = #{postNum}

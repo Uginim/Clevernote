@@ -1,31 +1,36 @@
 --------------------------------------------------------
---  파일이 생성됨 - 목요일-3월-12-2020   
+--  파일이 생성됨 - 월요일-3월-16-2020   
 --------------------------------------------------------
 --------------------------------------------------------
 --  DDL for Sequence ATTACHMENT_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "ATTACHMENT_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 61 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "ATTACHMENT_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 101 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence BOARD_COMMENT_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "BOARD_COMMENT_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 21 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "BOARD_COMMENT_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 221 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence BOARD_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "BOARD_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 101 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "BOARD_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 1101 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence BOARD_TYPE_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "BOARD_TYPE_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 21 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "BOARD_TYPE_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 41 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence CATEGORY_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "CATEGORY_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999999 INCREMENT BY 1 START WITH 501 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "CATEGORY_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999999 INCREMENT BY 1 START WITH 521 CACHE 20 NOORDER  NOCYCLE ;
+--------------------------------------------------------
+--  DDL for Sequence HISTORY_SEQUENCE
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "HISTORY_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 241 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence NOTE_SEQUENCE
 --------------------------------------------------------
@@ -45,7 +50,12 @@
 --  DDL for Sequence USER_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "USER_SEQUENCE"  MINVALUE 1 MAXVALUE 99999999999 INCREMENT BY 1 START WITH 398 NOCACHE  NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "USER_SEQUENCE"  MINVALUE 1 MAXVALUE 99999999999 INCREMENT BY 1 START WITH 400 NOCACHE  NOORDER  NOCYCLE ;
+--------------------------------------------------------
+--  DDL for Sequence VOTE_SEQUENCE
+--------------------------------------------------------
+
+   CREATE SEQUENCE  "VOTE_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 121 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Table APP_USER
 --------------------------------------------------------
@@ -112,7 +122,9 @@
 	"CREATED_AT" TIMESTAMP (6) DEFAULT SYSTIMESTAMP, 
 	"UPDATED_AT" TIMESTAMP (6) DEFAULT systimestamp, 
 	"USERNAME" VARCHAR2(128 BYTE), 
-	"PARENT_NUM" NUMBER
+	"PARENT_NUM" NUMBER, 
+	"TARGET_NUM" NUMBER, 
+	"TARGET_USERNAME" VARCHAR2(128 BYTE)
    ) SEGMENT CREATION IMMEDIATE 
   PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
@@ -127,6 +139,8 @@
    COMMENT ON COLUMN "BOARD_COMMENT"."UPDATED_AT" IS '수정 일시';
    COMMENT ON COLUMN "BOARD_COMMENT"."USERNAME" IS '댓글유저이름';
    COMMENT ON COLUMN "BOARD_COMMENT"."PARENT_NUM" IS '부모 댓글';
+   COMMENT ON COLUMN "BOARD_COMMENT"."TARGET_NUM" IS '대상 댓글';
+   COMMENT ON COLUMN "BOARD_COMMENT"."TARGET_USERNAME" IS '답글대상 유저';
 --------------------------------------------------------
 --  DDL for Table BOARD_POST
 --------------------------------------------------------
@@ -212,7 +226,9 @@
    (	"POST_NUM" NUMBER, 
 	"COMMENT_NUM" NUMBER, 
 	"CREATED_AT" TIMESTAMP (6) DEFAULT SYSTIMESTAMP, 
-	"TYPE" CHAR(1 BYTE)
+	"TYPE" CHAR(2 BYTE), 
+	"HISTORY_NUM" NUMBER, 
+	"USER_NUM" NUMBER
    ) SEGMENT CREATION IMMEDIATE 
   PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
@@ -223,6 +239,8 @@
    COMMENT ON COLUMN "COMMENT_CHANGE_HISTORY"."COMMENT_NUM" IS '댓글 번호';
    COMMENT ON COLUMN "COMMENT_CHANGE_HISTORY"."CREATED_AT" IS '변경 시간';
    COMMENT ON COLUMN "COMMENT_CHANGE_HISTORY"."TYPE" IS '변경이력유형';
+   COMMENT ON COLUMN "COMMENT_CHANGE_HISTORY"."HISTORY_NUM" IS '변경이력번호';
+   COMMENT ON COLUMN "COMMENT_CHANGE_HISTORY"."USER_NUM" IS '사용자';
 --------------------------------------------------------
 --  DDL for Table COMMENT_VOTE
 --------------------------------------------------------
@@ -230,7 +248,7 @@
   CREATE TABLE "COMMENT_VOTE" 
    (	"VOTE_NUM" NUMBER, 
 	"COMMENT_NUM" NUMBER, 
-	"TYPE" CHAR(3 BYTE), 
+	"TYPE" CHAR(1 BYTE), 
 	"CREATED_AT" TIMESTAMP (6) DEFAULT SYSTIMESTAMP, 
 	"UPDATED_AT" TIMESTAMP (6) DEFAULT SYSTIMESTAMP, 
 	"USER_NUM" NUMBER
@@ -343,6 +361,15 @@
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
   TABLESPACE "SYSTEM" ;
 --------------------------------------------------------
+--  DDL for Index COMMENT_CHANGE_HISTORY_PK1
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "COMMENT_CHANGE_HISTORY_PK1" ON "COMMENT_CHANGE_HISTORY" ("HISTORY_NUM") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
+  TABLESPACE "SYSTEM" ;
+--------------------------------------------------------
 --  DDL for Index BOARD_COMMENT_PK
 --------------------------------------------------------
 
@@ -419,17 +446,28 @@
 --------------------------------------------------------
 
   CREATE OR REPLACE TRIGGER "TRIGGER_COMMENT_IDU" 
-AFTER DELETE OR INSERT OR UPDATE OF COMMENT_NUM,POST_NUM ON BOARD_COMMENT FOR EACH ROW
+AFTER DELETE OR INSERT OR UPDATE OF COMMENT_NUM,POST_NUM,CONTENT ON BOARD_COMMENT FOR EACH ROW
 BEGIN
-    IF INSERTING THEN
-        INSERT INTO comment_change_history (post_num, comment_num, created_at, type)
-        VALUES (:new.post_num, :new.comment_num, systimestamp, 'I');
+    IF INSERTING THEN        
+        IF :new.parent_num IS NULL THEN 
+            INSERT INTO comment_change_history (post_num, comment_num, created_at, type, history_num, user_num)
+            VALUES (:new.post_num, :new.comment_num, systimestamp, 'I', HISTORY_SEQUENCE.nextval,:new.user_num);
+--        ELSIF :new.parent_num IS NOT NULL THEN
+        ELSE
+            INSERT INTO comment_change_history (post_num, comment_num, created_at, type, history_num, user_num)
+            VALUES (:new.post_num, :new.parent_num, systimestamp, 'CI', HISTORY_SEQUENCE.nextval, :new.user_num);
+        END IF;
     ELSIF UPDATING THEN
-        INSERT INTO comment_change_history (post_num, comment_num, created_at, type)
-        VALUES (:old.post_num, :old.comment_num, systimestamp, 'U');
+        INSERT INTO comment_change_history (post_num, comment_num, created_at, type, history_num, user_num)
+        VALUES (:old.post_num, :old.comment_num, systimestamp, 'U', HISTORY_SEQUENCE.nextval, :old.user_num);
     ELSIF DELETING THEN
-        INSERT INTO comment_change_history (post_num, comment_num, created_at, type)
-        VALUES (:old.post_num, :old.comment_num, systimestamp, 'D');
+        IF :old.parent_num IS NULL THEN
+            INSERT INTO comment_change_history (post_num, comment_num, created_at, type, history_num, user_num)
+            VALUES (:old.post_num, :old.comment_num, systimestamp, 'D', HISTORY_SEQUENCE.nextval, :old.user_num);
+        ELSE
+            INSERT INTO comment_change_history (post_num, comment_num, created_at, type, history_num, user_num)
+            VALUES (:old.post_num, :old.comment_num, systimestamp, 'CD', HISTORY_SEQUENCE.nextval, :old.user_num);
+        END IF;
     END IF;
 END;
 /
@@ -448,6 +486,39 @@ END;
 
 /
 ALTER TRIGGER "TRIGGER_FOR_DEFAULT_CATEGORY" ENABLE;
+--------------------------------------------------------
+--  DDL for Procedure BOARD_SAMPLE_DATA_PROC
+--------------------------------------------------------
+set define off;
+
+  CREATE OR REPLACE PROCEDURE "BOARD_SAMPLE_DATA_PROC" 
+(
+  RECORDCNT IN NUMBER DEFAULT 959
+) AS 
+BEGIN
+   FOR i in 1..RECORDCNT LOOP  
+    INSERT INTO board_post(
+      post_num,
+      title,
+      type_num,
+      user_num,
+      content,
+      username,
+      post_group
+    ) VALUES (
+      BOARD_SEQUENCE.nextval,      
+      '제목-' || i,
+      1,
+      399,      
+      '반갑습니다-' || i,
+      '관리자',
+      BOARD_SEQUENCE.currval
+    );
+  END LOOP;
+  COMMIT;
+END BOARD_SAMPLE_DATA_PROC;
+
+/
 --------------------------------------------------------
 --  Constraints for Table TAG
 --------------------------------------------------------
@@ -503,15 +574,16 @@ ALTER TRIGGER "TRIGGER_FOR_DEFAULT_CATEGORY" ENABLE;
 --  Constraints for Table COMMENT_CHANGE_HISTORY
 --------------------------------------------------------
 
-  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("TYPE" NOT NULL ENABLE);
-  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("POST_NUM" NOT NULL ENABLE);
-  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("COMMENT_NUM" NOT NULL ENABLE);
-  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("CREATED_AT" NOT NULL ENABLE);
-  ALTER TABLE "COMMENT_CHANGE_HISTORY" ADD CONSTRAINT "COMMENT_CHANGE_HISTORY_PK" PRIMARY KEY ("POST_NUM", "COMMENT_NUM", "CREATED_AT")
+  ALTER TABLE "COMMENT_CHANGE_HISTORY" ADD CONSTRAINT "COMMENT_CHANGE_HISTORY_PK" PRIMARY KEY ("HISTORY_NUM")
   USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)
   TABLESPACE "SYSTEM"  ENABLE;
+  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("TYPE" NOT NULL ENABLE);
+  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("POST_NUM" NOT NULL ENABLE);
+  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("COMMENT_NUM" NOT NULL ENABLE);
+  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("CREATED_AT" NOT NULL ENABLE);
+  ALTER TABLE "COMMENT_CHANGE_HISTORY" MODIFY ("HISTORY_NUM" NOT NULL ENABLE);
 --------------------------------------------------------
 --  Constraints for Table APP_USER
 --------------------------------------------------------
@@ -622,7 +694,9 @@ ALTER TRIGGER "TRIGGER_FOR_DEFAULT_CATEGORY" ENABLE;
   ALTER TABLE "BOARD_COMMENT" ADD CONSTRAINT "BOARD_COMMENT_FK2" FOREIGN KEY ("POST_NUM")
 	  REFERENCES "BOARD_POST" ("POST_NUM") ENABLE;
   ALTER TABLE "BOARD_COMMENT" ADD CONSTRAINT "BOARD_COMMENT_FK3" FOREIGN KEY ("PARENT_NUM")
-	  REFERENCES "BOARD_COMMENT" ("COMMENT_NUM") ON DELETE SET NULL ENABLE;
+	  REFERENCES "BOARD_COMMENT" ("COMMENT_NUM") ON DELETE CASCADE ENABLE;
+  ALTER TABLE "BOARD_COMMENT" ADD CONSTRAINT "BOARD_COMMENT_FK4" FOREIGN KEY ("TARGET_NUM")
+	  REFERENCES "BOARD_COMMENT" ("COMMENT_NUM") ON DELETE CASCADE ENABLE;
 --------------------------------------------------------
 --  Ref Constraints for Table BOARD_POST
 --------------------------------------------------------
@@ -637,6 +711,20 @@ ALTER TRIGGER "TRIGGER_FOR_DEFAULT_CATEGORY" ENABLE;
 
   ALTER TABLE "CATEGORY" ADD CONSTRAINT "CATEGORY_FK1" FOREIGN KEY ("OWNER_NUM")
 	  REFERENCES "APP_USER" ("USER_NUM") ON DELETE CASCADE ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table COMMENT_CHANGE_HISTORY
+--------------------------------------------------------
+
+  ALTER TABLE "COMMENT_CHANGE_HISTORY" ADD CONSTRAINT "COMMENT_CHANGE_HISTORY_FK1" FOREIGN KEY ("POST_NUM")
+	  REFERENCES "BOARD_POST" ("POST_NUM") ON DELETE CASCADE ENABLE;
+--------------------------------------------------------
+--  Ref Constraints for Table COMMENT_VOTE
+--------------------------------------------------------
+
+  ALTER TABLE "COMMENT_VOTE" ADD CONSTRAINT "COMMENT_VOTE_FK1" FOREIGN KEY ("COMMENT_NUM")
+	  REFERENCES "BOARD_COMMENT" ("COMMENT_NUM") ENABLE;
+  ALTER TABLE "COMMENT_VOTE" ADD CONSTRAINT "COMMENT_VOTE_FK2" FOREIGN KEY ("USER_NUM")
+	  REFERENCES "APP_USER" ("USER_NUM") ENABLE;
 --------------------------------------------------------
 --  Ref Constraints for Table NOTE
 --------------------------------------------------------

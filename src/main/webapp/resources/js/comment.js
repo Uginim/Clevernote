@@ -18,7 +18,7 @@ var updatingHistoryInterval;
 window.addEventListener("load",
 (e)=>{    
     
-
+ 
     // 초기화
     initComments();
     // 댓글 등록 버튼
@@ -62,7 +62,8 @@ window.addEventListener("load",
  
         // 댓글 주인 관련 
         if( clickedElement.classList.contains('delete')){            // 삭제 요청
-            filterUserLoggedIn(requsetDeleteComment,clickedElement);
+            if(confirm("삭제하시겠습니까?"))
+                filterUserLoggedIn(requsetDeleteComment,clickedElement);
         }else if(clickedElement.classList.contains('open-editor') ){ // 편집기
             filterUserLoggedIn(openModifyingEditor,clickedElement);
         }else if(clickedElement.classList.contains('cancel')){ // 취소
@@ -132,14 +133,20 @@ function requestVote(btnElement,type){
             console.log("msg",e.currentTarget.response);
             markPreperence(commentNum,type);
             console.log('버튼 클릭');
+            // 댓글 하나 갱신            
+            renewOneComment(commentNum);
         },formdata);  
     }else {
         requestJson("DELETE","/comment/vote/"+commentNum,(e)=>{
             console.log("msg",e.currentTarget.response);
-            markPreperence(commentNum,type);
+            // markPreperence(commentNum,type);
+            removeMark();
             console.log('버튼 클릭');
+            // 댓글 갱신
+            renewOneComment(commentNum);
         });        
     }
+    
 }
 
 // 내 모든 선호도 댓글 표시
@@ -156,15 +163,34 @@ function markAllMyPreperences(datas){
 function markPreperence(commentNum,type){    
     const commentArticle = getCommentArticle(commentNum);
     const preference = commentArticle.querySelector('.preference')
-    if(type[0].toUpperCase() ==='L'){
-        preference.querySelector('.like').classList.add(KEY_PREPERENCE_MARK);
-        preference.querySelector('.dislike').classList.remove(KEY_PREPERENCE_MARK);
+    likeBtn = preference.querySelector('.like');
+    dislikeBtn = preference.querySelector('.dislike');
+    if(type[0].toUpperCase() ==='L'){        
+        likeBtn.classList.add(KEY_PREPERENCE_MARK);
+        likeBtn.classList.remove('btn-light');
+        likeBtn.classList.add('btn-info');
+        dislikeBtn.classList.remove(KEY_PREPERENCE_MARK);
+        dislikeBtn.classList.add('btn-light');
+        dislikeBtn.classList.remove('btn-info');
     }else if(type[0].toUpperCase() ==='D') {
-        preference.querySelector('.like').classList.remove(KEY_PREPERENCE_MARK);
-        preference.querySelector('.dislike').classList.add(KEY_PREPERENCE_MARK);
+        likeBtn.classList.remove(KEY_PREPERENCE_MARK);
+        dislikeBtn.classList.add(KEY_PREPERENCE_MARK);
+        dislikeBtn.classList.remove('btn-light');
+        dislikeBtn.classList.add('btn-info');
+        likeBtn.classList.add('btn-light');
+        likeBtn.classList.remove('btn-info');
     }
 }
+// 선호도 마킹 삭제
+function removeMark(commentNum){
+    const commentArticle = getCommentArticle(commentNum);
+    const preference = commentArticle.querySelector('.preference')
+    
+    preference.querySelector('.like').classList.remove(KEY_PREPERENCE_MARK);
+    preference.querySelector('.dislike').classList.remove(KEY_PREPERENCE_MARK);
 
+    
+}
 
 // 수정 편집기 열기 
 function openModifyingEditor(btnElement){
@@ -270,6 +296,9 @@ function markAllMyComments(){
         if(sessionUserNum === commentUserNum){
             // 내 댓글 표시
             element.classList.add('my-comment');
+            // element.classList.remove('bg-white');
+            element.querySelector('.username').classList.add('alert');
+            element.querySelector('.username').classList.add('alert-info');
             // 추가 삭제 버튼 추가
             const header = element.querySelector('p.header');
             // 없을 경우
@@ -381,17 +410,34 @@ function requestWritingReplyComment(btnElement){
     const formData = new FormData();            
     const postNum = getPostNum();
     const parentNum = btnElement.getAttribute(KEY_PARENT_NUM);
+    const defaultTime = (new Date()).getTime();
     formData.append("content",contentTextarea.value);
     formData.append("parentNum",parentNum);
     formData.append("targetUsername",btnElement.getAttribute(KEY_USER_NAME));
     formData.append("targetCommentNum",btnElement.getAttribute(KEY_COMMENT_NUM)); 
     
     requestJson("POST","/comment/one/"+postNum,(event)=>{
-        contentTextarea.value ="";
-        const spreadBtn = document.querySelector('#'+commentIdPrefix+parentNum+' button.spread');
-        // console.log('#'+commentIdPrefix+commentNum+' button.spread');
-        const time = spreadBtn.getAttribute(KEY_LAST_COMMENT_TIME);
-        // console.log("spreadBtn:",spreadBtn,"time:",time);
+        contentTextarea.value ="";        
+        // 자식 리스트 있는지 확인
+        const commentArticle = getCommentArticle(parentNum);
+        // console.log("자식 리스트 확인 ",commentArticle,commentArticle.querySelector('.children-list'));
+        if(!commentArticle.querySelector('.children-list')){
+            console.log("")
+            appendList(commentArticle,{
+                commentNum:parentNum,
+                childrenCount:0,
+                createdAt:defaultTime
+            });
+            const spreadBtn = document.querySelector('#'+commentIdPrefix+parentNum+' button.spread');
+            console.log('#'+commentIdPrefix+commentNum+' button.spread');
+            console.log("spreadBtn:",spreadBtn)
+            const time = spreadBtn.getAttribute(KEY_LAST_COMMENT_TIME);
+            console.log("time:",time);
+            requestNextChildren(time,parentNum);
+        }
+        
+        
+        
     },formData)
 }
 
@@ -479,43 +525,62 @@ function requestChangeHistory(lastUpdatedTime, func){
 function updateHistory(datas){
     // 마지막 갱신 시간 
     const {historyList,lastHistoryTime} = datas;
-    lastHistoryUpdatedTime = Math.max(lastHistoryTime,lastHistoryUpdatedTime);        
+    lastHistoryUpdatedTime = Math.max(lastHistoryTime,lastHistoryUpdatedTime);
+    const sessionUserNum = parseInt(getLoggedInUserNum());
+    
     historyList.forEach((value)=>{
         value.type = value.type.trim();// 공백 삭제.. 젠장
-        const {postNum, historyNum, commentNum, createdAt, type} = value;
+        const {postNum, historyNum, commentNum, createdAt, type, userNum} = value;
         console.log('postNum,historyNum,commentNum,createdAt,type',postNum,historyNum,commentNum,createdAt,type);
         const commentArticle = getCommentArticle(commentNum);
-        if(type==='D'){ // 루트 삭제
-            console.log("root 댓글 삭제 ",commentArticle)
-            if(removeComment(commentArticle)){
-                addCount('section#comment .total-count>.item-count',-1); // 총 개수
-                addCount('section#comment article.rest-comments span.count',-1);
+        if(isNaN(sessionUserNum) || sessionUserNum !== userNum ){ // 내 활동이력은 무시한다.(왜냐면 내가 반영했으니까)
+            if(type==='D'){ // 루트 삭제
+                console.log("root 댓글 삭제 ",commentArticle)
+                if(removeComment(commentArticle)){
+                    addCount('section#comment .total-count>.item-count',-1); // 총 개수
+                    addCount('section#comment article.rest-comments span.count',-1);
+                }
+            }else if(type==='CD'){ // 자식 삭제
+                console.log("자식 삭제됨 ",commentArticle);            
+                if(removeComment(commentArticle)){
+                    addCount('section#comment .total-count>.item-count',-1); // 총 개수
+                    // addCount('section.children-list span.rest-count',-1,commentArticle); // 남은 자식 개수는 업데이트할 필요없잖아 표시된건 
+                    
+                }
+                // 삭제됨 메시지
+            }else if(type==='I') { // 루트 생성됨
+                console.log("root 댓글 생성 ",commentArticle)
+                // 총댓 수 
+                // const totalConnt = document.querySelector('section#comment .total-count>.item-count',data.totalCommentCount);
+                addCount('section#comment .total-count>.item-count',1); // 총 개수            
+                addCount('section#comment article.rest-comments span.count',1);
+            }else if(type==='CI'){ // 자식 생성됨
+                console.log("자식 댓글 생성 ",commentArticle)
+                addCount('section#comment .total-count>.item-count',1); // 총 개수
+                addCount('section.children-list span.rest-count',1,commentArticle); // 남은 자식 개수
+            }else if(type==='U') { // 수정됨
+                renewOneComment(commentNum);
             }
-        }else if(type==='CD'){ // 자식 삭제
-            console.log("자식 삭제됨 ",commentArticle);            
-            if(removeComment(commentArticle)){
-                addCount('section#comment .total-count>.item-count',-1); // 총 개수
-                addCount('section.children-list span.rest-count',-1,commentArticle); // 남은 자식 개수
-            }
-            // 삭제됨 메시지
-        }else if(type==='I') { // 루트 생성됨
-            console.log("root 댓글 생성 ",commentArticle)
-            // 총댓 수 
-            // const totalConnt = document.querySelector('section#comment .total-count>.item-count',data.totalCommentCount);
-            addCount('section#comment .total-count>.item-count',1); // 총 개수            
-            addCount('section#comment article.rest-comments span.count',1);
-        }else if(type==='CI'){ // 자식 생성됨
-            console.log("자식 댓글 생성 ",commentArticle)
-            addCount('section#comment .total-count>.item-count',1); // 총 개수
-            addCount('section.children-list span.rest-count',1,commentArticle); // 남은 자식 개수
-        }else if(type==='U') { // 수정됨
-
         }
     });    
 }
 
+function renewOneComment(commentNum){
+    const commentArticle = getCommentArticle(commentNum);
+    let type = "child";
+    if(commentArticle.classList.contains('root-comment')){
+        type = "root";                
+    }
+    console.log("type:",type);
+    requestOneComment(commentNum,type,(e)=>{
+        console.log("e",e,e.currentTarget,e.currentTarget.response, JSON.parse(e.currentTarget.response));
+        updateOneComment(JSON.parse(e.currentTarget.response).comment);                
+    });
+}
+
 // count 수정
 function addCount(selector,count,target){
+    console.log("addCount()",selector,count,target);
     target = target || document;
     count = count || 1;
     const countElement = target.querySelector(selector);
@@ -523,7 +588,7 @@ function addCount(selector,count,target){
     if(countElement&&countElement.innerText && !isNaN(parseInt(countElement.innerText)) ){
         countElement.innerText = parseInt(countElement.innerText) +count;
     }else {
-        countElement.innerText = count
+        countElement.innerText = count;
     }
 }
 
@@ -604,7 +669,9 @@ function makeNewRootComment(data){
             <article id="${commentIdPrefix}${data.commentNum}" class="comment root-comment shadow-sm p-3 mb-5 bg-white rounded" ${KEY_COMMENT_NUM}="${data.commentNum}" ${KEY_USER_NUM}="${data.userNum}" ${KEY_POST_NUM}="${data.postNum}">
                 <p class="header">
                     <span class="username">${data.username}</span>
-                    <span class="created-at"><small class="time text-muted">${new Date(data.createdAt)} ${data.updatedAt!=data.createdAt ? '(수정됨)':''}</small>에 작성됨</span>
+                    <span class="created-at"><small class="time text-muted">${new Date(data.createdAt).toLocaleString()} <span class="is-updated">
+                        ${data.updatedAt!=data.createdAt ? '(수정됨)':''}
+                    </span></small>에 작성됨</span>
                     <button class="btn btn-link open-reply" ${KEY_COMMENT_NUM}="${data.commentNum}" >답글</button>
                 </p>
                 <p class="content bg-light p-3">${data.content}</p><textarea class="form-control modify-editor"></textarea>
@@ -657,7 +724,9 @@ function makeNewChildComment(data,parentNum){
                 <article id="${commentIdPrefix}${data.commentNum}" class="comment child-comment pt-3 border-top " ${KEY_COMMENT_NUM}="${data.commentNum}" ${KEY_USER_NUM}="${data.userNum}" ${KEY_POST_NUM}="${data.postNum}">
                 <p class="header">
                     <span class="username">${data.username}</span>
-                    <span class="created-at"><small class="time text-muted">${new Date(data.createdAt)} ${data.updatedAt!=data.createdAt ? '(수정됨)':''}</small>에 작성됨</span>
+                    <span class="created-at"><small class="time text-muted">${new Date(data.createdAt).toLocaleString()} <div class="is-updated">
+                        ${data.updatedAt!=data.createdAt ? '(수정됨)':''}
+                    </div></small>에 작성됨</span>
                     <button class="reply btn btn-link" ${KEY_COMMENT_NUM}="${data.commentNum}" >답글</button>
                 </p>
                 <a href="#${commentIdPrefix}${data.targetNum}">@${data.targetUsername}&nbsp;</a>
@@ -672,3 +741,44 @@ function makeNewChildComment(data,parentNum){
 }
 
 // 날짜 양식
+function getDateWithFormat(longTypeTime){
+    const date = new Date(longTypeTime);
+    return `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} ${date.toLocaleString()}`
+}
+
+
+// 댓글 요청
+function requestOneComment(commentNum,type,callback,arguments){
+    if(type !== 'root' && type!=='child')
+        return false;
+    requestJson("GET",`/comment/one/${type}/${commentNum}`,(...args)=>{        
+        callback.apply(null,args);
+        console.log("args:",args);
+    },null,null,arguments);
+    return true;
+}
+// 댓글 하나 갱신
+function updateOneComment(data,commentNum){
+    console.log("updateOneComment()",data.commentNum, commentNum);
+    commentNum = commentNum || data.commentNum;
+    const commentArticle = getCommentArticle(commentNum);
+    console.log(commentArticle);
+    const content = commentArticle.querySelector('.content');
+    // 내용 수정
+    content.innerText = data.content;
+    // 시간 수정    
+    if(data.updatedAt!=data.createdAt){
+        const isUpdated = commentArticle.querySelector('.is-updated');
+        isUpdated.innerText = '(수정됨)';
+    }
+    // 좋아요 싫어요 
+    const like = commentArticle.querySelector('.like .count');
+    const dislike = commentArticle.querySelector('.dislike .count');
+    like.innerText = data.like;
+    dislike.innerText = data.dislike;
+    // 루트일 경우 자식 개수 갱신
+    if (commentArticle.classList.contains('root-comment')){
+        const childrenCount = commentArticle.querySelector('.children-list .rest-count')
+        childrenCount.innerText= data.childrenCount;
+    }
+}

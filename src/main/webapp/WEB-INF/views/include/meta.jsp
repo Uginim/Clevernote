@@ -6,6 +6,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath }/webjars/popper.js/2.0.2/umd/popper.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath }/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath }/resources/js/common.js" ></script>
+<link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/common.css" />
 <link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/header.css" />
 
 <%-- Sun editor --%>

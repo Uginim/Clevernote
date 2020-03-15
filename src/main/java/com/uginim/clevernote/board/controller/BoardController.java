@@ -71,7 +71,7 @@ public class BoardController {
 	public String write(
 			@PathVariable String returnPage,
 //			@Valid 
-			@ModelAttribute("board") BoardPostVO board,
+			@Valid @ModelAttribute("board") BoardPostVO board,
 			BindingResult result,
 //			HttpServletRequest request
 			HttpSession session
@@ -216,7 +216,7 @@ public class BoardController {
 		Map<String,Object> map = boardManager.view(postNum);
 		BoardPostVO board = (BoardPostVO) map.get("board");
 		board.setTitle("[답글]" +board.getTitle());
-		board.setContent("[원글]" +board.getContent());
+		board.setContent("[원글]\n-------------------------------------------------------------------------" +board.getContent());
 		model.addAttribute("board", board);
 		
 		return "board/replying-form";
