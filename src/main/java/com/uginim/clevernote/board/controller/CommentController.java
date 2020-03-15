@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,8 +68,8 @@ public class CommentController {
 		return res;
 	}
 	
-	// 댓글 쓰기 
-	@PostMapping(path="/{postNum}", produces="application/json")
+	// 댓글 쓰기	
+	@PostMapping(path="/one/{postNum}", produces="application/json")
 	public ResponseEntity<Map<String,Object>> writeNewComment(
 			@RequestParam(name = "content") 
 				String content,
@@ -135,6 +136,7 @@ public class CommentController {
 	
 	
 	// 자식댓글들 가져오기 
+	
 	@GetMapping(path="/child", produces = "application/json" )
 	public ResponseEntity<Map<String,Object>> getChildComments(			
 			@RequestParam(name = "parentNum") long parentNum,
@@ -156,20 +158,28 @@ public class CommentController {
 	
 	// 수정
 	// 내용만 수정할 것
-	@PutMapping(path="/{postNum}", produces="application/json" )
+	
+	@PutMapping(path="/one",consumes = "application/json", produces="application/json")
 	public ResponseEntity<Map<String,Object>> updateComment(
-			HttpSession session,
-			@RequestParam(name = "commenttNum", defaultValue = "0") long commentNum,			
-			@RequestParam(name = "content") String content
+			@RequestBody HashMap<String,Object> body,			
+			HttpSession session
 			){
 		ResponseEntity<Map<String,Object>> res =null;
+		body.get("content");
 		Map<String,Object> datas = new HashMap<String,Object>();
 		datas.put("state", 0);
+		String content = (String)body.get("content");
+		String commentNumStr = (String)body.get("commentNum");
+		long commentNum = Long.parseLong(commentNumStr);
+//		long commentNum = (int)body.get("commentNum");
+		logger.info("commentNum:"+commentNum);
+		logger.info("content:"+content);
 		// 세션 확인
 		if(loginManager.isLoggedIn(session)) {						
 			// 댓글 주인과 수정하는 세션이 일치하는지 확인
 			long userNum = loginManager.getLoggedInUserInfo(session).getUserNum();
 			long ownerNum = commentManager.getCommentUserNum(commentNum);
+			logger.info("userNum, ownerNum:("+userNum+","+ownerNum+")" );
 			if(userNum == ownerNum ) { // 일치
 				if(commentNum!=0) {
 					try {			
@@ -190,7 +200,7 @@ public class CommentController {
 	
 	// 삭제
 	// 세션확인
-	@DeleteMapping(path="/{postNum}/{commentNum}",  produces="application/json")
+	@DeleteMapping(path="/one/{commentNum}",  produces="application/json")
 	public ResponseEntity<Map<String,Object>> deleteComment(
 			HttpSession session,
 //			@RequestParam(name = "commentNum", defaultValue = "0") long commentNum
@@ -283,10 +293,13 @@ public class CommentController {
 			@RequestParam(name = "type") char voteType,
 			HttpSession session	
 			){
+		
 		if(loginManager.isLoggedIn(session)) {
 			long userNum = loginManager.getLoggedInUserInfo(session).getUserNum();
+			
 			try {				
 				int state = commentManager.voteToComment(commentNum, userNum, voteType);
+				logger.info("state:"+state);
 				if(state ==1) {
 					return new ResponseEntity<String> ("success",HttpStatus.OK);					
 				}
@@ -296,11 +309,12 @@ public class CommentController {
 		}		
 		return new ResponseEntity<String> ("failed",HttpStatus.UNAUTHORIZED);
 	}
-	
+	 
 	// 투표 취소
-	@DeleteMapping(path="/vote")
+	@DeleteMapping(path="/vote/{commentNum}")
 	public ResponseEntity<String> cancelVote(
-		@RequestParam(name = "commentNum") long commentNum,
+//		@RequestParam(name = "commentNum") long commentNum,
+		@PathVariable(name = "commentNum") long commentNum,
 		HttpSession session
 			){
 		if(loginManager.isLoggedIn(session)) {
@@ -318,16 +332,17 @@ public class CommentController {
 	}
 	
 	// 변경 이력 가져오기
-	@GetMapping(path="/history/{postNum}")
+	@GetMapping(path="/history/{postNum}",produces = "application/json")
 	public ResponseEntity<Map<String,Object>> getCommentHistory(			
 		@PathVariable(name = "postNum") long postNum,
-		@RequestParam(name = "basetime") Date basetime
+		@RequestParam(name = "basetime") long basetime
 			){
 		Map<String,Object> datas = null;
 		ResponseEntity<Map<String,Object>> res=null;
-		
+		logger.info("postNum:"+postNum);
+		logger.info("basetime:"+basetime);
 		try {
-			datas = commentManager.getChangeHistory(postNum, basetime);		
+			datas = commentManager.getChangeHistory(postNum, new Date( basetime));		
 			res = new ResponseEntity<Map<String,Object>> (datas ,HttpStatus.OK);					
 			
 		}catch (Exception e) {

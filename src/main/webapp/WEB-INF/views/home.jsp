@@ -10,33 +10,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>CleverNote Home</title>
-	<%@include file="include/head.jsp"%>
+	<%@include file="/WEB-INF/views/include/meta.jsp"%>
+	<link rel="stylesheet" href="${pageContext.request.contextPath }/resources/css/home.css" />
+	
 </head>
 <body>
-<header>
 
-<c:choose>
-	<c:when test="${sessionScope['sessionUser']==null}">
-		<a href='<c:url value="/user/signup" />'><button type="button">sign up</button></a>
-		<a href='<c:url value="/signin" />'><button type="button">sign in</button>
-	</c:when>
-	<c:when test="${sessionScope['sessionUser']!=null}">
-		<a href='#'><button type="button">프로필 수정</button></a>
-		<a href='<c:url value="/signout" />'><button type="button">sign out</button>
-	</c:when>
-</c:choose>
-</header>
-<nav>
-	<a href="#">기능소개</a>
-	<a href="<c:url value="/board/list"/>">문의 게시판</a>
-	<a href="<c:url value="/note"/>" >노트</a>
-	<a href="#">개발자 블로그</a>
-</nav>
-<h1>
-    CleverNote에 오신 것을 환영합니다~
-</h1>
-<p>CleverNote를 쓰시면<br> 언제든 손쉽게 메모하실 수 있습니다.</p>
+	
+	<%@include file="/WEB-INF/views/include/header.jsp"%>
+	
+<main role="main">
 
-<%-- <P>  The time on the server is ${serverTime}. </P> --%>
+	<section class="jumbotron text-center">
+    <div class="container">
+      <h1> CleverNote에 오신 것을 환영합니다~</h1>
+      <p class="lead text-muted">CleverNote를 쓰시면<br> 언제든 손쉽게 메모하실 수 있습니다.</p>
+      <p>      
+        <a href="<c:url value="/user/signup" />" class="btn btn-primary my-2">가입하기</a>
+        <a href="<c:url value="/signin" />" class="btn btn-secondary my-2">로그인 하기</a>
+      </p>
+    </div>
+  </section>
+		<article id="introduction-of-features" class="container justify-content-md-center">
+            <h1>
+                서비스 소개
+            </h1>
+            <a class="featrue-image" href="#">
+                <h4>메모</h4>
+                <img src="<c:url value="resources/img/memo.svg"/>" alt="">
+            </a>
+            <a class="featrue-image" href="#">
+                <h4>공유</h4>
+                <img src="<c:url value="resources/img/share.svg"/>" alt="">
+            </a>
+            <a class="featrue-image" href="#">
+                <h4>일정</h4>
+                <img src="<c:url value="resources/img/schedule.svg"/>" alt="">
+            </a>
+            <a class="featrue-image" href="#">
+                <h4>템플릿</h4>
+                <img src="<c:url value="resources/img/template.svg"/>" alt="">
+            </a>
+        </article>
+	
+
+	
+</main>
+	<%@ include file="/WEB-INF/views/include/footer.jsp"  %>
+
+
 </body>
 </html>

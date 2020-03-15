@@ -1,0 +1,97 @@
+@charset "utf-8";
+/* div{outline:1px solid red;}
+div.container{outline:1px solid blue;} */
+* { box-sizing: border-box; }
+html,body{
+  height: 100%;
+}
+body{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+header{
+  display: flex;
+
+}
+.container {
+  display:flex;
+  justify-content: center;
+  
+}
+.keeping-login-info{
+  display: flex;
+  justify-content: center;
+  font-size: 0.9em;
+}
+.login-wrapper{
+  width:18em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.login-contnet{
+  display: flex;
+  align-items:center;
+}
+.login-content > div{
+  margin: 10px 0;
+}
+.login-content button, .login-content input{
+  width:100%;
+  border:1px solid gray;
+  height: 2.7em;
+}
+.login-content button[type="submit"] {
+  background-color: #81ecec;
+  color:#333377;
+  font-size:1.2em;
+  font-weight:1000;
+}
+.login-title {
+  text-align: center;
+  color: gray;
+}
+[name="email"], [name="pw"], .loginBtn{
+  padding: 10px;
+  border-radius: 5px;
+}
+#loginForm{
+  width:100%;
+  border-bottom: 1px solid gray;
+  padding:10px;
+}
+/*비밀번호 찾기*/
+.find_info {
+  margin-top:20px;
+  font-size: 0.6rem;
+  color:gray;
+  text-align: center;
+}
+.find_info > a {
+  text-decoration: none;
+  color:gray;
+}
+.find_info > a:hover {
+  text-decoration: underline;
+}
+
+/* 오류 메세지 */
+.errmsg {
+  color:red;
+  font-size:0.6rem;
+  font-weight:bold;        
+}
+button.google-oauth{
+  margin-top: 2em;
+  width:100%;
+  height: 2.7em;
+  padding:0.3em;  
+  box-sizing: border-box;
+  border-radius: 0.5em;
+  font-size:1em;
+  font-weight: 400;
+  letter-spacing: 0em;
+  background-color: lightslategray;
+}

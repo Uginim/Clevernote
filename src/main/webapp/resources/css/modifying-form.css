@@ -1,0 +1,47 @@
+table{
+    border:1px solid;
+    border-collapse: collapse;
+    width:40em;
+}
+table td, table th{
+    padding: 0.45em;
+    border:1px solid;
+}
+input,select,textarea{
+    border: none;
+}
+tr.content{
+    height: 20em;
+}
+/* tr.content>td{
+    height:auto;
+} */
+tr.content>td,
+tr.content>th{
+      /* height:auto; */
+      /* height:100%; */
+      height: 20em;
+}
+td.tools{
+    display: flex;
+    padding: 0;        
+}
+tr.content>td>*{
+    height:100%;
+}
+.no-border{
+    border:none;
+}
+td>*{
+    width:100%;
+}
+
+/* .{ */
+
+.attachments>td button{
+    display: inline-block;
+    width:auto;
+}
+.attachments>td button.invisible-mode{
+    display: none;
+}

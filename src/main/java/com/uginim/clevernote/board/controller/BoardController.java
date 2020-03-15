@@ -165,14 +165,14 @@ public class BoardController {
 	}
 	
 	// 첨부파일 1건 삭제
-	@DeleteMapping("/file/{fid}")
+	@DeleteMapping("/file/{attachmentNum}")
 	@ResponseBody
 	public ResponseEntity<String> fileDelete(
 			@PathVariable long attachmentNum
 			) {
 		int state = boardManager.deleteAttachment(attachmentNum);
 		if(state == 1) {
-			return new ResponseEntity<String>("success",HttpStatus.OK);
+			return new ResponseEntity<String>(""+attachmentNum,HttpStatus.OK);
 		} else {
 			return new ResponseEntity<String>("failed",HttpStatus.NOT_FOUND);
 		}

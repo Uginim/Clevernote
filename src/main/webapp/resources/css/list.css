@@ -1,0 +1,46 @@
+@charset "UTF-8";
+table#board {
+	border-collapse: collapse;
+	table-layout: fixed;
+	word-break: break-all;
+	height: auto;
+	border: 1px solid;
+	table-layout: fixed;
+	word-break: break-all;
+	height: auto;
+}
+
+.row {
+	display: flex;
+	justify-content: center;
+}
+
+.board-table {
+	
+}
+.tool{
+	display: flex;
+	flex-dirowtion :row-reverse;
+	justify-content: flex-start;
+}
+.control {
+	display: flex;	
+	justify-content: center;
+}
+.control a {
+	margin-left: 0.25em;
+	margin-right: 0.25em;
+}
+table th,table td{
+	padding:0.5em;
+	border: 1px solid;
+}
+th {
+	background-color: #bbbbbb;	
+}
+td {
+}
+
+h3.title {
+	text-align: center;
+}

@@ -13,13 +13,17 @@ function getContextPath() {
 }
 
 // ajax 
-function requestJson(method,uri, callback, sendData){
+function requestJson(method,uri, callback, sendData, contentType, arguments){
 	// var targetElement = document.querySelector(targetSelector);
 	var xhr = new XMLHttpRequest();	
 	xhr.addEventListener('load',event=>{
-		callback(event);		
+		newArguments = [event];
+		callback.apply(null,newArguments.concat(arguments));
 	});
 	xhr.open(method,uri);
+	if(contentType){
+		xhr.setRequestHeader("Content-Type", contentType);
+	}
 	if(sendData)
 		xhr.send(sendData);
 	else 
@@ -34,4 +38,16 @@ var clevernoteUtil ={
 		});
 	}
 
+}
+
+// window.addEventListener('load',initSunEditor);
+function initSunEditor (){
+	if(document.getElementById('post-content-editor')) {
+		const editor = SUNEDITOR.create((document.getElementById('post-content-editor') || 'post-content-editor'),{
+			// All of the plugins are loaded in the "window.SUNEDITOR" object in dist/suneditor.min.js file
+			// Insert options
+			// Language global object (default: en)
+			lang: SUNEDITOR_LANG['ko']
+		});
+	}
 }

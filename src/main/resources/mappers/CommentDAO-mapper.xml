@@ -70,7 +70,7 @@
 			            WHERE  post_num = #{postNum} 
 			            AND parent_num IS NOT NULL 
 			            GROUP BY parent_num) "child",
-			        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+			        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1,'l',1)) "like", COUNT(DECODE(type,'D',1,'d',1)) "dislike"
 				        FROM comment_vote, board_comment
 				        WHERE board_comment.comment_num = comment_vote.comment_num                        
 				        GROUP BY board_comment.comment_num) "vote"  
@@ -128,7 +128,7 @@
 		        nvl("vote"."like",0) AS "like",
 		        nvl("vote"."dislike",0) AS "dislike"
 		    FROM board_comment "comment",
-		        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+		        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1,'l',1)) "like", COUNT(DECODE(type,'D',1,'d',1)) "dislike"
 		        FROM comment_vote, board_comment
 		        WHERE board_comment.comment_num = comment_vote.comment_num
 		        AND board_comment.parent_num = #{parentNum}
@@ -219,10 +219,12 @@
 		    post_num "postNum",
 		    comment_num "commentNum",
 		    created_at "createdAt",
+		    history_num "historyNum",
 		    type "type"
 		FROM comment_change_history
 		WHERE post_num = #{postNum}
-		AND created_at > #{lastUpdatedTime}
+		AND created_at <![CDATA[ > ]]>  #{lastUpdatedTime}
+		ORDER BY created_at ASC
 	</select>
 <!-- 댓글 가져오기	 -->
 	<select id="selectOneComment" parameterType="long" resultType="BoardCommentVO">
@@ -245,7 +247,7 @@
 		            WHERE  parent_num = #{commentNum} 
 		            AND parent_num IS NOT NULL 
 		            GROUP BY parent_num) "child",
-		    (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+		    (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1,'l',1)) "like", COUNT(DECODE(type,'D',1,'d',1)) "dislike"
 		        FROM comment_vote, board_comment
 		        WHERE board_comment.comment_num = comment_vote.comment_num                        
 		        GROUP BY board_comment.comment_num) "vote"                
@@ -273,7 +275,7 @@
 			            WHERE parent_num = #{commentNum} 
 			            AND parent_num IS NOT NULL 
 			            GROUP BY parent_num) "child",
-			        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+			        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1,'l',1)) "like", COUNT(DECODE(type,'D',1,'d',1)) "dislike"
 				        FROM comment_vote, board_comment
 				        WHERE board_comment.comment_num = comment_vote.comment_num 
 				        AND board_comment.comment_num = #{commentNum}                       
@@ -300,7 +302,7 @@
 	        nvl("vote"."like",0) AS "like",
 	        nvl("vote"."dislike",0) AS "dislike"
 	    FROM board_comment "comment",
-	        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1)) "like", COUNT(DECODE(type,'D',1)) "dislike"
+	        (SELECT board_comment.comment_num, COUNT(DECODE(type,'L',1,'l',1)) "like", COUNT(DECODE(type,'D',1,'d',1)) "dislike"
 	        FROM comment_vote, board_comment
 	        WHERE board_comment.comment_num = comment_vote.comment_num
 	        AND board_comment.comment_num = #{commentNum}	        
@@ -338,10 +340,11 @@
 		WHERE comment_num = #{commentNum}
 	</update>
 <!-- 특정 댓글의 내용만 수정	 -->
-	<update id="updatedContent" parameterType="map">
+	<update id="updateContent" parameterType="map">
 		UPDATE board_comment 
-		content = #{content},
-		updated_at = SYSTIMESTAMP	
+		SET
+			content = #{content},
+			updated_at = SYSTIMESTAMP	
 		WHERE comment_num = #{commentNum}
 	</update>
 <!-- 댓글 삭제하기	 -->
@@ -410,7 +413,7 @@
 	<select id="selectMyAllVotes" parameterType="map" resultType="VoteVO">
 		SELECT 
 		    "vote".vote_num "voteNum",
-		    "vote".comment_num "comment_num",
+		    "vote".comment_num "commentNum",
 		    "vote".type "type",
 		    "vote".created_at "createdAt",
 		    "vote".updated_at "updatedAt",
@@ -432,7 +435,7 @@
 				</when>
 				<when test="commentNum != null and userNum != null">
 					comment_num = #{commentNum}
-					and user_num #{userNum}
+					and user_num = #{userNum}
 				</when>
 				<otherwise>
 					 1=0

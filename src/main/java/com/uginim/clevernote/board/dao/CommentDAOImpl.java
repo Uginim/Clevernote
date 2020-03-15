@@ -265,11 +265,11 @@ public class CommentDAOImpl implements CommentDAO {
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.putIfAbsent("commentNum", commentNum);
 		map.putIfAbsent("content", content);
-		return session.update("mappers.CommentDAO-mapper.updatedContent",map);
+		return session.update("mappers.CommentDAO-mapper.updateContent",map);
 	}
 	
 	
-	/* Delete */	
+	/* Delete */	 
 	/**
 	 * 댓글 삭제하기
 	 * @param commentNum 댓글번호

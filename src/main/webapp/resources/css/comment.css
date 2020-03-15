@@ -1,3 +1,17 @@
-#comment{	
-	
+#comment .active{	
+	display: inline-block !important;
+}
+#comment .modify-editor, 
+#comment .reply-editor,
+#comment .hiding-btn {
+	display: none;
+}
+
+
+#comment .display-none{
+    display: none !important;
+}
+
+.error{	
+	color: red;
 }

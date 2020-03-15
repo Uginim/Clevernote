@@ -1,0 +1,24 @@
+@charset "UTF-8";
+main a{	
+    text-decoration: none;
+    color:black;
+}
+.featrue-image {
+    margin:10px;
+    box-sizing: border-box;
+    width:150px;
+    height: 150px;
+    padding: 10px;
+    border-radius: 20px;
+/*     box-shadow: 1px 1px 3px 1px lightgray;     */
+/*     text-decoration: none ; */
+/*     color: #2d3436; */
+    background-color: white;
+}
+.featrue-image h4{
+    margin:1px;
+}
+#introduction-of-features img{
+    width:6rem;
+    height:6rem;
+}

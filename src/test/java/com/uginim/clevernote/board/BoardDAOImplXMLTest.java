@@ -17,6 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.uginim.clevernote.board.dao.BoardDAO;
 import com.uginim.clevernote.board.vo.BoardPostVO;
+import com.uginim.clevernote.board.vo.BoardTypeVO;
 
 
 @ExtendWith(SpringExtension.class)
@@ -60,9 +61,10 @@ public class BoardDAOImplXMLTest {
 	
 	//총레코드 카운트
 	@Test
-	@Disabled
+//	@Disabled
 	public void totalRecordCount() {
-		
+		List<BoardTypeVO> list = boardDAO.getBoardTypes();
+		logger.info("types:"+list);
 //		int cnt = boardDAO.totalRecordCount("TC", "코비드");
 //		logger.info("총레코드수: " + cnt);
 	}

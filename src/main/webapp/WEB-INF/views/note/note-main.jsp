@@ -89,13 +89,13 @@ function init(){
 	},true);
 	
 	// 에디터 추가
-	const suneditor = SUNEDITOR.create(noteEditor,{
-	    // All of the plugins are loaded in the "window.SUNEDITOR" object in dist/suneditor.min.js file
-	    // Insert options
-	    // Language global object (default: en)
-	    lang: SUNEDITOR_LANG['ko'],
-	    placeholder     : "내용을 채워주세요" 
-	});
+	// const suneditor = SUNEDITOR.create(noteEditor,{
+	//     // All of the plugins are loaded in the "window.SUNEDITOR" object in dist/suneditor.min.js file
+	//     // Insert options
+	//     // Language global object (default: en)
+	//     lang: SUNEDITOR_LANG['ko'],
+	//     placeholder     : "내용을 채워주세요" 
+	// });
 
 	// 1. 카데고리 목록 가져오기
 	// 2. 선택된 카데고리에서 노트목록 가져오기

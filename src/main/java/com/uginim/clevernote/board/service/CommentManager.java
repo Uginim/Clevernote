@@ -59,6 +59,10 @@ public class CommentManager implements CommentService {
 		count = commentDAO.countRestComment(postNum,lastTime );			
 		logger.info("KEY_REST_COMMENTS_COUNT : "+ count);
 		datas.put(KEY_REST_COMMENTS_COUNT, count);
+		
+		// 4. 마지막 댓글 시간
+		datas.put(KEY_LAST_COMMENT_TIME, lastTime);
+		
 		return datas;
 	}
 	/**
@@ -98,6 +102,9 @@ public class CommentManager implements CommentService {
 		List<VoteVO> voteList = commentDAO.selectMyAllVotes(userNum, postNum);
 		logger.info("KEY_VOTE_LIST : "+ voteList.size());
 		datas.putIfAbsent(KEY_VOTE_LIST, voteList);
+		
+		// 5. 마지막 댓글 시간
+		datas.put(KEY_LAST_COMMENT_TIME, lastTime);
 		return datas;
 	}
 	
@@ -261,6 +268,7 @@ public class CommentManager implements CommentService {
 	 */
 	@Override
 	public int deleteComment(long commentNum) {
+		logger.info("deleteComment(long commentNum)");
 		return commentDAO.delete(commentNum);
 	}
 	
@@ -331,6 +339,7 @@ public class CommentManager implements CommentService {
 	 */
 	@Override
 	public int voteToComment(long commentNum, long userNum, char type) {
+		logger.info("voteToComment(long commentNum, long userNum, char type)");
 		VoteVO vote = new VoteVO();
 		vote.setCommentNum(commentNum);
 		vote.setUserNum(userNum);
@@ -345,7 +354,8 @@ public class CommentManager implements CommentService {
 	 * @return 성공 시 1
 	 */
 	@Override
-	public int cancelVote(long voteNum) { 
+	public int cancelVote(long voteNum) {
+		logger.info("cancelVote(long voteNum)");
 		return commentDAO.deleteVote(voteNum);
 	}
 	
@@ -357,6 +367,7 @@ public class CommentManager implements CommentService {
 	 */
 	@Override
 	public int cancelVote(long commentNum, long userNum) {
+		logger.info("cancelVote(long commentNum, long userNum)");
 		return commentDAO.deleteVote(commentNum, userNum);
 	}
 	
