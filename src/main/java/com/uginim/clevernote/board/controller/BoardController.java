@@ -1,6 +1,7 @@
 package com.uginim.clevernote.board.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ public class BoardController {
 		List<BoardTypeVO> boardTypes =  boardManager.getAllBoardTypes();
 		logger.info(boardTypes.toString());
 		model.addAttribute("boardTypes",boardTypes); 
+		model.addAttribute("requestTime",	new Date());
 	}
 	
 	// 게시글 작성 양식
@@ -93,6 +95,7 @@ public class BoardController {
 	@GetMapping({
 		"/list",
 		 "/list/{curPage}",
+		 "/list/{curPage}/{searchType}/",
 		 "/list/{curPage}/{searchType}/{keyword}"
 	})
 	public String getBoard(
@@ -118,7 +121,10 @@ public class BoardController {
 		Map<String,Object> map = boardManager.view(postNum);
 		BoardPostVO board = (BoardPostVO)map.get("board");
 		
-		logger.info(board.toString());
+		logger.info("board:"+board.toString());
+		board.setContent(board.getContent().replace("/n/r", "<br>"));
+		board.setContent(board.getContent().replace("/n", "<br>"));
+		board.setContent(board.getContent().replace("/r", "<br>"));
 		List<AttachmentFileVO> files = null;
 		if(map.get("files") != null) {
 			files = (List<AttachmentFileVO>)map.get("files");
@@ -216,7 +222,8 @@ public class BoardController {
 		Map<String,Object> map = boardManager.view(postNum);
 		BoardPostVO board = (BoardPostVO) map.get("board");
 		board.setTitle("[답글]" +board.getTitle());
-		board.setContent("[원글]\n-------------------------------------------------------------------------" +board.getContent());
+//		board.getContent().replace("<br>", "\n");
+		board.setContent("[원글]"+board.getContent()+"\n-------------------------------------------------------------------------\n" );
 		model.addAttribute("board", board);
 		
 		return "board/replying-form";

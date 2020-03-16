@@ -21,7 +21,7 @@
 		<form:input type="hidden" path="userNum" />
 		
 		<div class="form-group row mb-1 px-3">
-			<form:input class="form-control form-control-lg border-0" path="title" type="text" cols="70" placeholder="제목"/> 
+			<form:input class="form-control form-control-lg border-0" path="title" type="text" cols="70" placeholder="제목을 입력하세요.."/> 
 		</div>
 		<form:errors cssClass="error" path="title"/>
 		<div class="form-group row mb-2">
@@ -40,16 +40,19 @@
 				<input class="form-control" value="${sessionUser.username}" readonly cols="70"/>
 			</div>
         </div>
+        <form:errors path="content" cssClass="error"/>
 		<div class="form-group mb-2">
 			<label>내용</label>
 			<form:textarea id="post-content-editor" class="form-control" path="content" cols="70" rows="40"></form:textarea>
 		</div>
-		<form:errors path="content" cssClass="error"/>
+		
 		
 		<div class="custom-file  mb-2">
-			<label class="custom-file-label">첨부</label><input type="file" class="custom-file-input" name="files" multiple/>
+			<label class="custom-file-label">첨부</label><input id="attachments"  type="file" class="custom-file-input" name="files" multiple/>
 			<form:errors path="files"/>
 		</div>
+		<ul id="fileList" class="list-unstyled  list-group list-group-flush"></ul>
+		
 		<div class="row justify-content-end mb-5">
 			<div class="btn-group">            	
 				<form:button class="btn btn-outline-primary" id="submit-btn" data-returnPage="${returnPage }"
@@ -68,7 +71,6 @@
 			<button type="button" data-returnPage="${returnPage }"
 				id="list-btn">목록</button>
 		</td> --%>
-	
 		<div class="attachments row mb-2" >
 				<div class="col">
 					<div class="row mb-2">
@@ -84,10 +86,10 @@
 								<th scope="col">삭제여부</th>
 						   </tr>
 						  </thead>
-						    <tbody>						  
+						    <tbody id="file-list">						  
 							<c:if test="${!empty files}">
 								<c:forEach var="file" items="${files}">
-									<tr>
+									<tr class="file-item" data-fid="${file.attachmentNum}">
 								
 									<td>${file.name }</td><td>${file.fileSize }</td><td>${file.mimetype }</td><td><button class="btn btn-outline-dark delete-file-btn" data-fid="${file.attachmentNum}" type="button">삭제</button></td>
 									</tr> 

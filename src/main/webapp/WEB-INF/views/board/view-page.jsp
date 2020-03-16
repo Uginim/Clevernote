@@ -59,9 +59,9 @@
 		</div>
 		<hr>
 
-		<div class="content row mb-5 border-bottom shadow p-3 mb-5 bg-white rounded">
+		<div class="content row mb-5 border-bottom shadow p-4 mb-5 bg-white rounded">
 			<%-- <span><label>내용</label></span> --%>
-			<p>${board.content}</p>
+			<p class="p-3"><pre >${board.content}</pre></p>
 		</div> 
 		    
 		 
@@ -97,7 +97,7 @@
 <%-- 										<li class="file-item" data-fid="${file.attachmentNum}"> --%>
 									<tr>
 								
-									<td>${file.name }</td><td>${file.fileSize }</td><td>${file.mimetype }</td>
+									<td><a class="text-black" href="/board/file/${file.attachmentNum}">${file.name }</a></td><td>${file.fileSize }</td><td>${file.mimetype }</td>
 									</tr> 
 <!-- 									</li> -->
 								</c:forEach>

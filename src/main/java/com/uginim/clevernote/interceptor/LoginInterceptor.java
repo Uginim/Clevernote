@@ -1,5 +1,7 @@
 package com.uginim.clevernote.interceptor;
 
+import java.net.URI;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -18,11 +20,12 @@ public class LoginInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		String uri = request.getRequestURI();
-		String contextPath = request.getContextPath();
-		String reqResource = uri.substring(contextPath.length());
 		
-		logger.info("reqResource:"+reqResource);
+//		String uri = request.getRequestURI();
+//		String contextPath = request.getContextPath();
+//		String reqResource = uri.substring(contextPath.length());
+		
+//		logger.info("reqResource:"+reqResource);
 		HttpSession session = request.getSession(false);
 		if(redirectWhenNull(request,response,session)) {			
 			return false;
@@ -49,11 +52,25 @@ public class LoginInterceptor implements HandlerInterceptor {
 		HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
 	}
 	private boolean redirectWhenNull(HttpServletRequest request,HttpServletResponse response, Object target) throws Exception{
+		// 로그아웃 직후
+//		if(request.getAttribute("afterLogout")!=null) {
+//			response.sendRedirect("/");
+//			return true;
+//		}
+//		URI uri = new URI(request.getRequestURI());		
+//		logger.info("uri query:"+uri.getQuery());
+		logger.info("request.getParameterMap()"+request.getParameterMap().keySet());
+//		URI uriQuery= new URI(request.getRequestURI());
+//		logger.info("uri query:"+uriQuery.getQuery());
+		if(request.getParameterMap().get("afterlogout")!=null) {// 로그아웃 직후
+			response.sendRedirect("/");
+			return true;
+		}
 		if(target==null) {	
-			String uri = request.getRequestURI();
+			String uriStr = request.getRequestURI();
 			String contextPath = request.getContextPath();
-			String reqResource = uri.substring(contextPath.length());
-
+			String reqResource = uriStr.substring(contextPath.length());
+			
 			response.sendRedirect(contextPath+"/signin?next="+reqResource);
 			return true;			
 		}

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<section id="comment" data-postnum="${board.postNum}" data-usernum="${sessionUser.userNum}" data-posttime="${board.createdAt.time}">
+<section id="comment" data-postnum="${board.postNum}" data-usernum="${sessionUser.userNum}" data-posttime="${board.createdAt.time}" data-viewtime="${requestTime.time}">
     <!-- 댓글 작성 폼 -->
     <hr>
     <h5 class="total-count">댓글 <span class="item-count">0</span> 개 </h5>

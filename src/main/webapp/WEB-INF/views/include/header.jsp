@@ -15,11 +15,13 @@
 					        <c:choose>	        
 							<c:when test="${sessionScope['sessionUser']==null}">
 								<a class="btn btn-light mr-2" href='<c:url value="/user/signup" />'>sign up</a>
-								<a class="btn btn-light mr-2" href='<c:url value="/signin" />'>sign in</a>
+								<button id="global-signin-btn" class="btn btn-light mr-2" >sign in</button>
+<%-- 								<a class="btn btn-light mr-2" href='<c:url value="/signin" />'>sign in</a> --%>
 							</c:when>
 							<c:when test="${sessionScope['sessionUser']!=null}">
 								<a class="btn btn-light mr-2" href='#'>프로필 수정</a>
-								<a class="btn btn-light mr-2" href='<c:url value="/signout" />'>sign out</a>
+<%-- 								<a class="btn btn-light mr-2" href='<c:url value="/signout" />'>sign out</a> --%>
+									<button id="global-signout-btn" class="btn btn-light mr-2">sign out</button>
 							</c:when>		
 							</c:choose>
 						</div>

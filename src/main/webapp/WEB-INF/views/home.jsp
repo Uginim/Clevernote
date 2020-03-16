@@ -25,10 +25,12 @@
     <div class="container">
       <h1> CleverNote에 오신 것을 환영합니다~</h1>
       <p class="lead text-muted">CleverNote를 쓰시면<br> 언제든 손쉽게 메모하실 수 있습니다.</p>
+      <c:if test="${empty sessionUser }">
       <p>      
         <a href="<c:url value="/user/signup" />" class="btn btn-primary my-2">가입하기</a>
         <a href="<c:url value="/signin" />" class="btn btn-secondary my-2">로그인 하기</a>
       </p>
+      </c:if>
     </div>
   </section>
 		<article id="introduction-of-features" class="container justify-content-md-center">

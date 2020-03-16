@@ -1,6 +1,7 @@
 package com.uginim.clevernote.user.controller;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -58,8 +59,15 @@ public class LoginController {
 	}
 	
 	@RequestMapping("/signout")
-	public String signOut(HttpSession session) {
+	public String signOut(
+			@RequestParam(name = "next", required = false) String next,
+			HttpServletRequest request,
+			HttpSession session
+			) {
 		loginManager.signOut(session);
-		return "redirect:/";
+//		request.setAttribute("afterLogout",true);
+		
+//		return "redirect:/";
+		return "redirect:"+ ((next!=null)?next : "/" )+"?afterlogout=true";
 	}
 }

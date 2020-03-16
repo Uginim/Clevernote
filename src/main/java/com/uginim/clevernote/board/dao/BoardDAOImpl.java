@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.uginim.clevernote.board.vo.AttachmentFileVO;
-import com.uginim.clevernote.board.vo.BoardTypeVO;
 import com.uginim.clevernote.board.vo.BoardPostVO;
+import com.uginim.clevernote.board.vo.BoardTypeVO;
 
 @Repository
 public class BoardDAOImpl implements BoardDAO {

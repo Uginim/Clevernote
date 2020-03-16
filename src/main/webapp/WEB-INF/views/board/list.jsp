@@ -71,7 +71,7 @@ window.addEventListener("load", init,false);
 					<tr>
 						<td>${row.postNum}</td>
 						<td>${row.type.name}</td>
-						<td>
+						<td >
 						<c:forEach begin="1" end="${row.indent}">
 						&nbsp;&nbsp;
 						</c:forEach>
@@ -82,8 +82,9 @@ window.addEventListener("load", init,false);
 							${row.title}
 							<c:if test="${row.hasPicture }"><img alt="attachment(첨부파일)" src="${pageContext.request.contextPath}/resources/img/attachment.svg"></c:if> 
 						</a>
-						</td>
-						<td><b>${row.username}</b><!-- (${row.userNum}) --></td>
+						</td>	
+						
+						<td> <b class="${row.userNum == sessionUser.userNum?'text-info':''}">${row.username}</b><!-- (${row.userNum}) --></td>
 	<%-- 						<td>${row.bcdate}</td> --%>
 						<td>${createdAt}</td>
 						<td>${row.hit}</td>
@@ -100,8 +101,8 @@ window.addEventListener("load", init,false);
 			<!-- 처음페이지 / 이전페이지 이동 -->
 			<div class="btn-group mr-sm-2">
 				<c:if test="${pageManager.prev}">
-					<a class="btn btn-secondary" href="${contextRoot }/board/list/1/${pageManager.src.searchType}/${pageManager.src.keyword}">처음 페이지</a>
-					<a class="btn btn-secondary" href="${contextRoot }/board/list/${pageManager.startPageNum-1}/${pageManager.src.searchType}/${pageManager.src.keyword}">이전 페이지</a>
+					<a class="btn btn-secondary" href="${contextRoot }/board/list/1/${pageManager.src.searchType}/${pageManager.src.keyword}">처음</a>
+					<a class="btn btn-secondary" href="${contextRoot }/board/list/${pageManager.startPageNum-1}/${pageManager.src.searchType}/${pageManager.src.keyword}">이전</a>
 				</c:if>
 			</div>
 			<div class="btn-group mr-sm-2">
@@ -114,15 +115,15 @@ window.addEventListener("load", init,false);
 					</c:if>
 					<!-- 현재페이지와 요청페이지가 같으면 -->
 					<c:if test="${pageManager.rc.currentPage == pageNum }">
-						<a class="btn btn-secondary" href="${contextRoot }/board/list/${pageNum }/${pageManager.src.searchType}/${pageManager.src.keyword}" class="on">${pageNum }</a>
+						<a class="btn btn-primary	" href="${contextRoot }/board/list/${pageNum }/${pageManager.src.searchType}/${pageManager.src.keyword}" class="on">${pageNum }</a>
 					</c:if>
 				</c:forEach>
 			</div>
 			<!-- 다음페이지 / 최종페이지 이동 -->
 			<div class="btn-group mr-sm-2">
 				<c:if test="${pageManager.next}">
-					<a class="btn btn-secondary" href="${contextRoot }/board/list/${pageManager.endPageNum+1}/${pageManager.src.searchType}/${pageManager.src.keyword}">다음 페이지</a>
-					<a class="btn btn-secondary" href="${contextRoot }/board/list/${pageManager.finalEndPage}/${pageManager.src.searchType}/${pageManager.src.keyword}">최종 페이지</a>
+					<a class="btn btn-secondary" href="${contextRoot }/board/list/${pageManager.endPageNum+1}/${pageManager.src.searchType}/${pageManager.src.keyword}">다음</a>
+					<a class="btn btn-secondary" href="${contextRoot }/board/list/${pageManager.finalEndPage}/${pageManager.src.searchType}/${pageManager.src.keyword}">최종</a>
 				</c:if>
 			</div>
 		</div>

@@ -11,6 +11,7 @@ const KEY_USER_NUM = "data-usernum";
 const KEY_USER_NAME = "data-username";
 const KEY_PREPERENCE_MARK = "mark";
 const KEY_POST_TIME= "data-posttime";
+const KEY_VIEW_TIME= "data-viewtime";
 const CSS_CLASS_ACTIVE = "active";
 const CSS_CLASS_NONE = "display-none";
 var lastHistoryUpdatedTime;
@@ -140,7 +141,7 @@ function requestVote(btnElement,type){
         requestJson("DELETE","/comment/vote/"+commentNum,(e)=>{
             console.log("msg",e.currentTarget.response);
             // markPreperence(commentNum,type);
-            removeMark();
+            removeMark(commentNum);
             console.log('버튼 클릭');
             // 댓글 갱신
             renewOneComment(commentNum);
@@ -185,10 +186,15 @@ function markPreperence(commentNum,type){
 function removeMark(commentNum){
     const commentArticle = getCommentArticle(commentNum);
     const preference = commentArticle.querySelector('.preference')
-    
+    likeBtn = preference.querySelector('.like');
+    dislikeBtn = preference.querySelector('.dislike');
     preference.querySelector('.like').classList.remove(KEY_PREPERENCE_MARK);
     preference.querySelector('.dislike').classList.remove(KEY_PREPERENCE_MARK);
-
+    dislikeBtn.classList.add(KEY_PREPERENCE_MARK);
+    dislikeBtn.classList.add('btn-light');
+    dislikeBtn.classList.remove('btn-info');
+    likeBtn.classList.add('btn-light');
+    likeBtn.classList.remove('btn-info');
     
 }
 
@@ -325,10 +331,7 @@ function filterUserLoggedIn(callBackloggedIn, ...args){
         }
     }
 }
-// 로그인 화면으로 이동
-function moveToLoginForm(){        
-    location.href="/signin?next="+location.href.substring(location.origin.length,location.href.length);
-}
+
 
 // 로그인할 지 여부 묻기 
 function confirmLogin(){
@@ -410,32 +413,39 @@ function requestWritingReplyComment(btnElement){
     const formData = new FormData();            
     const postNum = getPostNum();
     const parentNum = btnElement.getAttribute(KEY_PARENT_NUM);
-    const defaultTime = (new Date()).getTime();
+    console.log("getViewTime()",getViewTime());
+//    const defaultTime = (new Date()).getTime();
+    const defaultTime = getViewTime();
+    console.log("defaultTime:",defaultTime);
     formData.append("content",contentTextarea.value);
     formData.append("parentNum",parentNum);
     formData.append("targetUsername",btnElement.getAttribute(KEY_USER_NAME));
     formData.append("targetCommentNum",btnElement.getAttribute(KEY_COMMENT_NUM)); 
-    
+    // 답글 닫기
+	cancelReplyEditor(btnElement);
     requestJson("POST","/comment/one/"+postNum,(event)=>{
         contentTextarea.value ="";        
         // 자식 리스트 있는지 확인
         const commentArticle = getCommentArticle(parentNum);
         // console.log("자식 리스트 확인 ",commentArticle,commentArticle.querySelector('.children-list'));
         if(!commentArticle.querySelector('.children-list')){
-            console.log("")
+            // 리스트 붙이기
+        	console.log("리스트 붙이기")
             appendList(commentArticle,{
                 commentNum:parentNum,
                 childrenCount:0,
-                createdAt:defaultTime
+//                createdAt:defaultTime
+                createdAt: getViewTime()
             });
-            const spreadBtn = document.querySelector('#'+commentIdPrefix+parentNum+' button.spread');
-            console.log('#'+commentIdPrefix+commentNum+' button.spread');
-            console.log("spreadBtn:",spreadBtn)
-            const time = spreadBtn.getAttribute(KEY_LAST_COMMENT_TIME);
-            console.log("time:",time);
-            requestNextChildren(time,parentNum);
+        	
+            
         }
-        
+        const spreadBtn = document.querySelector('#'+commentIdPrefix+parentNum+' button.spread');
+        console.log('#'+commentIdPrefix+commentNum+' button.spread');
+        console.log("spreadBtn:",spreadBtn)
+        const time = spreadBtn.getAttribute(KEY_LAST_COMMENT_TIME);
+        console.log("time:",time);
+        requestNextChildren(time,parentNum);
         
         
     },formData)
@@ -451,6 +461,11 @@ function getPostNum(){
 function getPostTime(){
     let postTime = document.querySelector(COMMENT_COMPONENT_SELECTOR ).getAttribute(KEY_POST_TIME);
     return postTime;
+}
+// 게시글 조회 시간 가져오기
+function getViewTime(){
+	let viewTime = document.querySelector(COMMENT_COMPONENT_SELECTOR ).getAttribute(KEY_VIEW_TIME);
+	return viewTime;
 }
 
 
@@ -491,7 +506,7 @@ function requestNextChildren(time,parentNum){
         const commentSelector = '#'+commentIdPrefix+data.parentKey;
         const selectorPrefix = commentSelector +' ';
         const comment = document.querySelector(commentSelector);
-        console.log("comment:"+comment);
+        console.log("comment:",comment);
         // 총 댓수 갱신
         // 리스트 갱신
         updatedChildCommentsList(selectorPrefix+'ul.children-list',data.commentList,true,parentNum);
@@ -724,10 +739,10 @@ function makeNewChildComment(data,parentNum){
                 <article id="${commentIdPrefix}${data.commentNum}" class="comment child-comment pt-3 border-top " ${KEY_COMMENT_NUM}="${data.commentNum}" ${KEY_USER_NUM}="${data.userNum}" ${KEY_POST_NUM}="${data.postNum}">
                 <p class="header">
                     <span class="username">${data.username}</span>
-                    <span class="created-at"><small class="time text-muted">${new Date(data.createdAt).toLocaleString()} <div class="is-updated">
+                    <span class="created-at"><small class="time text-muted">${new Date(data.createdAt).toLocaleString()} <span class="is-updated">
                         ${data.updatedAt!=data.createdAt ? '(수정됨)':''}
-                    </div></small>에 작성됨</span>
-                    <button class="reply btn btn-link" ${KEY_COMMENT_NUM}="${data.commentNum}" >답글</button>
+                    </span></small>에 작성됨</span>
+                    <button class="open-reply btn btn-link" ${KEY_COMMENT_NUM}="${data.commentNum}" >답글</button>
                 </p>
                 <a href="#${commentIdPrefix}${data.targetNum}">@${data.targetUsername}&nbsp;</a>
                 <p class="content bg-light p-3">${data.content}</p>
@@ -779,6 +794,7 @@ function updateOneComment(data,commentNum){
     // 루트일 경우 자식 개수 갱신
     if (commentArticle.classList.contains('root-comment')){
         const childrenCount = commentArticle.querySelector('.children-list .rest-count')
-        childrenCount.innerText= data.childrenCount;
+        if(childrenCount)
+        	childrenCount.innerText= data.childrenCount;
     }
 }

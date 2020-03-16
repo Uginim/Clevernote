@@ -50,7 +50,7 @@
             <form:hidden path="indent" value="${board.indent}"/>
             <form:hidden path="step" value="${board.step}"/>
             <div class="form-group row mb-1 px-3">
-                <form:input class="form-control form-control-lg border-0" path="title" type="text" cols="70" placeholder="제목"/> 
+                <form:input class="form-control form-control-lg border-0" path="title" type="text" cols="70" placeholder="제목을 입력하세요.."/> 
             </div>
             <form:errors cssClass="error" path="title"/>
             <div class="form-group row mb-2">
@@ -76,16 +76,18 @@
             </div>
             <form:errors path="content" cssClass="error"/>
             <div class="custom-file  mb-2">
-                <label class="custom-file-label">첨부</label><input type="file" class="custom-file-input" name="files" multiple/>
+                <label class="custom-file-label">첨부</label><input  id="attachments" type="file" class="custom-file-input" name="files" multiple/>
                 <form:errors path="files"/>
             </div>
+            <ul id="fileList" class="list-unstyled list-group list-group-flush"></ul>
             <div class="row justify-content-end">
                 <div class="btn-group">            	
                     <form:button class="btn btn-outline-primary" id="submit-btn">등록</form:button>
                     <form:button class="btn btn-outline-primary" data-returnPage="${returnPage }" data-prevView="${board.postNum}" id="cancel-btn">취소</form:button>
                     <form:button class="btn btn-outline-primary" data-returnPage="${returnPage }" id="list-btn">목록</form:button>
                 </div>
-            </div>            
+            </div>
+                        
         </form:form>
         </div>
     </main>
