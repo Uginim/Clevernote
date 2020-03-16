@@ -163,38 +163,43 @@ function markAllMyPreperences(datas){
 // 선호도 표시 
 function markPreperence(commentNum,type){    
     const commentArticle = getCommentArticle(commentNum);
-    const preference = commentArticle.querySelector('.preference')
-    likeBtn = preference.querySelector('.like');
-    dislikeBtn = preference.querySelector('.dislike');
-    if(type[0].toUpperCase() ==='L'){        
-        likeBtn.classList.add(KEY_PREPERENCE_MARK);
-        likeBtn.classList.remove('btn-light');
-        likeBtn.classList.add('btn-info');
-        dislikeBtn.classList.remove(KEY_PREPERENCE_MARK);
-        dislikeBtn.classList.add('btn-light');
-        dislikeBtn.classList.remove('btn-info');
-    }else if(type[0].toUpperCase() ==='D') {
-        likeBtn.classList.remove(KEY_PREPERENCE_MARK);
-        dislikeBtn.classList.add(KEY_PREPERENCE_MARK);
-        dislikeBtn.classList.remove('btn-light');
-        dislikeBtn.classList.add('btn-info');
-        likeBtn.classList.add('btn-light');
-        likeBtn.classList.remove('btn-info');
+    if(commentArticle){
+    	const preference = commentArticle.querySelector('.preference')
+    	likeBtn = preference.querySelector('.like');
+    	dislikeBtn = preference.querySelector('.dislike');
+    	if(type[0].toUpperCase() ==='L'){        
+    		likeBtn.classList.add(KEY_PREPERENCE_MARK);
+    		likeBtn.classList.remove('btn-light');
+    		likeBtn.classList.add('btn-info');
+    		dislikeBtn.classList.remove(KEY_PREPERENCE_MARK);
+    		dislikeBtn.classList.add('btn-light');
+    		dislikeBtn.classList.remove('btn-info');
+    	}else if(type[0].toUpperCase() ==='D') {
+    		likeBtn.classList.remove(KEY_PREPERENCE_MARK);
+    		dislikeBtn.classList.add(KEY_PREPERENCE_MARK);
+    		dislikeBtn.classList.remove('btn-light');
+    		dislikeBtn.classList.add('btn-info');
+    		likeBtn.classList.add('btn-light');
+    		likeBtn.classList.remove('btn-info');
+    	}
+    	
     }
 }
 // 선호도 마킹 삭제
 function removeMark(commentNum){
     const commentArticle = getCommentArticle(commentNum);
-    const preference = commentArticle.querySelector('.preference')
-    likeBtn = preference.querySelector('.like');
-    dislikeBtn = preference.querySelector('.dislike');
-    preference.querySelector('.like').classList.remove(KEY_PREPERENCE_MARK);
-    preference.querySelector('.dislike').classList.remove(KEY_PREPERENCE_MARK);
-    dislikeBtn.classList.add(KEY_PREPERENCE_MARK);
-    dislikeBtn.classList.add('btn-light');
-    dislikeBtn.classList.remove('btn-info');
-    likeBtn.classList.add('btn-light');
-    likeBtn.classList.remove('btn-info');
+    if(commentArticle){    	
+    	const preference = commentArticle.querySelector('.preference')
+    	likeBtn = preference.querySelector('.like');
+    	dislikeBtn = preference.querySelector('.dislike');
+    	preference.querySelector('.like').classList.remove(KEY_PREPERENCE_MARK);
+    	preference.querySelector('.dislike').classList.remove(KEY_PREPERENCE_MARK);
+    	dislikeBtn.classList.add(KEY_PREPERENCE_MARK);
+    	dislikeBtn.classList.add('btn-light');
+    	dislikeBtn.classList.remove('btn-info');
+    	likeBtn.classList.add('btn-light');
+    	likeBtn.classList.remove('btn-info');
+    }
     
 }
 
@@ -202,23 +207,25 @@ function removeMark(commentNum){
 function openModifyingEditor(btnElement){
     const commentNum = btnElement.getAttribute(KEY_COMMENT_NUM);
     const commentArticle = getCommentArticle(commentNum);
-    console.log('editor:',commentArticle);
-    const editor = commentArticle.querySelector('textarea.modify-editor');
-    const content = commentArticle.querySelector('p.content');
-    
-    // 버튼 
-    const openEditorBtn = commentArticle.querySelector('button.open-editor');
-    const cancelBtn = commentArticle.querySelector('button.cancel');
-    const modifyBtn = commentArticle.querySelector('button.modify');
-    openEditorBtn.classList.add(CSS_CLASS_NONE);
-    cancelBtn.classList.add(CSS_CLASS_ACTIVE);
-    modifyBtn.classList.add(CSS_CLASS_ACTIVE);
-
-    console.log(editor, content)
-
-    editor.value= content.innerText;
-    editor.classList.add(CSS_CLASS_ACTIVE);
-    content.classList.add(CSS_CLASS_NONE);
+    if(commentArticle){    	
+    	console.log('editor:',commentArticle);
+    	const editor = commentArticle.querySelector('textarea.modify-editor');
+    	const content = commentArticle.querySelector('p.content');
+    	
+    	// 버튼 
+    	const openEditorBtn = commentArticle.querySelector('button.open-editor');
+    	const cancelBtn = commentArticle.querySelector('button.cancel');
+    	const modifyBtn = commentArticle.querySelector('button.modify');
+    	openEditorBtn.classList.add(CSS_CLASS_NONE);
+    	cancelBtn.classList.add(CSS_CLASS_ACTIVE);
+    	modifyBtn.classList.add(CSS_CLASS_ACTIVE);
+    	
+    	console.log(editor, content)
+    	
+    	editor.value= content.innerText;
+    	editor.classList.add(CSS_CLASS_ACTIVE);
+    	content.classList.add(CSS_CLASS_NONE);
+    }
 }
 // 수정 취소
 function cancelModifying(btnElement){
