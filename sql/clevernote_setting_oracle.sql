@@ -1,21 +1,21 @@
 --------------------------------------------------------
---  파일이 생성됨 - 월요일-3월-16-2020   
+--  파일이 생성됨 - 화요일-3월-17-2020   
 --------------------------------------------------------
 --------------------------------------------------------
 --  DDL for Sequence ATTACHMENT_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "ATTACHMENT_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 101 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "ATTACHMENT_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 281 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence BOARD_COMMENT_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "BOARD_COMMENT_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 221 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "BOARD_COMMENT_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 301 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence BOARD_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "BOARD_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 1101 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "BOARD_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 1141 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence BOARD_TYPE_SEQUENCE
 --------------------------------------------------------
@@ -25,12 +25,12 @@
 --  DDL for Sequence CATEGORY_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "CATEGORY_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999999 INCREMENT BY 1 START WITH 521 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "CATEGORY_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999999 INCREMENT BY 1 START WITH 541 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence HISTORY_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "HISTORY_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 241 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "HISTORY_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 341 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence NOTE_SEQUENCE
 --------------------------------------------------------
@@ -50,18 +50,18 @@
 --  DDL for Sequence USER_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "USER_SEQUENCE"  MINVALUE 1 MAXVALUE 99999999999 INCREMENT BY 1 START WITH 400 NOCACHE  NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "USER_SEQUENCE"  MINVALUE 1 MAXVALUE 99999999999 INCREMENT BY 1 START WITH 418 NOCACHE  NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Sequence VOTE_SEQUENCE
 --------------------------------------------------------
 
-   CREATE SEQUENCE  "VOTE_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 121 CACHE 20 NOORDER  NOCYCLE ;
+   CREATE SEQUENCE  "VOTE_SEQUENCE"  MINVALUE 1 MAXVALUE 9999999999 INCREMENT BY 1 START WITH 241 CACHE 20 NOORDER  NOCYCLE ;
 --------------------------------------------------------
 --  DDL for Table APP_USER
 --------------------------------------------------------
 
   CREATE TABLE "APP_USER" 
-   (	"EMAIL" VARCHAR2(50 BYTE), 
+   (	"EMAIL" VARCHAR2(256 BYTE), 
 	"CREATED_AT" TIMESTAMP (6), 
 	"UPDATED_AT" TIMESTAMP (6), 
 	"USERNAME" VARCHAR2(128 BYTE), 
@@ -285,6 +285,13 @@
   NOCACHE LOGGING 
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT FLASH_CACHE DEFAULT CELL_FLASH_CACHE DEFAULT)) ;
+
+   COMMENT ON COLUMN "NOTE"."CREATED_AT" IS '생성일시';
+   COMMENT ON COLUMN "NOTE"."TITLE" IS '제목';
+   COMMENT ON COLUMN "NOTE"."UPDATED_AT" IS '수정일시';
+   COMMENT ON COLUMN "NOTE"."CONTENT" IS '내용';
+   COMMENT ON COLUMN "NOTE"."NOTE_NUM" IS '노트번호';
+   COMMENT ON COLUMN "NOTE"."CATEGORY_NUM" IS '카데고리번호';
 --------------------------------------------------------
 --  DDL for Table TAG
 --------------------------------------------------------
