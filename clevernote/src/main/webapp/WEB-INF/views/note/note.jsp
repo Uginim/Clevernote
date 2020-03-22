@@ -1,12 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Note Editor</title>
+<script src="<c:url value="/resources/js/note/note.js"/>"> </script>
 </head>
 <body>
+	<div id="root"></div>
 	<nav id="global-tools">
 		
 	</nav>

@@ -1,0 +1,5 @@
+clevernote/src/main/resources/config/database.properties
+clevernote/target/
+clevernote/temp/*
+note-client/node_modules
+clevernote/src/main/webapp/resources/js/note
