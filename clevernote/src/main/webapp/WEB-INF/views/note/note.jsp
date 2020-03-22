@@ -21,7 +21,7 @@
 			<ul id="note-list">			
 			</ul>
 		</section>
-	</aside>
+	</aside>	
 	<main id="note-main">
 		<header id="note-header" class="note" >
 		</header>
