@@ -34,11 +34,7 @@ public class NoteController {
 	
 	
 	
-	//노트 메인페이지 받아오기
-	@GetMapping()
-	public String getNotePage() { 
-		return "note/note-main";
-	}
+
 	
 	// 카데고리 목록 가져오기
 	@ResponseBody

@@ -194,7 +194,7 @@ function removeMark(commentNum){
     	dislikeBtn = preference.querySelector('.dislike');
     	preference.querySelector('.like').classList.remove(KEY_PREPERENCE_MARK);
     	preference.querySelector('.dislike').classList.remove(KEY_PREPERENCE_MARK);
-    	dislikeBtn.classList.add(KEY_PREPERENCE_MARK);
+//    	dislikeBtn.classList.add(KEY_PREPERENCE_MARK);
     	dislikeBtn.classList.add('btn-light');
     	dislikeBtn.classList.remove('btn-info');
     	likeBtn.classList.add('btn-light');
