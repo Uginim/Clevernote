@@ -232,7 +232,7 @@
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
-			<version>1.4</version>
+			<version>1.5</version>
 		</dependency>
 		<!-- 파일 업로드 끝 -->
 		<!-- 어노테이션을 사용해서 DTO,VO등의 객체에 setter,getter,constructor등을 자동생성 -->
